@@ -77,9 +77,22 @@ export const analyticsAPI = {
 
 // User endpoints
 export const userAPI = {
+  getDirectory: () => api.get('/users/directory'),
   getAll: (params) => api.get('/users', { params }),
   getById: (id) => api.get(`/users/${id}`),
+  create: (data) => api.post('/users', data),
+  invite: (email) => api.post('/users/invite', { email }),
   update: (id, data) => api.put(`/users/${id}`, data),
+  delete: (id) => api.delete(`/users/${id}`),
+};
+
+// Department endpoints
+export const departmentAPI = {
+  getAll: () => api.get('/departments'),
+  getById: (id) => api.get(`/departments/${id}`),
+  create: (data) => api.post('/departments', data),
+  update: (id, data) => api.put(`/departments/${id}`, data),
+  delete: (id) => api.delete(`/departments/${id}`),
 };
 
 export default api;

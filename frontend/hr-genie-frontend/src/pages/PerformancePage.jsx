@@ -1,11 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { TrendingUp, Star, Calendar as CalendarIcon, MessageSquare } from 'lucide-react';
+import { TrendingUp, Star, Calendar as CalendarIcon, MessageSquare, Target } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import EvaluationModal from '../components/modals/EvaluationModal';
+import { useToast } from '../context/ToastContext';
+import GoalsPage from './GoalsPage';
+import { useTranslation } from 'react-i18next';
+
+const TABS = [
+    { key: 'reviews', label: 'performance.reviews' },
+    { key: 'goals', label: 'performance.goalsAndOkrs' },
+];
 
 const PerformancePage = () => {
     const { user } = useAuth();
+    const toast = useToast();
+    const { t } = useTranslation();
+    const [activeTab, setActiveTab] = useState('reviews');
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isEvalModalOpen, setIsEvalModalOpen] = useState(false);
@@ -22,90 +33,104 @@ const PerformancePage = () => {
             setReviews(res.data.reviews || []);
         } catch (err) {
             console.error('Failed to fetch reviews', err);
-            // mock data fallback
-            setReviews([
-                { id: 1, reviewer_name: 'Admin User', rating: 4, review_date: '2023-12-15', comments: 'Great performance this quarter, shows strong initiative.' },
-                { id: 2, reviewer_name: 'Jane Smith', rating: 5, review_date: '2023-06-10', comments: 'Exceeded all goals and mentored junior devs.' }
-            ]);
+            toast.error('Failed to load performance reviews');
         } finally {
             setLoading(false);
         }
     };
 
-    const renderStars = (rating) => {
-        return Array.from({ length: 5 }).map((_, i) => (
-            <Star key={i} className={`w-4 h-4 ${i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
-        ));
-    };
-
-    if (loading) return <div className="text-center py-10">Loading performance reviews...</div>;
+    if (loading && activeTab === 'reviews') return (
+        <div className="flex items-center justify-center h-64">
+            <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
+        </div>
+    );
 
     return (
         <div className="space-y-6 animate-fadeIn">
-            <div className="flex justify-between items-center mb-6">
+            {/* Header */}
+            <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Performance Evaluation</h1>
-                    <p className="text-gray-500">Track and review your performance history.</p>
+                    <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">{t('performance.title')}</h1>
+                    <p className="text-zinc-500 text-sm mt-1">{t('performance.subtitle')}</p>
                 </div>
-                {(user?.role === 'admin' || user?.role === 'hr' || user?.role === 'manager') && (
+                {activeTab === 'reviews' && (user?.role === 'admin' || user?.role === 'hr' || user?.role === 'manager') && (
                     <button
                         onClick={() => setIsEvalModalOpen(true)}
-                        className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition"
+                        className="px-4 py-2 bg-zinc-900 text-white text-[13px] font-bold uppercase tracking-wider rounded-md hover:bg-zinc-800 transition-colors flex items-center gap-2"
                     >
-                        <TrendingUp className="w-5 h-5" />
-                        New Evaluation
+                        <TrendingUp className="w-4 h-4" />
+                        {t('performance.newEvaluation')}
                     </button>
                 )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {reviews.map(review => (
-                    <div key={review.id} className="card flex flex-col hover:shadow-lg transition">
-                        <div className="flex items-center justify-between border-b pb-4 mb-4">
-                            <div className="flex items-center gap-2">
-                                <div className="p-2 bg-indigo-50 rounded text-indigo-600">
-                                    <Star className="w-5 h-5" />
+            {/* Tabs */}
+            <div className="flex gap-1 bg-zinc-100 p-1 rounded-md w-fit border border-zinc-200">
+                {TABS.map(tab => (
+                    <button
+                        key={tab.key}
+                        onClick={() => setActiveTab(tab.key)}
+                        className={`px-4 py-2 rounded-md text-[13px] font-bold transition-all ${
+                            activeTab === tab.key
+                                ? 'bg-white text-zinc-900 shadow-sm border border-zinc-200'
+                                : 'text-zinc-500 hover:text-zinc-700 border border-transparent'
+                        }`}
+                    >
+                        {t(tab.label)}
+                    </button>
+                ))}
+            </div>
+
+            {/* Reviews Tab */}
+            {activeTab === 'reviews' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {reviews.map(review => (
+                        <div key={review.id} className="card bg-white border border-zinc-200 flex flex-col hover:border-zinc-300 transition-colors relative overflow-hidden p-6">
+                            <div className="flex items-center justify-between border-b border-zinc-100 pb-4 mb-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-zinc-50 border border-zinc-100 rounded-md">
+                                        <Star className="w-4 h-4 text-zinc-900 fill-zinc-900" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-zinc-900 text-[14px]">Q-Review</h3>
+                                        <div className="flex items-center gap-0.5 mt-1">
+                                            {Array.from({ length: 5 }).map((_, i) => (
+                                                <Star key={i} className={`w-3 h-3 ${i < review.rating ? 'text-zinc-900 fill-zinc-900' : 'text-zinc-200'}`} />
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 className="font-semibold text-gray-900">Q-Review</h3>
-                                    <div className="flex items-center gap-1 mt-1">
-                                        {renderStars(review.rating)}
+                                <div className="text-right">
+                                    <div className="flex items-center text-[11px] font-bold text-zinc-400 uppercase tracking-wider gap-1">
+                                        <CalendarIcon className="w-3 h-3" />
+                                        {new Date(review.review_date).toLocaleDateString()}
                                     </div>
                                 </div>
                             </div>
-                            <div className="text-right">
-                                <div className="flex items-center text-xs text-gray-500 gap-1">
-                                    <CalendarIcon className="w-3 h-3" />
-                                    {new Date(review.review_date).toLocaleDateString()}
+                            <div className="flex-1 mb-6">
+                                <div className="flex items-start gap-2">
+                                    <MessageSquare className="w-3.5 h-3.5 text-zinc-400 mt-1 flex-shrink-0" />
+                                    <p className="text-[13px] text-zinc-600 italic leading-relaxed">"{review.comments}"</p>
                                 </div>
                             </div>
-                        </div>
-
-                        <div className="flex-1 mb-4">
-                            <div className="flex items-start gap-2">
-                                <MessageSquare className="w-4 h-4 text-gray-400 mt-1 flex-shrink-0" />
-                                <p className="text-sm text-gray-600 italic">"{review.comments}"</p>
+                            <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider pt-4 border-t border-zinc-100">
+                                {t('performance.reviewedBy')} <span className="text-zinc-900">{review.reviewer_name || t('performance.systemUser')}</span>
                             </div>
                         </div>
-
-                        <div className="text-xs text-gray-500 mt-auto pt-4 border-t">
-                            Reviewed by: <span className="font-medium text-gray-700">{review.reviewer_name || 'System User'}</span>
+                    ))}
+                    {reviews.length === 0 && (
+                        <div className="col-span-full text-center py-12 bg-white border border-zinc-200 rounded-lg">
+                            <Star className="w-10 h-10 text-zinc-200 mx-auto mb-3" />
+                            <p className="text-zinc-500 text-[13px] font-bold uppercase tracking-wider">{t('performance.noReviews')}</p>
                         </div>
-                    </div>
-                ))}
+                    )}
+                </div>
+            )}
 
-                {reviews.length === 0 && (
-                    <div className="col-span-full text-center py-10 bg-white rounded-lg border border-dashed border-gray-300 text-gray-500">
-                        No performance reviews found for your profile.
-                    </div>
-                )}
-            </div>
+            {/* Goals Tab */}
+            {activeTab === 'goals' && <GoalsPage embedded />}
 
-            <EvaluationModal
-                isOpen={isEvalModalOpen}
-                onClose={() => setIsEvalModalOpen(false)}
-                onEvaluationAdded={(newEval) => setReviews([newEval, ...reviews])}
-            />
+            <EvaluationModal isOpen={isEvalModalOpen} onClose={() => setIsEvalModalOpen(false)} onEvaluationAdded={(newEval) => setReviews([newEval, ...reviews])} />
         </div>
     );
 };

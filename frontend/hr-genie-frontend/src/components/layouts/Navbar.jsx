@@ -1,17 +1,31 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Menu, LogOut, User, ChevronDown } from 'lucide-react';
+import { Menu, LogOut, User, ChevronDown, Globe } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import NotificationBell from '../notifications/NotificationBell';
+
+const LANGUAGES = [
+  { code: 'en', label: 'EN' },
+  { code: 'sq', label: 'SQ' },
+  { code: 'de', label: 'DE' },
+];
 
 const Navbar = ({ onMenuClick }) => {
   const { user, logout } = useAuth();
+  const { t, i18n } = useTranslation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const langRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
+      }
+      if (langRef.current && !langRef.current.contains(event.target)) {
+        setLangOpen(false);
       }
     };
 
@@ -24,75 +38,120 @@ const Navbar = ({ onMenuClick }) => {
     window.location.href = '/login';
   };
 
+  const changeLanguage = (code) => {
+    i18n.changeLanguage(code);
+    setLangOpen(false);
+  };
+
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-30">
+    <nav className="bg-white border-b border-zinc-200 sticky top-0 z-30">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left side */}
           <div className="flex items-center gap-4">
             <button
               onClick={onMenuClick}
-              className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="lg:hidden p-2 hover:bg-zinc-100 rounded-md transition-colors"
             >
-              <Menu className="w-6 h-6 text-gray-600" />
+              <Menu className="w-6 h-6 text-zinc-600" />
             </button>
-            
+
             <div className="hidden lg:block">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Welcome back, {user?.name?.split(' ')[0]}!
+              <h2 className="text-[15px] font-semibold text-zinc-900 tracking-tight">
+                {user?.name?.split(' ')[0]}
               </h2>
-              <p className="text-sm text-gray-500">{user?.department}</p>
+              <p className="text-[13px] text-zinc-500">
+                {user?.org_name && <span className="text-zinc-700 font-medium">{user.org_name}</span>}
+                {user?.org_name && user?.department && <span> · </span>}
+                {user?.department}
+              </p>
             </div>
           </div>
 
-          {/* Right side - User menu */}
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors"
-            >
-              <div className="w-9 h-9 bg-primary-100 rounded-full flex items-center justify-center">
-                <User className="w-5 h-5 text-primary-700" />
-              </div>
-              <div className="hidden sm:block text-left">
-                <p className="text-sm font-medium text-gray-900">{user?.name}</p>
-                <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
-              </div>
-              <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
-            </button>
+          {/* Right side - Language + Notifications + User menu */}
+          <div className="flex items-center gap-2">
+            {/* Language Switcher */}
+            <div className="relative" ref={langRef}>
+              <button
+                onClick={() => setLangOpen(!langOpen)}
+                className="flex items-center gap-1.5 px-2 py-1.5 hover:bg-zinc-100 rounded-md transition-all duration-200 text-zinc-500 hover:text-zinc-900"
+              >
+                <Globe className="w-4 h-4" />
+                <span className="text-[12px] font-bold uppercase tracking-wider">{i18n.language?.substring(0, 2).toUpperCase()}</span>
+              </button>
 
-            {/* Dropdown */}
-            {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 animate-fadeIn">
-                <div className="px-4 py-3 border-b border-gray-200">
-                  <p className="text-sm font-medium text-gray-900">{user?.name}</p>
-                  <p className="text-xs text-gray-500">{user?.email}</p>
+              {langOpen && (
+                <div className="absolute right-0 mt-1 w-28 bg-white rounded-md shadow-sm border border-zinc-200 py-1 animate-slideUp z-50">
+                  {LANGUAGES.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => changeLanguage(lang.code)}
+                      className={`w-full text-left px-3 py-1.5 text-[13px] transition-colors ${
+                        i18n.language === lang.code
+                          ? 'bg-zinc-100 text-zinc-900 font-semibold'
+                          : 'text-zinc-600 hover:bg-zinc-50'
+                      }`}
+                    >
+                      {t(`language.${lang.code}`)}
+                    </button>
+                  ))}
                 </div>
-                
-                <div className="px-2 py-2">
-                  <div className="px-3 py-2 text-xs text-gray-500">
-                    <div className="flex justify-between mb-1">
-                      <span>Sick Leave</span>
-                      <span className="font-medium text-gray-900">{user?.sick_leave_balance} days</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Vacation</span>
-                      <span className="font-medium text-gray-900">{user?.vacation_balance} days</span>
+              )}
+            </div>
+
+            <NotificationBell />
+
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center gap-2 px-2 py-1.5 hover:bg-zinc-100 rounded-md transition-all duration-200"
+              >
+                <div className="w-8 h-8 bg-zinc-900 rounded-md flex items-center justify-center">
+                  <User className="w-4 h-4 text-white" />
+                </div>
+                <ChevronDown className={`w-3.5 h-3.5 text-zinc-400 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {/* Dropdown */}
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-1 w-64 bg-white rounded-md shadow-sm border border-zinc-200 py-1.5 animate-slideUp">
+                  <div className="px-4 py-2.5 border-b border-zinc-100">
+                    <p className="text-[14px] font-medium text-zinc-900">{user?.name}</p>
+                    <p className="text-[13px] text-zinc-500">{user?.email}</p>
+                  </div>
+
+                  <div className="px-3 py-2">
+                    <div className="px-3 py-2 bg-zinc-50 rounded-md">
+                      <div className="flex justify-between mb-1 text-[13px] text-zinc-500">
+                        <span>{t('navbar.sickLeave')}</span>
+                        <span className="font-medium text-zinc-900">{user?.sick_leave_balance}d</span>
+                      </div>
+                      <div className="flex justify-between text-[13px] text-zinc-500">
+                        <span>{t('navbar.vacation')}</span>
+                        <span className="font-medium text-zinc-900">{user?.vacation_balance}d</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="border-t border-gray-200 mt-2 pt-2 px-2">
-                  <button
-                    onClick={handleLogout}
-                    className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>Sign Out</span>
-                  </button>
+                  <div className="border-t border-zinc-100 px-1.5 pt-1 space-y-0.5">
+                    <button
+                      onClick={() => { setDropdownOpen(false); window.location.href = '/profile'; }}
+                      className="w-full flex items-center gap-2 px-2.5 py-1.5 text-[13px] text-zinc-700 hover:bg-zinc-100 rounded-md transition-colors font-medium"
+                    >
+                      <User className="w-3.5 h-3.5" />
+                      <span>{t('navbar.myProfile')}</span>
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-2 px-2.5 py-1.5 text-[13px] text-zinc-700 hover:bg-zinc-100 rounded-md transition-colors font-medium"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>{t('auth.signOut')}</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>

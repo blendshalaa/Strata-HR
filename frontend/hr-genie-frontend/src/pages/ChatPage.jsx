@@ -3,9 +3,11 @@ import { chatAPI } from '../services/api';
 import MessageBubble from '../components/chat/MessageBubble';
 import ChatInput from '../components/chat/ChatInput';
 import ConversationList from '../components/chat/ConversationList';
-import { Bot, Menu } from 'lucide-react';
+import { Bot, Menu, Sparkles } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const ChatPage = () => {
+  const { t } = useTranslation();
   const [conversations, setConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -51,7 +53,7 @@ const ChatPage = () => {
 
   const handleSendMessage = async (content) => {
     setLoading(true);
-    
+
     const userMessage = {
       role: 'user',
       content,
@@ -66,7 +68,7 @@ const ChatPage = () => {
       });
 
       const newConversationId = response.data.conversation_id;
-      
+
       if (!activeConversation) {
         setActiveConversation(newConversationId);
         await fetchConversations();
@@ -88,7 +90,7 @@ const ChatPage = () => {
   };
 
   const handleDeleteConversation = async (id) => {
-    if (window.confirm('Delete this conversation?')) {
+    if (window.confirm(t('chat.deleteConversation'))) {
       try {
         await chatAPI.deleteConversation(id);
         if (activeConversation === id) {
@@ -101,9 +103,16 @@ const ChatPage = () => {
     }
   };
 
+  const suggestions = [
+    t('chat.sickLeavePolicy'),
+    t('chat.vacationDays'),
+    t('chat.needLeave'),
+    t('chat.remoteWorkPolicy')
+  ];
+
   return (
-    <div className="h-[calc(100vh-8rem)] flex gap-6">
-      <div className="hidden lg:block w-80 rounded-xl overflow-hidden shadow-sm">
+    <div className="h-[calc(100vh-8rem)] flex gap-4 animate-fadeIn">
+      <div className="hidden lg:block w-80 rounded-lg overflow-hidden border border-zinc-200 shadow-sm">
         <ConversationList
           conversations={conversations}
           activeConversation={activeConversation}
@@ -116,7 +125,7 @@ const ChatPage = () => {
       {sidebarOpen && (
         <>
           <div
-            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+            className="lg:hidden fixed inset-0 bg-zinc-900/40 z-40"
             onClick={() => setSidebarOpen(false)}
           />
           <div className="lg:hidden fixed left-0 top-0 bottom-0 w-80 z-50 animate-slideIn">
@@ -134,52 +143,54 @@ const ChatPage = () => {
         </>
       )}
 
-      <div className="flex-1 card p-0 flex flex-col overflow-hidden">
-        <div className="flex items-center gap-3 p-4 border-b border-gray-200">
+      <div className="flex-1 bg-white rounded-lg border border-zinc-200 shadow-sm p-0 flex flex-col overflow-hidden">
+        {/* Chat Header */}
+        <div className="flex items-center gap-4 px-6 py-4 border-b border-zinc-100 bg-white">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="lg:hidden p-2 hover:bg-gray-100 rounded-lg"
+            className="lg:hidden p-2 hover:bg-zinc-50 rounded-md transition-colors"
           >
-            <Menu className="w-5 h-5 text-gray-600" />
+            <Menu className="w-4 h-4 text-zinc-500" />
           </button>
-          <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-            <Bot className="w-6 h-6 text-primary-600" />
+          <div className="w-10 h-10 bg-zinc-900 rounded-md flex items-center justify-center shadow-sm">
+            <Bot className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h2 className="font-semibold text-gray-900">HR Assistant</h2>
-            <p className="text-sm text-gray-500">Ask me anything about HR</p>
+            <h2 className="text-[14px] font-bold text-zinc-900">{t('chat.hrAssistant')}</h2>
+            <div className="flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">{t('chat.aiPoweredOnline')}</p>
+            </div>
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-zinc-50/30">
           {messages.length === 0 ? (
             <div className="h-full flex items-center justify-center">
-              <div className="text-center max-w-md">
-                <div className="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Bot className="w-12 h-12 text-primary-600" />
+              <div className="text-center max-w-sm px-6">
+                <div className="w-16 h-16 bg-zinc-900 rounded-md flex items-center justify-center mx-auto mb-6 shadow-md">
+                  <Bot className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  Welcome to HR Genie!
+                <h3 className="text-[18px] font-bold text-zinc-900 mb-2 tracking-tight">
+                  {t('chat.welcomeToHrGenie')}
                 </h3>
-                <p className="text-gray-600 mb-6">
-                  I'm your AI assistant. I can help you with HR policies, leave requests, 
-                  benefits information, and more.
+                <p className="text-zinc-500 mb-8 text-[13px] leading-relaxed">
+                  {t('chat.imYourAiAssistant')}
                 </p>
-                <div className="space-y-2 text-left">
-                  <p className="text-sm text-gray-500 font-medium">Try asking:</p>
+                <div className="space-y-3 text-left">
+                  <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-4">{t('chat.commonQuestions')}</p>
                   <div className="space-y-2">
-                    {[
-                      "What's the sick leave policy?",
-                      "How many vacation days do I have?",
-                      "I need leave from Dec 20-27",
-                      "Tell me about remote work policy"
-                    ].map((example, i) => (
+                    {suggestions.map((example, i) => (
                       <button
                         key={i}
                         onClick={() => handleSendMessage(example)}
-                        className="w-full text-left px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm text-gray-700 transition-colors"
+                        className="w-full text-left px-4 py-3 bg-white hover:bg-zinc-50 border border-zinc-200 rounded-md text-[13px] text-zinc-700 hover:text-zinc-900 transition-all shadow-sm"
                       >
-                        "{example}"
+                        <span className="flex items-center gap-3">
+                          <Sparkles className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0" />
+                          {example}
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -193,14 +204,14 @@ const ChatPage = () => {
               ))}
               {loading && (
                 <div className="flex gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
-                    <Bot className="w-5 h-5 text-primary-600" />
+                  <div className="w-8 h-8 rounded-md bg-zinc-900 flex items-center justify-center flex-shrink-0">
+                    <Bot className="w-4 h-4 text-white" />
                   </div>
-                  <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3">
-                    <div className="flex gap-2">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="bg-white border border-zinc-200 rounded-lg px-4 py-3 shadow-sm">
+                    <div className="flex gap-1.5">
+                      <div className="w-1.5 h-1.5 bg-zinc-300 rounded-full animate-bounce" />
+                      <div className="w-1.5 h-1.5 bg-zinc-300 rounded-full animate-bounce" style={{ animationDelay: '0.15s' }} />
+                      <div className="w-1.5 h-1.5 bg-zinc-300 rounded-full animate-bounce" style={{ animationDelay: '0.3s' }} />
                     </div>
                   </div>
                 </div>

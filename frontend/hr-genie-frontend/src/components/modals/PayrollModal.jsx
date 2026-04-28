@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import api from '../../services/api';
+import { useTranslation } from 'react-i18next';
 
 const PayrollModal = ({ isOpen, onClose, onPayrollAdded }) => {
     const [userId, setUserId] = useState('');
@@ -12,6 +13,7 @@ const PayrollModal = ({ isOpen, onClose, onPayrollAdded }) => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (isOpen) {
@@ -50,7 +52,7 @@ const PayrollModal = ({ isOpen, onClose, onPayrollAdded }) => {
                 pay_period_end: periodEnd
             };
 
-            const res = await api.post('/payroll', newPayroll);
+            const res = await api.post('/payroll/calculate', newPayroll);
             onPayrollAdded(res.data.payroll);
             onClose();
         } catch (err) {
@@ -64,36 +66,36 @@ const PayrollModal = ({ isOpen, onClose, onPayrollAdded }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center animate-fadeIn">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-slideUp">
-                <div className="flex items-center justify-between p-6 border-b border-gray-100">
-                    <h2 className="text-xl font-bold text-gray-900">Run Payroll</h2>
+        <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4 animate-fadeIn">
+            <div className="bg-white border border-zinc-200 rounded-lg shadow-lg w-full max-w-lg overflow-hidden animate-slideUp">
+                <div className="flex items-center justify-between p-5 border-b border-zinc-100">
+                    <h2 className="text-[16px] font-bold text-zinc-900">{t('payrollModal.runPayroll')}</h2>
                     <button
                         onClick={onClose}
-                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition"
+                        className="p-1.5 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 rounded-md transition-colors"
                     >
-                        <X className="w-5 h-5" />
+                        <X className="w-4 h-4" />
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     {error && (
-                        <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg border border-red-100">
+                        <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md border border-red-100">
                             {error}
                         </div>
                     )}
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Employee <span className="text-red-500">*</span>
+                        <label className="block text-[13px] font-semibold text-zinc-700 mb-1.5">
+                            {t('common.employee')} <span className="text-zinc-400">*</span>
                         </label>
                         <select
                             required
                             value={userId}
                             onChange={(e) => setUserId(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                         >
-                            <option value="">Select an employee...</option>
+                            <option value="">{t('evaluationModal.selectEmployee')}</option>
                             {users.map((user) => (
                                 <option key={user.id} value={user.id}>
                                     {user.name} ({user.email})
@@ -104,86 +106,86 @@ const PayrollModal = ({ isOpen, onClose, onPayrollAdded }) => {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Base Salary <span className="text-red-500">*</span>
+                            <label className="block text-[13px] font-semibold text-zinc-700 mb-1.5">
+                                {t('payrollModal.baseSalary')} <span className="text-zinc-400">*</span>
                             </label>
                             <input
                                 type="number"
                                 required
                                 value={baseSalary}
                                 onChange={(e) => setBaseSalary(e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+                                className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                                 placeholder="e.g. 5000"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Bonus
+                            <label className="block text-[13px] font-semibold text-zinc-700 mb-1.5">
+                                {t('payrollModal.bonus')}
                             </label>
                             <input
                                 type="number"
                                 value={bonus}
                                 onChange={(e) => setBonus(e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+                                className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                                 placeholder="e.g. 500"
                             />
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Tax Deduction
+                        <label className="block text-[13px] font-semibold text-zinc-700 mb-1.5">
+                            {t('payrollModal.taxDeduction')}
                         </label>
                         <input
                             type="number"
                             value={taxDeduction}
                             onChange={(e) => setTaxDeduction(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                             placeholder="e.g. 1000"
                         />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Period Start <span className="text-red-500">*</span>
+                            <label className="block text-[13px] font-semibold text-zinc-700 mb-1.5">
+                                {t('payrollModal.periodStart')} <span className="text-zinc-400">*</span>
                             </label>
                             <input
                                 type="date"
                                 required
                                 value={periodStart}
                                 onChange={(e) => setPeriodStart(e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+                                className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Period End <span className="text-red-500">*</span>
+                            <label className="block text-[13px] font-semibold text-zinc-700 mb-1.5">
+                                {t('payrollModal.periodEnd')} <span className="text-zinc-400">*</span>
                             </label>
                             <input
                                 type="date"
                                 required
                                 value={periodEnd}
                                 onChange={(e) => setPeriodEnd(e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+                                className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                             />
                         </div>
                     </div>
 
-                    <div className="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
+                    <div className="pt-4 flex items-center justify-end gap-3 mt-4">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 text-gray-700 font-medium hover:bg-gray-100 rounded-lg transition"
+                            className="px-4 py-2 text-[13px] font-semibold text-zinc-700 bg-white border border-zinc-300 rounded-md hover:bg-zinc-50 transition-colors"
                         >
-                            Cancel
+                            {t('common.cancel')}
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
-                            className={`px-4 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                            className={`px-4 py-2 text-[13px] font-bold text-white bg-zinc-900 border border-zinc-900 rounded-md hover:bg-zinc-800 transition-colors ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
-                            {loading ? 'Processing...' : 'Submit Payroll'}
+                            {loading ? t('payrollModal.processing') : t('payrollModal.submitPayroll')}
                         </button>
                     </div>
                 </form>

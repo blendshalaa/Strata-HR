@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Bot, Mail, Lock, AlertCircle } from 'lucide-react';
+import { Bot, Mail, Lock, AlertCircle, ArrowRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Login = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -20,47 +22,48 @@ const Login = () => {
       await login(email, password);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error || 'Invalid credentials');
+      setError(err.response?.data?.error || t('auth.invalidCredentials'));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-100 flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
+    <div className="min-h-screen bg-zinc-50 flex items-center justify-center p-4 relative overflow-hidden font-sans">
+
+      <div className="max-w-md w-full relative z-10">
         {/* Logo */}
         <div className="text-center mb-8 animate-fadeIn">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-600 rounded-2xl mb-4 shadow-lg">
-            <Bot className="w-10 h-10 text-white" />
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-zinc-900 rounded-lg mb-5 shadow-sm border border-zinc-200">
+            <Bot className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">HR Genie</h1>
-          <p className="text-gray-600">Your AI-Powered HR Assistant</p>
+          <h1 className="text-2xl font-bold text-zinc-900 mb-1 tracking-tight">{t('common.appName')}</h1>
+          <p className="text-sm text-zinc-500 font-medium">{t('auth.yourHrWorkspace')}</p>
         </div>
 
         {/* Login Card */}
-        <div className="card animate-fadeIn">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Welcome Back</h2>
+        <div className="bg-white border border-zinc-200 rounded-lg p-8 sm:p-10 shadow-sm animate-slideUp">
+          <h2 className="text-lg font-semibold text-zinc-900 mb-6">{t('auth.signInToAccount')}</h2>
 
           {error && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-red-800">{error}</p>
+            <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-md flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 shrink-0" />
+              <p className="text-sm text-red-800 font-medium">{error}</p>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
+              <label className="block text-[13px] font-medium text-zinc-700 mb-1.5">
+                {t('auth.emailAddress')}
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Mail className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="input pl-10"
+                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all text-sm"
                   placeholder="you@company.com"
                   required
                 />
@@ -68,16 +71,21 @@ const Login = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-[13px] font-medium text-zinc-700">
+                  {t('auth.password')}
+                </label>
+                <Link to="/forgot-password" className="text-[13px] font-medium text-zinc-500 hover:text-zinc-900 transition-colors">
+                  {t('auth.forgotPassword')}
+                </Link>
+              </div>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Lock className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="input pl-10"
+                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all text-sm"
                   placeholder="••••••••"
                   required
                 />
@@ -87,24 +95,29 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full py-3 text-base disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full mt-2 py-2.5 bg-zinc-900 text-white rounded-md text-sm font-medium hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? t('auth.signingIn') : (
+                <>
+                  {t('auth.signIn')}
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                </>
+              )}
             </button>
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <Link to="/register" className="text-primary-600 hover:text-primary-700 font-medium">
-                Sign up
+            <p className="text-sm text-zinc-500">
+              {t('auth.dontHaveAccount')}{' '}
+              <Link to="/register" className="text-zinc-900 hover:underline font-medium transition-colors">
+                {t('auth.signUp')}
               </Link>
             </p>
           </div>
         </div>
 
-        <p className="text-center text-xs text-gray-500 mt-8">
-          Powered by OpenAI • Built for Modern HR Teams
+        <p className="text-center text-[13px] text-zinc-400 mt-8">
+          {t('auth.poweredBy')}
         </p>
       </div>
     </div>

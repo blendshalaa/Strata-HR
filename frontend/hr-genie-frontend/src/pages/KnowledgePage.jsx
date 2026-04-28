@@ -4,9 +4,11 @@ import { knowledgeAPI } from '../services/api';
 import KnowledgeCard from '../components/knowledge/KnowledgeCard';
 import { Search, BookOpen, X, Plus, Edit, Trash2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 const KnowledgePage = () => {
   const { isHR, isAdmin } = useAuth();
+  const { t } = useTranslation();
   const [articles, setArticles] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedArticle, setSelectedArticle] = useState(null);
@@ -45,22 +47,22 @@ const KnowledgePage = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this article?')) return;
+    if (!window.confirm(t('knowledge.deleteConfirm'))) return;
     
     try {
       await knowledgeAPI.delete(id);
       await fetchKnowledge();
       setSelectedArticle(null);
-      alert('Article deleted successfully');
+      alert(t('knowledge.articleDeleted'));
     } catch (error) {
-      alert('Failed to delete article');
+      alert(t('knowledge.failedToDelete'));
     }
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -69,8 +71,8 @@ const KnowledgePage = () => {
     <div className="space-y-6 animate-fadeIn">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Knowledge Base</h1>
-          <p className="text-gray-600">Browse company policies, procedures, and FAQs</p>
+          <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">{t('knowledge.title')}</h1>
+          <p className="text-zinc-500 text-sm mt-1">{t('knowledge.subtitle')}</p>
         </div>
         {(isHR || isAdmin) && (
           <button
@@ -78,26 +80,26 @@ const KnowledgePage = () => {
               setEditingArticle(null);
               setShowCreateModal(true);
             }}
-            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+            className="flex items-center gap-2 bg-zinc-900 text-white px-4 py-2 text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-zinc-800 transition-colors shadow-sm"
           >
-            <Plus className="w-5 h-5" />
-            Add Article
+            <Plus className="w-3.5 h-3.5" />
+            {t('knowledge.addArticle')}
           </button>
         )}
       </div>
 
       {/* Search and Filters */}
-      <div className="card">
+      <div className="card bg-white border border-zinc-200 p-5">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="md:col-span-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-3.5 h-3.5" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search articles..."
-                className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                placeholder={t('knowledge.searchArticles')}
+                className="w-full pl-9 pr-4 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
               />
             </div>
           </div>
@@ -105,9 +107,9 @@ const KnowledgePage = () => {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+              className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
             >
-              <option value="">All Categories</option>
+              <option value="">{t('knowledge.allCategories')}</option>
               {categories.map((cat) => (
                 <option key={cat.category} value={cat.category}>
                   {cat.category} ({cat.count})
@@ -120,9 +122,10 @@ const KnowledgePage = () => {
 
       {/* Articles Grid */}
       {articles.length === 0 ? (
-        <div className="card text-center py-12">
-          <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">No articles found</p>
+        <div className="bg-white border border-zinc-200 rounded-md text-center py-16">
+          <BookOpen className="w-10 h-10 text-zinc-200 mx-auto mb-3" />
+          <p className="text-[13px] font-bold text-zinc-900 uppercase tracking-wider">{t('knowledge.noArticles')}</p>
+          <p className="text-[12px] text-zinc-500 mt-1">{t('knowledge.tryDifferentSearch')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -140,9 +143,10 @@ const KnowledgePage = () => {
                       setEditingArticle(article);
                       setShowCreateModal(true);
                     }}
-                    className="p-2 bg-white rounded-lg shadow-md hover:bg-gray-50 transition-colors"
+                    className="p-1.5 bg-white border border-zinc-200 rounded-md shadow-sm hover:bg-zinc-50 transition-colors"
+                    title="Edit Article"
                   >
-                    <Edit className="w-4 h-4 text-blue-600" />
+                    <Edit className="w-3.5 h-3.5 text-zinc-600" />
                   </button>
                   {isAdmin && (
                     <button
@@ -150,9 +154,10 @@ const KnowledgePage = () => {
                         e.stopPropagation();
                         handleDelete(article.id);
                       }}
-                      className="p-2 bg-white rounded-lg shadow-md hover:bg-gray-50 transition-colors"
+                      className="p-1.5 bg-white border border-zinc-200 rounded-md shadow-sm hover:bg-red-50 hover:text-red-600 transition-colors"
+                      title="Delete Article"
                     >
-                      <Trash2 className="w-4 h-4 text-red-600" />
+                      <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   )}
                 </div>
@@ -164,40 +169,40 @@ const KnowledgePage = () => {
 
       {/* Article View Modal */}
       {selectedArticle && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto animate-fadeIn">
-            <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-start justify-between">
+        <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={() => setSelectedArticle(null)}>
+          <div className="bg-white border border-zinc-200 rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto animate-fadeIn shadow-xl" onClick={e => e.stopPropagation()}>
+            <div className="sticky top-0 bg-white border-b border-zinc-100 p-6 flex items-start justify-between z-10">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                <h2 className="text-[20px] font-bold text-zinc-900 mb-2 leading-tight">
                   {selectedArticle.title}
                 </h2>
                 {selectedArticle.category && (
-                  <span className="inline-block px-3 py-1 bg-primary-100 text-primary-700 text-sm rounded-full">
+                  <span className="inline-block px-2 py-0.5 bg-zinc-900 text-white text-[10px] font-bold uppercase tracking-wider rounded-md">
                     {selectedArticle.category}
                   </span>
                 )}
               </div>
               <button
                 onClick={() => setSelectedArticle(null)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-1.5 hover:bg-zinc-100 rounded-md transition-colors"
               >
-                <X className="w-6 h-6 text-gray-500" />
+                <X className="w-4 h-4 text-zinc-400" />
               </button>
             </div>
             <div className="p-6">
               <div className="prose prose-sm max-w-none">
-                <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+                <p className="text-zinc-600 whitespace-pre-wrap leading-relaxed text-[14px]">
                   {selectedArticle.content}
                 </p>
               </div>
               {selectedArticle.tags && selectedArticle.tags.length > 0 && (
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <p className="text-sm font-medium text-gray-500 mb-2">Tags:</p>
+                <div className="mt-8 pt-6 border-t border-zinc-100">
+                  <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest mb-3">{t('knowledge.associatedTags')}</p>
                   <div className="flex flex-wrap gap-2">
                     {selectedArticle.tags.map((tag, i) => (
                       <span
                         key={i}
-                        className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full"
+                        className="px-2.5 py-1 bg-zinc-50 border border-zinc-200 text-zinc-600 text-[11px] font-bold uppercase tracking-wider rounded-md"
                       >
                         {tag}
                       </span>
@@ -267,48 +272,49 @@ const CreateArticleModal = ({ article, onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-fadeIn">
-        <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">
+    <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white border border-zinc-200 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-fadeIn shadow-xl" onClick={e => e.stopPropagation()}>
+        <div className="sticky top-0 bg-white border-b border-zinc-100 p-6 flex items-center justify-between z-10">
+          <h2 className="text-[18px] font-bold text-zinc-900">
             {article ? 'Edit Article' : 'Create New Article'}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1.5 hover:bg-zinc-100 rounded-md transition-colors"
           >
-            <X className="w-6 h-6 text-gray-500" />
+            <X className="w-4 h-4 text-zinc-400" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
           {error && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
+            <div className="p-3 bg-red-50 border border-red-100 rounded-md text-[13px] text-red-700">
               {error}
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-[13px] font-bold text-zinc-700 mb-1.5">
               Title *
             </label>
             <input
               type="text"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+              className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+              placeholder="Enter article title"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-[13px] font-bold text-zinc-700 mb-1.5">
               Category *
             </label>
             <select
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+              className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
               required
             >
               <option value="policies">Policies</option>
@@ -319,43 +325,43 @@ const CreateArticleModal = ({ article, onClose, onSuccess }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-[13px] font-bold text-zinc-700 mb-1.5">
               Content *
             </label>
             <textarea
               value={formData.content}
               onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
-              rows="10"
+              className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors min-h-[200px]"
+              placeholder="Write the full content here..."
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-[13px] font-bold text-zinc-700 mb-1.5">
               Tags (comma-separated)
             </label>
             <input
               type="text"
               value={formData.tags}
               onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-              placeholder="leave, policy, hr"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+              placeholder="e.g., leave, policy, hr"
+              className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
             />
           </div>
 
-          <div className="flex gap-3 pt-4">
+          <div className="flex gap-3 pt-6 border-t border-zinc-100 mt-6">
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-primary-600 text-white px-4 py-3 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
+              className="flex-1 bg-zinc-900 text-white px-4 py-2.5 rounded-md hover:bg-zinc-800 transition-colors disabled:opacity-50 text-[12px] font-bold uppercase tracking-wider"
             >
               {loading ? 'Saving...' : article ? 'Update Article' : 'Create Article'}
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+              className="px-4 py-2.5 bg-white text-zinc-700 border border-zinc-300 rounded-md hover:bg-zinc-50 transition-colors text-[12px] font-bold uppercase tracking-wider"
             >
               Cancel
             </button>

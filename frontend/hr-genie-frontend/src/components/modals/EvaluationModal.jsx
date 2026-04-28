@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { X, Star } from 'lucide-react';
+import { X, Star, Sparkles, AlertTriangle } from 'lucide-react';
 import api from '../../services/api';
+import { useTranslation } from 'react-i18next';
 
 const EvaluationModal = ({ isOpen, onClose, onEvaluationAdded }) => {
     const [userId, setUserId] = useState('');
@@ -9,7 +10,9 @@ const EvaluationModal = ({ isOpen, onClose, onEvaluationAdded }) => {
     const [reviewDate, setReviewDate] = useState(new Date().toISOString().split('T')[0]);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isGenerating, setIsGenerating] = useState(false);
     const [error, setError] = useState(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (isOpen) {
@@ -34,7 +37,7 @@ const EvaluationModal = ({ isOpen, onClose, onEvaluationAdded }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (rating === 0) {
-            setError('Please provide a rating.');
+            setError(t('evaluationModal.provideRating'));
             return;
         }
         setLoading(true);
@@ -58,9 +61,33 @@ const EvaluationModal = ({ isOpen, onClose, onEvaluationAdded }) => {
             onClose();
         } catch (err) {
             console.error('Failed to create evaluation', err);
-            setError(err.response?.data?.error || 'An error occurred while creating the evaluation.');
+            setError(err.response?.data?.error || t('evaluationModal.failedGenerate'));
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleGenerateDraft = async () => {
+        if (!userId) {
+            setError(t('evaluationModal.selectEmployeeFirst'));
+            return;
+        }
+
+        setIsGenerating(true);
+        setError(null);
+
+        try {
+            const res = await api.post('/performance/generate-draft', { user_id: userId });
+            const { rating, comments } = res.data;
+
+            // Apply AI suggestions
+            if (rating) setRating(rating);
+            if (comments) setComments(comments);
+
+        } catch (err) {
+            setError(t('evaluationModal.failedGenerate') + ' ' + (err.response?.data?.error || ''));
+        } finally {
+            setIsGenerating(false);
         }
     };
 
@@ -71,36 +98,36 @@ const EvaluationModal = ({ isOpen, onClose, onEvaluationAdded }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center animate-fadeIn">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-slideUp">
-                <div className="flex items-center justify-between p-6 border-b border-gray-100">
-                    <h2 className="text-xl font-bold text-gray-900">New Performance Evaluation</h2>
+        <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4 animate-fadeIn">
+            <div className="bg-white border border-zinc-200 rounded-lg shadow-lg w-full max-w-lg overflow-hidden animate-slideUp">
+                <div className="flex items-center justify-between p-5 border-b border-zinc-100">
+                    <h2 className="text-[16px] font-bold text-zinc-900">{t('evaluationModal.title')}</h2>
                     <button
                         onClick={onClose}
-                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition"
+                        className="p-1.5 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 rounded-md transition-colors"
                     >
-                        <X className="w-5 h-5" />
+                        <X className="w-4 h-4" />
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     {error && (
-                        <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg border border-red-100">
+                        <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md border border-red-100">
                             {error}
                         </div>
                     )}
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Employee <span className="text-red-500">*</span>
+                        <label className="block text-[13px] font-semibold text-zinc-700 mb-1.5">
+                            {t('common.employee')} <span className="text-zinc-400">*</span>
                         </label>
                         <select
                             required
                             value={userId}
                             onChange={(e) => setUserId(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                         >
-                            <option value="">Select an employee...</option>
+                            <option value="">{t('evaluationModal.selectEmployee')}</option>
                             {users.map((user) => (
                                 <option key={user.id} value={user.id}>
                                     {user.name} ({user.email})
@@ -110,8 +137,8 @@ const EvaluationModal = ({ isOpen, onClose, onEvaluationAdded }) => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Overall Rating <span className="text-red-500">*</span>
+                        <label className="block text-[13px] font-semibold text-zinc-700 mb-1.5">
+                            {t('evaluationModal.overallRating')} <span className="text-zinc-400">*</span>
                         </label>
                         <div className="flex gap-2">
                             {[...Array(5)].map((_, i) => (
@@ -122,7 +149,7 @@ const EvaluationModal = ({ isOpen, onClose, onEvaluationAdded }) => {
                                     className="focus:outline-none transition-transform hover:scale-110"
                                 >
                                     <Star
-                                        className={`w-8 h-8 ${i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+                                        className={`w-8 h-8 ${i < rating ? 'text-zinc-900 fill-zinc-900' : 'text-zinc-200'}`}
                                     />
                                 </button>
                             ))}
@@ -130,46 +157,60 @@ const EvaluationModal = ({ isOpen, onClose, onEvaluationAdded }) => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Review Date <span className="text-red-500">*</span>
+                        <label className="block text-[13px] font-semibold text-zinc-700 mb-1.5">
+                            {t('evaluationModal.reviewDate')} <span className="text-zinc-400">*</span>
                         </label>
                         <input
                             type="date"
                             required
                             value={reviewDate}
                             onChange={(e) => setReviewDate(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Comments
+                        <label className="block text-[13px] font-semibold text-zinc-700 mb-1.5">
+                            {t('evaluationModal.comments')}
                         </label>
                         <textarea
                             rows={4}
                             value={comments}
                             onChange={(e) => setComments(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition resize-none"
-                            placeholder="Detailed feedback for the employee..."
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors resize-none"
+                            placeholder={t('evaluationModal.commentsPlaceholder')}
                         />
                     </div>
 
-                    <div className="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
+                    <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 mt-4">
                         <button
                             type="button"
-                            onClick={onClose}
-                            className="px-4 py-2 text-gray-700 font-medium hover:bg-gray-100 rounded-lg transition"
+                            onClick={handleGenerateDraft}
+                            disabled={isGenerating || !userId}
+                            className={`w-full sm:w-auto flex justify-center items-center gap-2 px-3 py-2 bg-zinc-50 border border-zinc-200 text-[13px] font-medium text-zinc-700 rounded-md hover:bg-zinc-100 transition-colors ${(isGenerating || !userId) ? 'opacity-50 cursor-not-allowed' : ''
+                                }`}
+                            title="Generate a draft review using AI based on employee history"
                         >
-                            Cancel
+                            <Sparkles className="w-3.5 h-3.5" />
+                            {isGenerating ? t('evaluationModal.generating') : t('evaluationModal.autoGenerate')}
                         </button>
-                        <button
-                            type="submit"
-                            disabled={loading || !userId}
-                            className={`px-4 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition ${(loading || !userId) ? 'opacity-70 cursor-not-allowed' : ''}`}
-                        >
-                            {loading ? 'Submitting...' : 'Submit Evaluation'}
-                        </button>
+
+                        <div className="flex flex-col sm:flex-row w-full sm:w-auto items-center gap-3">
+                            <button
+                                type="button"
+                                onClick={onClose}
+                                className="w-full sm:w-auto px-4 py-2 text-[13px] font-semibold text-zinc-700 bg-white border border-zinc-300 rounded-md hover:bg-zinc-50 transition-colors"
+                            >
+                                {t('common.cancel')}
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={loading || !userId}
+                                className={`w-full sm:w-auto px-4 py-2 text-[13px] font-bold text-white bg-zinc-900 border border-zinc-900 rounded-md hover:bg-zinc-800 transition-colors ${(loading || !userId) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                                {loading ? t('common.submitting') : t('evaluationModal.submitEvaluation')}
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>

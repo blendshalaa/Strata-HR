@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { leaveAPI } from '../services/api';
-import { CheckCircle, XCircle, Clock, Calendar, User, Filter } from 'lucide-react';
+import api from '../services/api';
+import { CheckCircle, XCircle, Clock, Calendar, User, Filter, Download } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const LeaveApprovalsPage = () => {
   const { isHR, isAdmin } = useAuth();
+  const toast = useToast();
+  const navigate = useNavigate();
+  const { t } = useTranslation();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('pending');
@@ -12,7 +19,7 @@ const LeaveApprovalsPage = () => {
 
   useEffect(() => {
     if (!isHR && !isAdmin) {
-      window.location.href = '/dashboard';
+      navigate('/dashboard');
       return;
     }
     fetchRequests();
@@ -34,9 +41,9 @@ const LeaveApprovalsPage = () => {
     try {
       await leaveAPI.updateStatus(id, status);
       await fetchRequests();
-      alert(`Leave request ${status} successfully!`);
+      toast.success(`Leave request ${status} successfully`);
     } catch (error) {
-      alert(error.response?.data?.error || 'Failed to update request');
+      toast.error(error.response?.data?.error || 'Failed to update request');
     } finally {
       setActionLoading(null);
     }
@@ -50,9 +57,9 @@ const LeaveApprovalsPage = () => {
     };
     const { bg, text, border, icon: Icon } = config[status];
     return (
-      <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border ${bg} ${text} ${border}`}>
+      <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-bold border uppercase tracking-wider ${bg} ${text} ${border}`}>
         <Icon className="w-3 h-3" />
-        {status.charAt(0).toUpperCase() + status.slice(1)}
+        {status}
       </span>
     );
   };
@@ -60,38 +67,54 @@ const LeaveApprovalsPage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
     <div className="space-y-6 animate-fadeIn">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Leave Approvals</h1>
-        <p className="text-gray-600">Review and approve employee leave requests</p>
+      <div className="flex items-end justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-1">{t('leaveApprovals.title')}</h1>
+          <p className="text-zinc-500 text-sm">{t('leaveApprovals.subtitle')}</p>
+        </div>
+        <button
+          onClick={async () => {
+            try {
+              const res = await api.get('/export/leave', { responseType: 'blob' });
+              const url = window.URL.createObjectURL(new Blob([res.data]));
+              const a = document.createElement('a'); a.href = url; a.download = 'leave_export.csv'; a.click();
+              window.URL.revokeObjectURL(url);
+              toast.success(t('leaveApprovals.leaveCsvDownloaded'));
+            } catch { toast.error(t('leaveApprovals.exportFailed')); }
+          }}
+          className="btn-secondary flex items-center gap-2 text-[13px] font-bold uppercase tracking-wider"
+        >
+          <Download className="w-3.5 h-3.5" /> {t('common.exportCsv')}
+        </button>
       </div>
 
       {/* Filter */}
-      <div className="card">
-        <div className="flex items-center gap-4">
-          <Filter className="w-5 h-5 text-gray-400" />
+      <div className="card bg-white border border-zinc-200 p-4">
+        <div className="flex items-center gap-4 flex-wrap">
+          <Filter className="w-4 h-4 text-zinc-400" />
           <div className="flex gap-2">
             {['all', 'pending', 'approved', 'rejected'].map((status) => (
               <button
                 key={status}
                 onClick={() => setFilter(status === 'all' ? '' : status)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-3 py-1.5 rounded-md text-[12px] font-bold uppercase tracking-wider transition-colors border ${
                   (status === 'all' && filter === '') || filter === status
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-zinc-900 text-white border-zinc-900'
+                    : 'bg-white text-zinc-500 border-zinc-200 hover:bg-zinc-50'
                 }`}
               >
-                {status.charAt(0).toUpperCase() + status.slice(1)}
+                {status}
               </button>
             ))}
           </div>
-          <span className="ml-auto text-sm text-gray-500">
+          <span className="ml-auto text-[12px] font-bold text-zinc-400 uppercase tracking-wider">
             {requests.length} request{requests.length !== 1 ? 's' : ''}
           </span>
         </div>
@@ -99,86 +122,93 @@ const LeaveApprovalsPage = () => {
 
       {/* Requests List */}
       {requests.length === 0 ? (
-        <div className="card text-center py-12">
-          <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">No leave requests found</p>
+        <div className="card bg-white border border-zinc-200 text-center py-12">
+          <Calendar className="w-10 h-10 text-zinc-300 mx-auto mb-3" />
+          <p className="text-zinc-500 text-[13px] font-bold uppercase tracking-wider">{t('leaveApprovals.noRequestsFound')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4">
           {requests.map((request) => (
-            <div key={request.id} className="card hover:shadow-md transition-shadow">
-              <div className="flex items-start justify-between">
+            <div key={request.id} className="card bg-white border border-zinc-200 p-6 hover:border-zinc-300 transition-colors">
+              <div className="flex flex-col md:flex-row gap-6 lg:gap-8">
                 <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-                      <User className="w-5 h-5 text-primary-600" />
+                  {/* Header */}
+                  <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-10 h-10 bg-zinc-100 border border-zinc-200 rounded-full flex items-center justify-center">
+                        <User className="w-5 h-5 text-zinc-600" />
+                      </div>
+                      <div>
+                        <h3 className="text-[15px] font-bold text-zinc-900 leading-none mb-1.5">{request.employee_name}</h3>
+                        <p className="text-[11px] font-bold text-zinc-500 tracking-wider uppercase">{request.department}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{request.employee_name}</h3>
-                      <p className="text-sm text-gray-500">{request.department}</p>
+                    {/* Status badge */}
+                    <div className="shrink-0">
+                      {getStatusBadge(request.status)}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  {/* Grid Data */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-zinc-50 border border-zinc-100 rounded-md mb-6">
                     <div>
-                      <p className="text-xs text-gray-500 mb-1">Type</p>
-                      <p className="text-sm font-medium text-gray-900 capitalize">{request.type}</p>
+                      <p className="text-[10px] uppercase font-bold tracking-widest text-zinc-500 mb-1">{t('common.type')}</p>
+                      <p className="text-[13px] font-bold text-zinc-900 capitalize">{request.type}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 mb-1">Start Date</p>
-                      <p className="text-sm font-medium text-gray-900">
-                        {new Date(request.start_date).toLocaleDateString()}
-                      </p>
+                      <p className="text-[10px] uppercase font-bold tracking-widest text-zinc-500 mb-1">{t('leave.startDate')}</p>
+                      <p className="text-[13px] font-bold text-zinc-900">{new Date(request.start_date).toLocaleDateString()}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 mb-1">End Date</p>
-                      <p className="text-sm font-medium text-gray-900">
-                        {new Date(request.end_date).toLocaleDateString()}
-                      </p>
+                      <p className="text-[10px] uppercase font-bold tracking-widest text-zinc-500 mb-1">{t('leave.endDate')}</p>
+                      <p className="text-[13px] font-bold text-zinc-900">{new Date(request.end_date).toLocaleDateString()}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 mb-1">Days</p>
-                      <p className="text-sm font-medium text-gray-900">{request.days}</p>
+                      <p className="text-[10px] uppercase font-bold tracking-widest text-zinc-500 mb-1">{t('leaveApprovals.duration')}</p>
+                      <p className="text-[13px] font-bold text-zinc-900">{request.days} {request.days !== 1 ? t('leaveApprovals.dayPlural') : t('leaveApprovals.day')}</p>
                     </div>
                   </div>
 
                   {request.reason && (
-                    <div className="mb-4">
-                      <p className="text-xs text-gray-500 mb-1">Reason</p>
-                      <p className="text-sm text-gray-700">{request.reason}</p>
+                    <div className="mb-6 pl-4 border-l border-zinc-200">
+                      <p className="text-[10px] uppercase font-bold tracking-widest text-zinc-500 mb-1.5">{t('common.reason')}</p>
+                      <p className="text-[13px] text-zinc-600 leading-relaxed">{request.reason}</p>
                     </div>
                   )}
 
-                  <div className="flex items-center gap-3">
-                    {getStatusBadge(request.status)}
+                  {/* Footer metadata */}
+                  <div className="flex items-center flex-wrap gap-4 pt-4 border-t border-zinc-100">
                     {request.approver_name && (
-                      <span className="text-xs text-gray-500">
-                        by {request.approver_name}
+                      <span className="text-[12px] font-bold text-zinc-400 flex items-center gap-1.5">
+                        <CheckCircle className="w-3.5 h-3.5" />
+                        {t('leaveApprovals.reviewedBy')} <span className="text-zinc-700">{request.approver_name}</span>
                       </span>
                     )}
-                    <span className="text-xs text-gray-400">
-                      {new Date(request.created_at).toLocaleDateString()}
+                    <span className="text-[12px] font-bold text-zinc-400 flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5" />
+                      {t('leaveApprovals.submitted')} {new Date(request.created_at).toLocaleDateString()}
                     </span>
                   </div>
                 </div>
 
+                {/* Actions side */}
                 {request.status === 'pending' && (
-                  <div className="flex gap-2 ml-4">
+                  <div className="flex flex-row md:flex-col gap-3 justify-center md:pl-6 md:border-l md:border-zinc-100 shrink-0">
                     <button
                       onClick={() => handleApproval(request.id, 'approved')}
                       disabled={actionLoading === request.id}
-                      className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                      className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-zinc-900 text-white border border-zinc-900 rounded-md hover:bg-zinc-800 transition-colors disabled:opacity-50 text-[12px] font-bold uppercase tracking-wider"
                     >
                       <CheckCircle className="w-4 h-4" />
-                      Approve
+                      {t('leaveApprovals.approve')}
                     </button>
                     <button
                       onClick={() => handleApproval(request.id, 'rejected')}
                       disabled={actionLoading === request.id}
-                      className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+                      className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-white text-red-600 border border-red-200 rounded-md hover:bg-red-50 transition-colors disabled:opacity-50 text-[12px] font-bold uppercase tracking-wider"
                     >
                       <XCircle className="w-4 h-4" />
-                      Reject
+                      {t('leaveApprovals.reject')}
                     </button>
                   </div>
                 )}

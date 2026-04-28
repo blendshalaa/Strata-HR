@@ -73,3 +73,25 @@ CREATE TABLE IF NOT EXISTS calendar_events (
     created_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Onboarding Tasks Table
+CREATE TABLE IF NOT EXISTS onboarding_tasks (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    task_name VARCHAR(255) NOT NULL,
+    is_completed BOOLEAN DEFAULT FALSE,
+    completed_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Timesheets Table (Time & Attendance)
+CREATE TABLE IF NOT EXISTS timesheets (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    clock_in TIMESTAMP WITH TIME ZONE,
+    clock_out TIMESTAMP WITH TIME ZONE,
+    regular_hours DECIMAL(5, 2) DEFAULT 0.00,
+    overtime_hours DECIMAL(5, 2) DEFAULT 0.00,
+    status VARCHAR(50) DEFAULT 'pending', -- pending, approved, rejected, processed
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
