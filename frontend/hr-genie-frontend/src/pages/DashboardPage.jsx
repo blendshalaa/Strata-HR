@@ -240,41 +240,62 @@ const DashboardPage = () => {
 };
 
 // Flight Risk Widget Component
+// Flight Risk Widget Component
 const FlightRiskWidget = () => {
   const { t } = useTranslation();
-  const [loading, setLoading] = useState(true);
-  const [risks, setRisks] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [risks, setRisks] = useState(null);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchRisk = async () => {
-      try {
-        const res = await api.get('/analytics/flight-risk');
-        setRisks(res.data.high_risk_employees || []);
-      } catch (err) {
-        setError(t('dashboard.failedToLoadAnalytics'));
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRisk();
-  }, []);
+  const fetchRisk = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await api.get('/analytics/flight-risk');
+      setRisks(res.data.high_risk_employees || []);
+    } catch (err) {
+      setError(t('dashboard.failedToLoadAnalytics') || 'Failed to load analysis');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  if (loading) {
+  if (risks === null) {
     return (
-      <div className="card min-h-48 flex items-center justify-center border-rose-200">
-        <div className="flex flex-col items-center gap-3 text-rose-600">
-          <div className="w-6 h-6 border-2 border-rose-200 border-t-rose-600 rounded-full animate-spin" />
-          <p className="text-[13px] font-medium">{t('dashboard.analyzingRetention')}</p>
+      <div className="card border-zinc-200 bg-white flex flex-col items-center justify-center p-8 text-center min-h-48 mt-6">
+        <div className="p-3 bg-zinc-100 rounded-full mb-4 border border-zinc-200">
+          <Sparkles className="w-6 h-6 text-zinc-900" />
         </div>
+        <h3 className="text-[15px] font-bold text-zinc-900 mb-2">{t('dashboard.predictiveRetention')}</h3>
+        <p className="text-[13px] text-zinc-500 mb-5 max-w-sm">
+          Run an on-demand AI analysis to identify potential flight risks and retention flags based on employee data.
+        </p>
+        <button 
+          onClick={fetchRisk} 
+          disabled={loading}
+          className="btn-primary"
+        >
+          {loading ? (
+            <><div className="w-4 h-4 border-2 border-zinc-200 border-t-white rounded-full animate-spin mr-2" /> {t('dashboard.analyzingRetention')}</>
+          ) : (
+            'Run AI Analysis'
+          )}
+        </button>
       </div>
     );
   }
 
-  if (error || risks.length === 0) return null;
+  if (error || risks.length === 0) {
+    return (
+      <div className="card border-zinc-200 bg-white flex flex-col items-center justify-center p-8 text-center min-h-48 mt-6">
+        <p className="text-[13px] text-zinc-500">{error || 'No high-risk employees identified at this time.'}</p>
+        <button onClick={() => setRisks(null)} className="mt-4 text-[13px] text-zinc-900 font-semibold hover:underline">Reset Analysis</button>
+      </div>
+    );
+  }
 
   return (
-    <div className="card border-rose-200 bg-rose-50/30">
+    <div className="card border-rose-200 bg-rose-50/30 mt-6">
       <div className="flex items-center gap-3 mb-6">
         <div className="p-2 bg-rose-100/50 rounded-md border border-rose-200/50">
           <AlertOctagon className="w-4 h-4 text-rose-600" />
@@ -288,6 +309,9 @@ const FlightRiskWidget = () => {
           </h3>
           <p className="text-[13px] text-zinc-500 mt-0.5">{t('dashboard.flightRiskDesc')}</p>
         </div>
+        <button onClick={() => setRisks(null)} className="ml-auto text-[12px] text-zinc-500 hover:text-zinc-900 font-medium">
+          Dismiss
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
