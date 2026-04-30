@@ -92,7 +92,7 @@ const PerformancePage = () => {
                                         <Star className="w-4 h-4 text-zinc-900 fill-zinc-900" />
                                     </div>
                                     <div>
-                                        <h3 className="font-bold text-zinc-900 text-[14px]">Q-Review</h3>
+                                        <h3 className="font-bold text-zinc-900 text-[14px]">Performance Review</h3>
                                         <div className="flex items-center gap-0.5 mt-1">
                                             {Array.from({ length: 5 }).map((_, i) => (
                                                 <Star key={i} className={`w-3 h-3 ${i < review.rating ? 'text-zinc-900 fill-zinc-900' : 'text-zinc-200'}`} />

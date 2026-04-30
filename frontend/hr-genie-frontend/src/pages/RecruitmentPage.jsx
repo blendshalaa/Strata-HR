@@ -4,6 +4,7 @@ import api from '../services/api';
 import JobModal from '../components/modals/JobModal';
 import { useToast } from '../context/ToastContext';
 import { useTranslation } from 'react-i18next';
+import { Info } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -50,9 +51,9 @@ const RecruitmentPage = () => {
             setApplications(prev =>
                 prev.map(app => app.id === applicationId ? { ...app, status: newStatus } : app)
             );
-            toast.success(`Application ${newStatus} successfully`);
+            toast.success(t('recruitment.applicationUpdated', { status: newStatus }));
         } catch (err) {
-            toast.error(err.response?.data?.error || 'Failed to update status');
+            toast.error(err.response?.data?.error || t('recruitment.failedToUpdateStatus'));
         } finally {
             setUpdatingStatus(null);
         }
@@ -64,9 +65,9 @@ const RecruitmentPage = () => {
             setJobs(prev =>
                 prev.map(job => job.id === jobId ? { ...job, status: newStatus } : job)
             );
-            toast.success(`Job ${newStatus === 'closed' ? 'closed' : 'reopened'} successfully`);
+            toast.success(newStatus === 'closed' ? t('recruitment.jobClosed') : t('recruitment.jobReopened'));
         } catch (err) {
-            toast.error(err.response?.data?.error || 'Failed to update job status');
+            toast.error(err.response?.data?.error || t('recruitment.failedToUpdateJob'));
         }
     };
 
@@ -121,7 +122,7 @@ const RecruitmentPage = () => {
             <div className="flex justify-between items-center">
                 <h2 className="text-[16px] font-bold text-zinc-900">
                     {t('recruitment.jobPostings')}
-                    <span className="text-[12px] font-bold text-zinc-400 uppercase tracking-wider ml-2">{jobs.length} total</span>
+                    <span className="text-[12px] font-bold text-zinc-400 uppercase tracking-wider ml-2">{jobs.length} {t('common.total')}</span>
                 </h2>
                 <button
                     onClick={() => setIsJobModalOpen(true)}
@@ -401,8 +402,14 @@ const RecruitmentPage = () => {
 const StatusDropdown = ({ currentStatus, isLoading, onStatusChange }) => {
     const [open, setOpen] = useState(false);
 
+    const { t } = useTranslation();
     const statuses = ['applied', 'interviewing', 'hired', 'rejected'];
-    const labels = { applied: 'Applied', interviewing: 'Interviewing', hired: 'Hired', rejected: 'Rejected' };
+    const labels = {
+        applied: t('recruitment.statusApplied'),
+        interviewing: t('recruitment.statusInterviewing'),
+        hired: t('recruitment.statusHired'),
+        rejected: t('recruitment.statusRejected')
+    };
 
     return (
         <div className="relative">
@@ -411,7 +418,7 @@ const StatusDropdown = ({ currentStatus, isLoading, onStatusChange }) => {
                 disabled={isLoading}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-zinc-900 bg-white border border-zinc-200 rounded-md hover:bg-zinc-50 transition-colors disabled:opacity-50"
             >
-                <span>Update</span>
+                <span>{t('recruitment.update')}</span>
                 {isLoading ? (
                     <div className="w-3.5 h-3.5 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin"></div>
                 ) : (
@@ -422,7 +429,7 @@ const StatusDropdown = ({ currentStatus, isLoading, onStatusChange }) => {
                 <>
                     <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
                     <div className="absolute left-0 mt-1 bg-white border border-zinc-200 rounded-md shadow-lg z-50 w-40 py-1 animate-fadeIn origin-top-left">
-                        <p className="px-3 py-1.5 text-[10px] font-bold text-zinc-400 uppercase tracking-widest border-b border-zinc-50 mb-1">Move to</p>
+                        <p className="px-3 py-1.5 text-[10px] font-bold text-zinc-400 uppercase tracking-widest border-b border-zinc-50 mb-1">{t('recruitment.moveTo')}</p>
                         {statuses.filter(s => s !== currentStatus).map(status => (
                             <button
                                 key={status}
@@ -474,7 +481,7 @@ const AddApplicantModal = ({ jobs, onClose, onSuccess }) => {
             });
             onSuccess();
         } catch (err) {
-            setError(err.response?.data?.error || 'Failed to add applicant');
+            setError(err.response?.data?.error || t('recruitment.failedToAddApplicant'));
         } finally {
             setLoading(false);
         }
@@ -489,8 +496,8 @@ const AddApplicantModal = ({ jobs, onClose, onSuccess }) => {
                             <UserPlus className="w-5 h-5 text-zinc-600" />
                         </div>
                         <div>
-                            <h2 className="text-[16px] font-bold text-zinc-900">Add Applicant</h2>
-                            <p className="text-[13px] text-zinc-500">Manually add a candidate sourced externally</p>
+                            <h2 className="text-[16px] font-bold text-zinc-900">{t('recruitment.addApplicantTitle')}</h2>
+                            <p className="text-[13px] text-zinc-500">{t('recruitment.addApplicantSubtitle')}</p>
                         </div>
                     </div>
                     <button onClick={onClose} className="p-1.5 hover:bg-zinc-100 rounded-md transition-colors">
@@ -507,14 +514,14 @@ const AddApplicantModal = ({ jobs, onClose, onSuccess }) => {
                     )}
 
                     <div>
-                        <label className="block text-[13px] font-bold text-zinc-700 mb-1.5">Job Position *</label>
+                        <label className="block text-[13px] font-bold text-zinc-700 mb-1.5">{t('recruitment.jobPositionLabel')}</label>
                         <select
                             value={formData.job_id}
                             onChange={(e) => setFormData({ ...formData, job_id: e.target.value })}
                             className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                             required
                         >
-                            <option value="">Select a job posting...</option>
+                            <option value="">{t('recruitment.selectJobPosting')}</option>
                             {openJobs.map(job => (
                                 <option key={job.id} value={job.id}>
                                     {job.title} {job.department_name ? `(${job.department_name})` : ''}
@@ -522,12 +529,12 @@ const AddApplicantModal = ({ jobs, onClose, onSuccess }) => {
                             ))}
                         </select>
                         {openJobs.length === 0 && (
-                            <p className="text-[11px] font-bold text-amber-600 mt-1 uppercase tracking-wider">No open positions. Create a job posting first.</p>
+                            <p className="text-[11px] font-bold text-amber-600 mt-1 uppercase tracking-wider">{t('recruitment.noOpenPositions')}</p>
                         )}
                     </div>
 
                     <div>
-                        <label className="block text-[13px] font-bold text-zinc-700 mb-1.5">Applicant Name *</label>
+                        <label className="block text-[13px] font-bold text-zinc-700 mb-1.5">{t('recruitment.applicantNameLabel')}</label>
                         <input
                             type="text"
                             value={formData.applicant_name}
@@ -539,7 +546,7 @@ const AddApplicantModal = ({ jobs, onClose, onSuccess }) => {
                     </div>
 
                     <div>
-                        <label className="block text-[13px] font-bold text-zinc-700 mb-1.5">Email *</label>
+                        <label className="block text-[13px] font-bold text-zinc-700 mb-1.5">{t('recruitment.emailLabel')}</label>
                         <input
                             type="email"
                             value={formData.email}
@@ -551,7 +558,7 @@ const AddApplicantModal = ({ jobs, onClose, onSuccess }) => {
                     </div>
 
                     <div>
-                        <label className="block text-[13px] font-bold text-zinc-700 mb-1.5">Resume / CV (PDF or Word)</label>
+                        <label className="block text-[13px] font-bold text-zinc-700 mb-1.5">{t('recruitment.resumeCvLabel')}</label>
                         <input
                             type="file"
                             accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -567,14 +574,14 @@ const AddApplicantModal = ({ jobs, onClose, onSuccess }) => {
                             className="flex-1 bg-zinc-900 text-white px-4 py-2.5 rounded-md hover:bg-zinc-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-[12px] font-bold uppercase tracking-wider"
                         >
                             <UserPlus className="w-4 h-4" />
-                            {loading ? 'Adding...' : 'Add Applicant'}
+                            {loading ? t('recruitment.adding') : t('recruitment.addApplicantBtn')}
                         </button>
                         <button
                             type="button"
                             onClick={onClose}
                             className="px-4 py-2.5 bg-white text-zinc-700 border border-zinc-300 rounded-md hover:bg-zinc-50 transition-colors text-[12px] font-bold uppercase tracking-wider"
                         >
-                            Cancel
+                            {t('common.cancel')}
                         </button>
                     </div>
                 </form>
@@ -592,7 +599,7 @@ const AIScreeningModal = ({ jobId, jobTitle, onClose }) => {
 
     const handleAnalyze = async () => {
         if (!resume) {
-            setError('Please upload a resume first');
+            setError(t('recruitment.pleaseUploadResume'));
             return;
         }
 
@@ -609,7 +616,7 @@ const AIScreeningModal = ({ jobId, jobTitle, onClose }) => {
 
             setResult(res.data);
         } catch (err) {
-            setError(err.response?.data?.error || 'Failed to analyze resume. Please try again.');
+            setError(err.response?.data?.error || t('recruitment.failedToAnalyze'));
         } finally {
             setLoading(false);
         }
@@ -624,8 +631,8 @@ const AIScreeningModal = ({ jobId, jobTitle, onClose }) => {
                             <Sparkles className="w-5 h-5 text-white" />
                         </div>
                         <div>
-                            <h2 className="text-[16px] font-bold text-zinc-900">AI ATS Screening</h2>
-                            <p className="text-[13px] text-zinc-500">Evaluating for: <span className="text-zinc-900 font-bold">{jobTitle}</span></p>
+                            <h2 className="text-[16px] font-bold text-zinc-900">{t('recruitment.aiAtsScreening')}</h2>
+                            <p className="text-[13px] text-zinc-500">{t('recruitment.evaluatingFor')} <span className="text-zinc-900 font-bold">{jobTitle}</span></p>
                         </div>
                     </div>
                     <button onClick={onClose} className="p-1.5 hover:bg-zinc-100 rounded-md transition-colors">
@@ -636,6 +643,10 @@ const AIScreeningModal = ({ jobId, jobTitle, onClose }) => {
                 <div className="p-6 relative z-10 max-h-[70vh] overflow-y-auto">
                     {!result ? (
                         <div className="space-y-6">
+                            <div className="flex items-start gap-3 p-3 bg-zinc-50 border border-zinc-200 rounded-md">
+                                <Info className="w-4 h-4 text-zinc-500 shrink-0 mt-0.5" />
+                                <p className="text-[12px] text-zinc-600 leading-relaxed">{t('recruitment.aiScreeningDesc')}</p>
+                            </div>
                             {error && (
                                 <div className="p-3 bg-red-50 border border-red-100 rounded-md text-[13px] text-red-700 flex items-center gap-2">
                                     <AlertTriangle className="w-4 h-4 flex-shrink-0" />
@@ -651,8 +662,8 @@ const AIScreeningModal = ({ jobId, jobTitle, onClose }) => {
                                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                 />
                                 <UploadCloud className="w-10 h-10 text-zinc-400 mx-auto mb-3" />
-                                <h3 className="text-zinc-900 font-bold text-[15px] mb-1">Click or drag resume here</h3>
-                                <p className="text-zinc-500 text-[13px]">Must be a PDF file containing the candidate's resume</p>
+                                <h3 className="text-zinc-900 font-bold text-[15px] mb-1">{t('recruitment.clickOrDragResume')}</h3>
+                                <p className="text-zinc-500 text-[13px]">{t('recruitment.mustBePdf')}</p>
 
                                 {resume && (
                                     <div className="mt-4 inline-flex items-center gap-2 bg-zinc-900 text-white px-4 py-2 rounded-md text-[12px] font-bold uppercase tracking-wider">
@@ -670,12 +681,12 @@ const AIScreeningModal = ({ jobId, jobTitle, onClose }) => {
                                 {loading ? (
                                     <>
                                         <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                                        Analyzing Candidate...
+                                        {t('recruitment.analyzingCandidate')}
                                     </>
                                 ) : (
                                     <>
                                         <Sparkles className="w-4 h-4" />
-                                        Scan Resume and Generate Score
+                                        {t('recruitment.scanResume')}
                                     </>
                                 )}
                             </button>
@@ -701,7 +712,7 @@ const AIScreeningModal = ({ jobId, jobTitle, onClose }) => {
                                 </div>
                                 <div className="flex-1 text-center md:text-left">
                                     <h3 className="text-[18px] font-bold text-zinc-900 mb-2">
-                                        {result.score >= 80 ? 'Excellent Match' : result.score >= 60 ? 'Good Potential' : 'Weak Match'}
+                                        {result.score >= 80 ? t('recruitment.excellentMatch') : result.score >= 60 ? t('recruitment.goodPotential') : t('recruitment.weakMatch')}
                                     </h3>
                                     <p className="text-zinc-600 leading-relaxed text-[13px] italic">
                                         "{result.summary}"
@@ -712,7 +723,7 @@ const AIScreeningModal = ({ jobId, jobTitle, onClose }) => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="bg-white border border-zinc-200 rounded-lg p-5">
                                     <h4 className="text-zinc-900 text-[12px] font-black uppercase tracking-wider flex items-center gap-2 mb-4">
-                                        <CheckCircle className="w-3.5 h-3.5 text-green-600" /> Matched Skills
+                                        <CheckCircle className="w-3.5 h-3.5 text-green-600" /> {t('recruitment.matchedSkills')}
                                     </h4>
                                     <div className="flex flex-wrap gap-2">
                                         {result.matched_skills?.map((skill, i) => (
@@ -723,7 +734,7 @@ const AIScreeningModal = ({ jobId, jobTitle, onClose }) => {
 
                                 <div className="bg-white border border-zinc-200 rounded-lg p-5">
                                     <h4 className="text-zinc-900 text-[12px] font-black uppercase tracking-wider flex items-center gap-2 mb-4">
-                                        <XCircle className="w-3.5 h-3.5 text-red-600" /> Missing Requirements
+                                        <XCircle className="w-3.5 h-3.5 text-red-600" /> {t('recruitment.missingRequirements')}
                                     </h4>
                                     <div className="flex flex-wrap gap-2">
                                         {result.missing_skills?.map((skill, i) => (
@@ -734,7 +745,7 @@ const AIScreeningModal = ({ jobId, jobTitle, onClose }) => {
                             </div>
 
                             <button onClick={onClose} className="w-full py-2.5 bg-white border border-zinc-300 text-zinc-700 text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-zinc-50 transition-colors">
-                                Close Analysis
+                                {t('recruitment.closeAnalysis')}
                             </button>
                         </div>
                     )}

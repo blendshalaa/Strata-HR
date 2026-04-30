@@ -30,6 +30,7 @@ const shiftRoutes = require('./routes/shifts');
 const errorHandler = require('./middleware/errorHandler');
 const { generalLimiter } = require('./middleware/rateLimiter');
 const logger = require('./utils/logger');
+const pool = require('./config/database');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -59,12 +60,14 @@ app.use('/uploads', authenticateToken, express.static(path.join(__dirname, 'uplo
 // Structured request logger (skips /health)
 app.use(logger.requestLogger);
 
-app.get('/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    service: 'HR Assistant API'
-  });
+app.get('/health', async (req, res) => {
+  try {
+    await pool.query('SELECT 1');
+    res.json({ status: 'ok', db: 'connected', timestamp: new Date().toISOString(), service: 'HR Assistant API' });
+  } catch (err) {
+    logger.error('Health check failed — DB unreachable', { message: err.message });
+    res.status(503).json({ status: 'error', db: 'unreachable', timestamp: new Date().toISOString() });
+  }
 });
 
 app.use('/api/auth', authRoutes);
@@ -105,4 +108,13 @@ app.listen(PORT, () => {
 process.on('SIGTERM', () => {
   logger.warn('SIGTERM signal received: closing HTTP server');
   process.exit(0);
+});
+
+process.on('unhandledRejection', (reason) => {
+  logger.error('Unhandled Promise Rejection', { reason: String(reason) });
+});
+
+process.on('uncaughtException', (err) => {
+  logger.error('Uncaught Exception — shutting down', { message: err.message, stack: err.stack });
+  process.exit(1);
 });

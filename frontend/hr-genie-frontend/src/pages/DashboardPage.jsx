@@ -239,8 +239,7 @@ const DashboardPage = () => {
   );
 };
 
-// Flight Risk Widget Component
-// Flight Risk Widget Component
+// Flight Risk Widget Component — Manual Trigger Only
 const FlightRiskWidget = () => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
@@ -508,7 +507,7 @@ const TimeClockWidget = () => {
     <div className={`card h-full flex flex-col items-center justify-center p-8 transition-colors ${isClockedIn ? 'bg-zinc-50 border-zinc-200' : ''}`}>
       <div className="mb-2 text-center">
         <h3 className="text-zinc-900 font-bold text-[16px] mb-1">{isClockedIn ? t('dashboard.shiftInProgress') : t('dashboard.readyToWork')}</h3>
-        <p className="text-zinc-500 text-[13px]">{t('dashboard.trackTimeSecurely')}</p>
+        <p className="text-zinc-500 text-[13px]">{isClockedIn ? 'Click "Clock Out" when you finish your shift' : 'Click "Clock In" to start tracking your work hours'}</p>
       </div>
 
       <div className={`text-4xl sm:text-5xl font-black tabular-nums tracking-tight my-6 ${isClockedIn ? 'text-emerald-600' : 'text-zinc-400'}`}>
@@ -525,11 +524,11 @@ const TimeClockWidget = () => {
       >
         {isClockedIn ? (
           <>
-            <Square className="w-4 h-4 fill-current" /> {t('dashboard.pauseTracking')}
+            <Square className="w-4 h-4 fill-current" /> Clock Out
           </>
         ) : (
           <>
-            <Play className="w-4 h-4 fill-current" /> {t('dashboard.startTracking')}
+            <Play className="w-4 h-4 fill-current" /> Clock In
           </>
         )}
       </button>

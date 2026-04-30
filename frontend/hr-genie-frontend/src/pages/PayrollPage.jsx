@@ -38,10 +38,10 @@ const PayrollPage = () => {
             setPayrolls(prev =>
                 prev.map(pay => pay.id === payrollId ? { ...pay, status: 'paid' } : pay)
             );
-            toast.success('Payroll marked as paid');
+            toast.success(t('payroll.payrollMarkedPaid'));
         } catch (err) {
             console.error('Error updating payroll status', err);
-            toast.error(err.response?.data?.error || 'Failed to update status');
+            toast.error(err.response?.data?.error || t('payroll.failedToUpdate'));
         } finally {
             setIsUpdating(null);
         }
@@ -53,17 +53,17 @@ const PayrollPage = () => {
             const url = window.URL.createObjectURL(new Blob([res.data]));
             const a = document.createElement('a'); a.href = url; a.download = 'payroll_export.csv'; a.click();
             window.URL.revokeObjectURL(url);
-            toast.success('Payroll CSV downloaded');
-        } catch { toast.error('Export failed'); }
+            toast.success(t('payroll.payrollCsvDownloaded'));
+        } catch { toast.error(t('payroll.exportFailed')); }
     };
 
     const handleGenerate = async () => {
         try {
             const res = await api.post('/payroll/generate');
             setPayrolls(prev => [...(res.data.payrolls || []), ...prev]);
-            toast.success(res.data.message || 'Payroll generated from timesheets');
+            toast.success(res.data.message || t('payroll.generated'));
         } catch (err) {
-            toast.error(err.response?.data?.error || 'Generation failed');
+            toast.error(err.response?.data?.error || t('payroll.generationFailed'));
         }
     };
 
@@ -84,7 +84,7 @@ const PayrollPage = () => {
                     <button onClick={handleExport} className="btn-secondary flex items-center gap-2 text-sm">
                         <Download className="w-4 h-4" /> <span className="hidden sm:inline">{t('common.exportCsv')}</span>
                     </button>
-                    <button onClick={handleGenerate} className="btn-secondary flex items-center gap-2 text-sm">
+                    <button onClick={handleGenerate} className="btn-secondary flex items-center gap-2 text-sm" title="Automatically generate payroll entries from approved employee timesheets">
                         <Zap className="w-4 h-4" /> {t('payroll.fromTimesheets')}
                     </button>
                     <button

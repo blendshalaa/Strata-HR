@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import api from '../services/api';
 import { useTranslation } from 'react-i18next';
+import ConfirmDialog from '../components/ui/ConfirmDialog';
 
 const SHIFT_TYPES = [
     { value: 'morning', label: 'Morning', color: 'bg-amber-100 text-amber-800 border-amber-200' },
@@ -36,6 +37,9 @@ const ShiftSchedulePage = () => {
     const [editingShift, setEditingShift] = useState(null);
     const [editForm, setEditForm] = useState({});
     const [editLoading, setEditLoading] = useState(false);
+
+    // Delete confirm
+    const [deleteConfirm, setDeleteConfirm] = useState(null);
 
     // Week calculation
     const weekDays = useMemo(() => {
@@ -136,13 +140,14 @@ const ShiftSchedulePage = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm(t('shifts.removeShiftConfirm'))) return;
         try {
             await api.delete(`/shifts/${id}`);
             setShifts(shifts.filter(s => s.id !== id));
             toast.success(t('shifts.shiftRemoved'));
         } catch (err) {
             toast.error(t('shifts.failedToDelete'));
+        } finally {
+            setDeleteConfirm(null);
         }
     };
 
@@ -214,7 +219,7 @@ const ShiftSchedulePage = () => {
                     </div>
                     <div className="flex items-center gap-2">
                         <button onClick={() => setWeekOffset(0)} className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-zinc-600 border border-zinc-200 rounded-md hover:bg-zinc-50 transition-colors">
-                            This Week
+                            {t('shifts.thisWeek')}
                         </button>
                     </div>
                 </div>
@@ -225,7 +230,7 @@ const ShiftSchedulePage = () => {
                         {/* Day Headers */}
                         <thead>
                             <tr className="border-b border-zinc-200 bg-zinc-50">
-                                <th className="px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest text-zinc-400 w-[180px] border-r border-zinc-100">Employee</th>
+                                <th className="px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest text-zinc-400 w-[180px] border-r border-zinc-100">{t('shifts.employee')}</th>
                                 {weekDays.map(day => (
                                     <th key={day.dateStr} className={`px-2 py-3 text-center border-r border-zinc-100 last:border-r-0 ${day.isToday ? 'bg-zinc-100' : ''}`}>
                                         <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">{day.dayName}</p>
@@ -263,7 +268,7 @@ const ShiftSchedulePage = () => {
                                                                         <button onClick={() => openEdit(shift)} className="p-0.5 bg-white rounded shadow-sm border border-zinc-200 hover:bg-zinc-50">
                                                                             <Edit3 className="w-2.5 h-2.5 text-zinc-600" />
                                                                         </button>
-                                                                        <button onClick={() => handleDelete(shift.id)} className="p-0.5 bg-white rounded shadow-sm border border-red-200 hover:bg-red-50">
+                                                                        <button onClick={() => setDeleteConfirm(shift.id)} className="p-0.5 bg-white rounded shadow-sm border border-red-200 hover:bg-red-50">
                                                                             <Trash2 className="w-2.5 h-2.5 text-red-500" />
                                                                         </button>
                                                                     </div>
@@ -271,8 +276,8 @@ const ShiftSchedulePage = () => {
                                                             </div>
                                                         ))}
                                                         {canManage && dayShifts.length === 0 && (
-                                                            <div className="h-full min-h-[50px] flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                                                                <Plus className="w-4 h-4 text-zinc-300" />
+                                                            <div className="h-full min-h-[50px] flex items-center justify-center opacity-30 hover:opacity-100 transition-opacity">
+                                                                <Plus className="w-4 h-4 text-zinc-400" />
                                                             </div>
                                                         )}
                                                     </div>
@@ -287,7 +292,7 @@ const ShiftSchedulePage = () => {
                                 <tr className="border-t border-zinc-200 bg-zinc-50/50">
                                     <td className="px-4 py-4 border-r border-zinc-100">
                                         <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider">
-                                            {employeeIds.length === 0 ? '+ Assign a shift' : 'Quick Add'}
+                                            {employeeIds.length === 0 ? t('shifts.assignAShift') : t('shifts.quickAdd')}
                                         </p>
                                     </td>
                                     {weekDays.map(day => (
@@ -320,7 +325,7 @@ const ShiftSchedulePage = () => {
                 <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={() => setShowCreate(false)}>
                     <div className="bg-white border border-zinc-200 rounded-md max-w-md w-full shadow-xl animate-fadeIn" onClick={e => e.stopPropagation()}>
                         <div className="flex items-center justify-between p-5 border-b border-zinc-200">
-                            <h3 className="text-[16px] font-bold text-zinc-900">Assign Shift</h3>
+                            <h3 className="text-[16px] font-bold text-zinc-900">{t('shifts.assignShift')}</h3>
                             <button onClick={() => setShowCreate(false)} className="p-1.5 hover:bg-zinc-100 rounded-md transition-colors">
                                 <X className="w-4 h-4 text-zinc-400" />
                             </button>
@@ -330,38 +335,38 @@ const ShiftSchedulePage = () => {
                                 Date: <span className="text-zinc-900 font-bold">{new Date(createDate + 'T00:00').toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric' })}</span>
                             </p>
                             <div>
-                                <label className="block text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-1.5">Employee</label>
+                                <label className="block text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-1.5">{t('shifts.employee')}</label>
                                 <select value={createForm.user_id} onChange={e => setCreateForm({ ...createForm, user_id: e.target.value })} className={inputClass} required>
-                                    <option value="">Select employee...</option>
+                                    <option value="">{t('shifts.selectEmployee')}</option>
                                     {employees.map(emp => (
-                                        <option key={emp.id} value={emp.id}>{emp.name} — {emp.department || 'No dept'}</option>
+                                        <option key={emp.id} value={emp.id}>{emp.name} — {emp.department || t('shifts.noDept')}</option>
                                     ))}
                                 </select>
                             </div>
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label className="block text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-1.5">Start Time</label>
+                                    <label className="block text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-1.5">{t('shifts.startTime')}</label>
                                     <input type="time" value={createForm.start_time} onChange={e => setCreateForm({ ...createForm, start_time: e.target.value })} className={inputClass} required />
                                 </div>
                                 <div>
-                                    <label className="block text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-1.5">End Time</label>
+                                    <label className="block text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-1.5">{t('shifts.endTime')}</label>
                                     <input type="time" value={createForm.end_time} onChange={e => setCreateForm({ ...createForm, end_time: e.target.value })} className={inputClass} required />
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-1.5">Shift Type</label>
+                                <label className="block text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-1.5">{t('shifts.shiftType')}</label>
                                 <select value={createForm.shift_type} onChange={e => setCreateForm({ ...createForm, shift_type: e.target.value })} className={inputClass}>
                                     {SHIFT_TYPES.map(st => <option key={st.value} value={st.value}>{st.label}</option>)}
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-1.5">Notes</label>
-                                <input type="text" value={createForm.notes} onChange={e => setCreateForm({ ...createForm, notes: e.target.value })} className={inputClass} placeholder="Optional notes" />
+                                <label className="block text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-1.5">{t('shifts.notes')}</label>
+                                <input type="text" value={createForm.notes} onChange={e => setCreateForm({ ...createForm, notes: e.target.value })} className={inputClass} placeholder={t('shifts.optionalNotes')} />
                             </div>
                             <div className="flex justify-end gap-3 pt-2">
-                                <button type="button" onClick={() => setShowCreate(false)} className="px-4 py-2 text-[12px] font-bold uppercase tracking-wider text-zinc-700 border border-zinc-200 rounded-md hover:bg-zinc-50 transition-colors">Cancel</button>
+                                <button type="button" onClick={() => setShowCreate(false)} className="px-4 py-2 text-[12px] font-bold uppercase tracking-wider text-zinc-700 border border-zinc-200 rounded-md hover:bg-zinc-50 transition-colors">{t('common.cancel')}</button>
                                 <button type="submit" disabled={createLoading} className="px-5 py-2 bg-zinc-900 text-white text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-zinc-800 transition-colors">
-                                    {createLoading ? 'Assigning...' : 'Assign Shift'}
+                                    {createLoading ? t('shifts.assigning') : t('shifts.assignShift')}
                                 </button>
                             </div>
                         </form>
@@ -374,7 +379,7 @@ const ShiftSchedulePage = () => {
                 <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={() => setEditingShift(null)}>
                     <div className="bg-white border border-zinc-200 rounded-md max-w-md w-full shadow-xl animate-fadeIn" onClick={e => e.stopPropagation()}>
                         <div className="flex items-center justify-between p-5 border-b border-zinc-200">
-                            <h3 className="text-[16px] font-bold text-zinc-900">Edit Shift</h3>
+                            <h3 className="text-[16px] font-bold text-zinc-900">{t('shifts.editShift')}</h3>
                             <button onClick={() => setEditingShift(null)} className="p-1.5 hover:bg-zinc-100 rounded-md transition-colors">
                                 <X className="w-4 h-4 text-zinc-400" />
                             </button>
@@ -385,34 +390,43 @@ const ShiftSchedulePage = () => {
                             </p>
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label className="block text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-1.5">Start Time</label>
+                                    <label className="block text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-1.5">{t('shifts.startTime')}</label>
                                     <input type="time" value={editForm.start_time} onChange={e => setEditForm({ ...editForm, start_time: e.target.value })} className={inputClass} required />
                                 </div>
                                 <div>
-                                    <label className="block text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-1.5">End Time</label>
+                                    <label className="block text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-1.5">{t('shifts.endTime')}</label>
                                     <input type="time" value={editForm.end_time} onChange={e => setEditForm({ ...editForm, end_time: e.target.value })} className={inputClass} required />
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-1.5">Shift Type</label>
+                                <label className="block text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-1.5">{t('shifts.shiftType')}</label>
                                 <select value={editForm.shift_type} onChange={e => setEditForm({ ...editForm, shift_type: e.target.value })} className={inputClass}>
                                     {SHIFT_TYPES.map(st => <option key={st.value} value={st.value}>{st.label}</option>)}
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-1.5">Notes</label>
+                                <label className="block text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-1.5">{t('shifts.notes')}</label>
                                 <input type="text" value={editForm.notes} onChange={e => setEditForm({ ...editForm, notes: e.target.value })} className={inputClass} />
                             </div>
                             <div className="flex justify-end gap-3 pt-2">
-                                <button type="button" onClick={() => setEditingShift(null)} className="px-4 py-2 text-[12px] font-bold uppercase tracking-wider text-zinc-700 border border-zinc-200 rounded-md hover:bg-zinc-50 transition-colors">Cancel</button>
+                                <button type="button" onClick={() => setEditingShift(null)} className="px-4 py-2 text-[12px] font-bold uppercase tracking-wider text-zinc-700 border border-zinc-200 rounded-md hover:bg-zinc-50 transition-colors">{t('common.cancel')}</button>
                                 <button type="submit" disabled={editLoading} className="px-5 py-2 bg-zinc-900 text-white text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-zinc-800 transition-colors flex items-center gap-2">
-                                    <Save className="w-3.5 h-3.5" /> {editLoading ? 'Saving...' : 'Save'}
+                                    <Save className="w-3.5 h-3.5" /> {editLoading ? t('shifts.saving') : t('common.save')}
                                 </button>
                             </div>
                         </form>
                     </div>
                 </div>
             )}
+
+            <ConfirmDialog
+                isOpen={!!deleteConfirm}
+                onClose={() => setDeleteConfirm(null)}
+                onConfirm={() => handleDelete(deleteConfirm)}
+                title={t('common.confirmDeleteTitle')}
+                message={t('shifts.removeShiftConfirm')}
+                confirmLabel={t('common.delete')}
+            />
         </div>
     );
 };

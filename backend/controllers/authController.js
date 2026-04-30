@@ -84,7 +84,7 @@ const register = async (req, res, next) => {
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role, org_id: orgId },
       process.env.JWT_SECRET,
-      { expiresIn: '7d' }
+      { expiresIn: '24h' }
     );
 
     res.status(201).json({
@@ -117,7 +117,9 @@ const login = async (req, res, next) => {
     }
 
     const result = await pool.query(
-      `SELECT u.*, o.name as org_name
+      `SELECT u.id, u.email, u.password_hash, u.name, u.department, u.role,
+              u.hire_date, u.sick_leave_balance, u.vacation_balance, u.org_id,
+              o.name as org_name
        FROM users u
        LEFT JOIN organizations o ON u.org_id = o.id
        WHERE u.email = $1`,
@@ -138,7 +140,7 @@ const login = async (req, res, next) => {
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role, org_id: user.org_id },
       process.env.JWT_SECRET,
-      { expiresIn: '7d' }
+      { expiresIn: '24h' }
     );
 
     res.json({

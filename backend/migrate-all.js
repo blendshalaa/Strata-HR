@@ -23,6 +23,7 @@ const migrations = [
     'db-migrate-goals.js',
     'db-migrate-multitenant.js',
     'db-migrate-shifts.js',
+    'db-migrate-indexes.js',
 ];
 
 async function runAll() {

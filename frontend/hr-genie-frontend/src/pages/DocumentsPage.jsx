@@ -4,6 +4,7 @@ import api from '../services/api';
 import { useToast } from '../context/ToastContext';
 import { FileText, Upload, Trash2, Download, Filter, Search, FolderOpen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import ConfirmDialog from '../components/ui/ConfirmDialog';
 
 const CATEGORIES = [
     { value: 'contract', label: 'Contract', color: 'bg-blue-50 text-blue-700 border-blue-200' },
@@ -25,6 +26,7 @@ const DocumentsPage = () => {
     const [showUpload, setShowUpload] = useState(false);
     const [filterCategory, setFilterCategory] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
+    const [deleteConfirm, setDeleteConfirm] = useState(null);
 
     // Upload form state
     const [uploadName, setUploadName] = useState('');
@@ -91,13 +93,14 @@ const DocumentsPage = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm(t('documents.deleteConfirm'))) return;
         try {
             await api.delete(`/documents/${id}`);
             toast.success(t('documents.documentDeleted'));
             fetchDocuments();
         } catch {
             toast.error(t('documents.deleteFailed'));
+        } finally {
+            setDeleteConfirm(null);
         }
     };
 
@@ -158,7 +161,7 @@ const DocumentsPage = () => {
                             <div>
                                 <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2">{t('common.employee')}</label>
                                 <select value={uploadUserId} onChange={e => setUploadUserId(e.target.value)} className={inputClass}>
-                                    <option value="">Myself</option>
+                                <option value="">{t('common.myself')}</option>
                                     {users.map(u => <option key={u.id} value={u.id}>{u.name} ({u.email})</option>)}
                                 </select>
                             </div>
@@ -170,7 +173,7 @@ const DocumentsPage = () => {
                                 className="w-full text-sm text-zinc-600 file:mr-4 file:py-2.5 file:px-5 file:rounded-md file:border-0 file:bg-zinc-100 file:text-zinc-900 file:text-sm file:font-bold hover:file:bg-zinc-200 file:cursor-pointer cursor-pointer file:transition-colors border border-zinc-200 rounded-md p-1" required />
                         </div>
                         <div className="md:col-span-2 flex justify-end gap-3 mt-2">
-                            <button type="button" onClick={() => setShowUpload(false)} className="px-5 py-2 text-sm font-bold text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded-md transition-colors">Cancel</button>
+                            <button type="button" onClick={() => setShowUpload(false)} className="px-5 py-2 text-sm font-bold text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded-md transition-colors">{t('common.cancel')}</button>
                             <button type="submit" disabled={uploading} className="bg-zinc-900 hover:bg-zinc-800 text-white px-6 py-2 rounded-md font-bold text-sm transition-colors disabled:opacity-50">
                                 {uploading ? t('documents.uploading') : t('documents.upload')}
                             </button>
@@ -268,7 +271,7 @@ const DocumentsPage = () => {
                                                         <Download className="w-4 h-4" />
                                                     </button>
                                                     {(isHR || doc.user_id === user?.id) && (
-                                                        <button onClick={() => handleDelete(doc.id)}
+                                                        <button onClick={() => setDeleteConfirm(doc.id)}
                                                             className="p-2 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
                                                             title="Delete">
                                                             <Trash2 className="w-4 h-4" />
@@ -310,16 +313,16 @@ const DocumentsPage = () => {
                                     <div className="flex flex-col gap-2 text-[12px] font-medium text-zinc-500 mb-4 bg-zinc-50 p-3 rounded-md border border-zinc-100">
                                         {isHR && doc.employee_name && (
                                             <div className="flex justify-between items-center">
-                                                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Employee</span>
+                                                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">{t('documents.employee')}</span>
                                                 <span className="text-zinc-900 font-bold">{doc.employee_name}</span>
                                             </div>
                                         )}
                                         <div className="flex justify-between items-center">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Size</span>
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">{t('documents.sizeLabel')}</span>
                                             <span className="text-zinc-900 font-bold">{formatFileSize(doc.file_size)}</span>
                                         </div>
                                         <div className="flex justify-between items-center">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Uploaded</span>
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">{t('documents.uploadedLabel')}</span>
                                             <span className="text-zinc-900 font-bold">{doc.created_at ? new Date(doc.created_at).toLocaleDateString() : '—'}</span>
                                         </div>
                                     </div>
@@ -330,7 +333,7 @@ const DocumentsPage = () => {
                                             <Download className="w-3.5 h-3.5" /> {t('documents.download')}
                                         </button>
                                         {(isHR || doc.user_id === user?.id) && (
-                                            <button onClick={() => handleDelete(doc.id)}
+                                            <button onClick={() => setDeleteConfirm(doc.id)}
                                                 className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-md font-bold text-[12px] flex items-center gap-2 transition-colors">
                                                 <Trash2 className="w-3.5 h-3.5" /> {t('common.delete')}
                                             </button>
@@ -342,6 +345,15 @@ const DocumentsPage = () => {
                     </div>
                 </>
             )}
+
+            <ConfirmDialog
+                isOpen={!!deleteConfirm}
+                onClose={() => setDeleteConfirm(null)}
+                onConfirm={() => handleDelete(deleteConfirm)}
+                title={t('documents.deleteDocumentTitle')}
+                message={t('documents.deleteDocumentMessage')}
+                confirmLabel={t('common.delete')}
+            />
         </div>
     );
 };

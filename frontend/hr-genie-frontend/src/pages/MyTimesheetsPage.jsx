@@ -6,8 +6,8 @@ import api from '../services/api';
 import { useTranslation } from 'react-i18next';
 
 const TABS = [
-    { key: 'list', label: 'All Entries' },
-    { key: 'weekly', label: 'Weekly View' },
+    { key: 'list', labelKey: 'timesheets.allEntries' },
+    { key: 'weekly', labelKey: 'timesheets.weeklyView' },
 ];
 
 const MyTimesheetsPage = () => {
@@ -180,6 +180,7 @@ const MyTimesheetsPage = () => {
                 <button
                     onClick={() => setShowManualEntry(!showManualEntry)}
                     className="px-4 py-2 bg-zinc-900 text-white text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-zinc-800 transition-colors flex items-center gap-2"
+                    title="Add a timesheet entry manually if you forgot to clock in or out"
                 >
                     <Plus className="w-3.5 h-3.5" />
                     {t('timesheets.manualEntry')}
@@ -211,7 +212,7 @@ const MyTimesheetsPage = () => {
                             <input type="text" value={manualForm.notes} onChange={e => setManualForm({ ...manualForm, notes: e.target.value })} className={inputClass} placeholder="e.g. Forgot to clock out yesterday" />
                         </div>
                         <div className="flex justify-end gap-3 pt-2">
-                            <button type="button" onClick={() => setShowManualEntry(false)} className="px-4 py-2 text-[12px] font-bold uppercase tracking-wider text-zinc-700 border border-zinc-200 rounded-md hover:bg-zinc-50 transition-colors">Cancel</button>
+                            <button type="button" onClick={() => setShowManualEntry(false)} className="px-4 py-2 text-[12px] font-bold uppercase tracking-wider text-zinc-700 border border-zinc-200 rounded-md hover:bg-zinc-50 transition-colors">{t('common.cancel')}</button>
                             <button type="submit" disabled={manualLoading} className="px-5 py-2 bg-zinc-900 text-white text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-zinc-800 transition-colors">
                                 {manualLoading ? t('common.submitting') : t('common.submit')}
                             </button>
@@ -242,7 +243,7 @@ const MyTimesheetsPage = () => {
                     {TABS.map(tab => (
                         <button key={tab.key} onClick={() => setActiveTab(tab.key)}
                             className={`px-4 py-2 rounded-md text-[13px] font-bold transition-all ${activeTab === tab.key ? 'bg-white text-zinc-900 shadow-sm border border-zinc-200' : 'text-zinc-500 hover:text-zinc-700 border border-transparent'}`}>
-                            {tab.label}
+                            {t(tab.labelKey)}
                         </button>
                     ))}
                 </div>

@@ -5,6 +5,7 @@ import ChatInput from '../components/chat/ChatInput';
 import ConversationList from '../components/chat/ConversationList';
 import { Bot, Menu, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import ConfirmDialog from '../components/ui/ConfirmDialog';
 
 const ChatPage = () => {
   const { t } = useTranslation();
@@ -13,6 +14,7 @@ const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -90,16 +92,16 @@ const ChatPage = () => {
   };
 
   const handleDeleteConversation = async (id) => {
-    if (window.confirm(t('chat.deleteConversation'))) {
-      try {
-        await chatAPI.deleteConversation(id);
-        if (activeConversation === id) {
-          handleNewConversation();
-        }
-        await fetchConversations();
-      } catch (error) {
-        console.error('Failed to delete conversation:', error);
+    try {
+      await chatAPI.deleteConversation(id);
+      if (activeConversation === id) {
+        handleNewConversation();
       }
+      await fetchConversations();
+    } catch (error) {
+      console.error('Failed to delete conversation:', error);
+    } finally {
+      setDeleteConfirm(null);
     }
   };
 
@@ -111,13 +113,14 @@ const ChatPage = () => {
   ];
 
   return (
+    <>
     <div className="h-[calc(100vh-8rem)] flex gap-4 animate-fadeIn">
       <div className="hidden lg:block w-80 rounded-lg overflow-hidden border border-zinc-200 shadow-sm">
         <ConversationList
           conversations={conversations}
           activeConversation={activeConversation}
           onSelect={(id) => setActiveConversation(id)}
-          onDelete={handleDeleteConversation}
+          onDelete={(id) => setDeleteConfirm(id)}
           onNew={handleNewConversation}
         />
       </div>
@@ -136,7 +139,7 @@ const ChatPage = () => {
                 setActiveConversation(id);
                 setSidebarOpen(false);
               }}
-              onDelete={handleDeleteConversation}
+              onDelete={(id) => setDeleteConfirm(id)}
               onNew={handleNewConversation}
             />
           </div>
@@ -224,6 +227,16 @@ const ChatPage = () => {
         <ChatInput onSend={handleSendMessage} loading={loading} />
       </div>
     </div>
+
+    <ConfirmDialog
+      isOpen={!!deleteConfirm}
+      onClose={() => setDeleteConfirm(null)}
+      onConfirm={() => handleDeleteConversation(deleteConfirm)}
+      title={t('common.confirmDeleteTitle')}
+      message={t('chat.deleteConversation')}
+      confirmLabel={t('common.delete')}
+    />
+  </>
   );
 };
 

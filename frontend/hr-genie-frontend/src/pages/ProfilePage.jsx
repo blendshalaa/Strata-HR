@@ -108,6 +108,13 @@ const ProfilePage = () => {
                 </div>
             </div>
 
+            {editing && (
+                <div className="flex items-center gap-2 px-4 py-2.5 bg-amber-50 border border-amber-200 rounded-md">
+                    <Edit3 className="w-4 h-4 text-amber-600 shrink-0" />
+                    <p className="text-[13px] font-medium text-amber-800">You are editing your profile. Make your changes below and click <strong>Save Changes</strong> when done.</p>
+                </div>
+            )}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <InfoCard icon={Mail} label={t('profile.email')} value={profile.email} />
                 <InfoCard

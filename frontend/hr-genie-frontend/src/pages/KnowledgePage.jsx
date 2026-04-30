@@ -5,6 +5,8 @@ import KnowledgeCard from '../components/knowledge/KnowledgeCard';
 import { Search, BookOpen, X, Plus, Edit, Trash2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import ConfirmDialog from '../components/ui/ConfirmDialog';
+import { useToast } from '../context/ToastContext';
 
 const KnowledgePage = () => {
   const { isHR, isAdmin } = useAuth();
@@ -17,6 +19,8 @@ const KnowledgePage = () => {
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingArticle, setEditingArticle] = useState(null);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const toast = useToast();
 
   useEffect(() => {
     fetchKnowledge();
@@ -47,15 +51,15 @@ const KnowledgePage = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm(t('knowledge.deleteConfirm'))) return;
-    
     try {
       await knowledgeAPI.delete(id);
       await fetchKnowledge();
       setSelectedArticle(null);
-      alert(t('knowledge.articleDeleted'));
+      toast.success(t('knowledge.articleDeleted'));
     } catch (error) {
-      alert(t('knowledge.failedToDelete'));
+      toast.error(t('knowledge.failedToDelete'));
+    } finally {
+      setDeleteConfirm(null);
     }
   };
 
@@ -68,6 +72,7 @@ const KnowledgePage = () => {
   }
 
   return (
+    <>
     <div className="space-y-6 animate-fadeIn">
       <div className="flex items-center justify-between">
         <div>
@@ -152,7 +157,7 @@ const KnowledgePage = () => {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDelete(article.id);
+                        setDeleteConfirm(article.id);
                       }}
                       className="p-1.5 bg-white border border-zinc-200 rounded-md shadow-sm hover:bg-red-50 hover:text-red-600 transition-colors"
                       title="Delete Article"
@@ -231,11 +236,23 @@ const KnowledgePage = () => {
         />
       )}
     </div>
+
+    <ConfirmDialog
+      isOpen={!!deleteConfirm}
+      onClose={() => setDeleteConfirm(null)}
+      onConfirm={() => handleDelete(deleteConfirm)}
+      title={t('common.confirmDeleteTitle')}
+      message={t('knowledge.deleteConfirm')}
+      confirmLabel={t('common.delete')}
+    />
+    </>
   );
 };
 
 // Create Article Modal Component
 const CreateArticleModal = ({ article, onClose, onSuccess }) => {
+  const { t } = useTranslation();
+  const toast = useToast();
   const [formData, setFormData] = useState({
     title: article?.title || '',
     content: article?.content || '',
@@ -253,19 +270,19 @@ const CreateArticleModal = ({ article, onClose, onSuccess }) => {
     try {
       const data = {
         ...formData,
-        tags: formData.tags.split(',').map(t => t.trim()).filter(t => t),
+        tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
       };
 
       if (article) {
         await knowledgeAPI.update(article.id, data);
-        alert('Article updated successfully');
+        toast.success(t('knowledge.articleUpdated'));
       } else {
         await knowledgeAPI.create(data);
-        alert('Article created successfully');
+        toast.success(t('knowledge.articleCreated'));
       }
       onSuccess();
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to save article');
+      setError(err.response?.data?.error || t('knowledge.failedToSave'));
     } finally {
       setLoading(false);
     }
@@ -276,7 +293,7 @@ const CreateArticleModal = ({ article, onClose, onSuccess }) => {
       <div className="bg-white border border-zinc-200 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-fadeIn shadow-xl" onClick={e => e.stopPropagation()}>
         <div className="sticky top-0 bg-white border-b border-zinc-100 p-6 flex items-center justify-between z-10">
           <h2 className="text-[18px] font-bold text-zinc-900">
-            {article ? 'Edit Article' : 'Create New Article'}
+            {article ? t('knowledge.editArticle') : t('knowledge.createArticle')}
           </h2>
           <button
             onClick={onClose}
@@ -295,21 +312,21 @@ const CreateArticleModal = ({ article, onClose, onSuccess }) => {
 
           <div>
             <label className="block text-[13px] font-bold text-zinc-700 mb-1.5">
-              Title *
+              {t('knowledge.titleLabel')}
             </label>
             <input
               type="text"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
-              placeholder="Enter article title"
+              placeholder={t('knowledge.titlePlaceholder')}
               required
             />
           </div>
 
           <div>
             <label className="block text-[13px] font-bold text-zinc-700 mb-1.5">
-              Category *
+              {t('knowledge.categoryLabel')}
             </label>
             <select
               value={formData.category}
@@ -326,20 +343,20 @@ const CreateArticleModal = ({ article, onClose, onSuccess }) => {
 
           <div>
             <label className="block text-[13px] font-bold text-zinc-700 mb-1.5">
-              Content *
+              {t('knowledge.contentLabel')}
             </label>
             <textarea
               value={formData.content}
               onChange={(e) => setFormData({ ...formData, content: e.target.value })}
               className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors min-h-[200px]"
-              placeholder="Write the full content here..."
+              placeholder={t('knowledge.contentPlaceholder')}
               required
             />
           </div>
 
           <div>
             <label className="block text-[13px] font-bold text-zinc-700 mb-1.5">
-              Tags (comma-separated)
+              {t('knowledge.tagsLabel')}
             </label>
             <input
               type="text"
@@ -356,14 +373,14 @@ const CreateArticleModal = ({ article, onClose, onSuccess }) => {
               disabled={loading}
               className="flex-1 bg-zinc-900 text-white px-4 py-2.5 rounded-md hover:bg-zinc-800 transition-colors disabled:opacity-50 text-[12px] font-bold uppercase tracking-wider"
             >
-              {loading ? 'Saving...' : article ? 'Update Article' : 'Create Article'}
+              {loading ? t('common.saving') : article ? t('knowledge.updateArticle') : t('knowledge.createArticle')}
             </button>
             <button
               type="button"
               onClick={onClose}
               className="px-4 py-2.5 bg-white text-zinc-700 border border-zinc-300 rounded-md hover:bg-zinc-50 transition-colors text-[12px] font-bold uppercase tracking-wider"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
           </div>
         </form>

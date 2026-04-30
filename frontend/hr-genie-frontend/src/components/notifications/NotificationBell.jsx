@@ -13,12 +13,12 @@ const typeIcons = {
 };
 
 const typeColors = {
-    leave: 'text-sky-400 bg-sky-500/10',
-    timesheet: 'text-indigo-400 bg-indigo-500/10',
-    payroll: 'text-emerald-400 bg-emerald-500/10',
-    success: 'text-emerald-400 bg-emerald-500/10',
-    warning: 'text-amber-400 bg-amber-500/10',
-    info: 'text-slate-400 bg-slate-500/10',
+    leave: 'text-sky-600 bg-sky-50',
+    timesheet: 'text-zinc-600 bg-zinc-100',
+    payroll: 'text-emerald-600 bg-emerald-50',
+    success: 'text-emerald-600 bg-emerald-50',
+    warning: 'text-amber-600 bg-amber-50',
+    info: 'text-zinc-500 bg-zinc-100',
 };
 
 const NotificationBell = () => {
@@ -102,25 +102,28 @@ const NotificationBell = () => {
         <div className="relative" ref={dropdownRef}>
             <button
                 onClick={handleToggle}
-                className="relative p-2 rounded-xl hover:bg-white/5 transition-colors"
+                className="relative p-2 rounded-[6px] transition-colors"
+                style={{ color: '#71717A' }}
+                onMouseEnter={e => e.currentTarget.style.background = '#FAFAFA'}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
-                <Bell className="w-5 h-5 text-slate-400" />
+                <Bell className="w-5 h-5" />
                 {unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-rose-500 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-lg shadow-rose-500/30 animate-pulse">
+                    <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-rose-500 rounded-full flex items-center justify-center text-[10px] font-bold text-white">
                         {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                 )}
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 animate-fadeIn">
+                <div className="absolute right-0 top-full mt-1 w-80 sm:w-96 bg-white border border-zinc-200 rounded-[8px] shadow-lg overflow-hidden z-50 animate-fadeIn">
                     {/* Header */}
-                    <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between">
-                        <h3 className="text-sm font-bold text-white">{t('notifications.title')}</h3>
+                    <div className="px-4 py-3 border-b border-zinc-100 flex items-center justify-between">
+                        <h3 className="text-[13px] font-bold text-zinc-900">{t('notifications.title')}</h3>
                         {unreadCount > 0 && (
                             <button
                                 onClick={handleMarkAllRead}
-                                className="flex items-center gap-1 text-xs text-primary-400 hover:text-primary-300 transition-colors"
+                                className="flex items-center gap-1 text-[12px] font-medium text-zinc-500 hover:text-zinc-900 transition-colors"
                             >
                                 <CheckCheck className="w-3.5 h-3.5" /> {t('notifications.markAllRead')}
                             </button>
@@ -131,12 +134,12 @@ const NotificationBell = () => {
                     <div className="max-h-80 overflow-y-auto">
                         {loading ? (
                             <div className="p-8 text-center">
-                                <div className="w-6 h-6 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto" />
+                                <div className="w-5 h-5 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin mx-auto" />
                             </div>
                         ) : notifications.length === 0 ? (
-                            <div className="p-8 text-center text-slate-500">
-                                <Bell className="w-8 h-8 mx-auto mb-2 opacity-30" />
-                                <p className="text-sm">{t('notifications.noNotifications')}</p>
+                            <div className="p-8 text-center">
+                                <Bell className="w-8 h-8 mx-auto mb-2 text-zinc-300" />
+                                <p className="text-[13px] text-zinc-500">{t('notifications.noNotifications')}</p>
                             </div>
                         ) : (
                             notifications.map(n => {
@@ -145,24 +148,23 @@ const NotificationBell = () => {
                                 return (
                                     <div
                                         key={n.id}
-                                        className={`px-4 py-3 border-b border-white/5 flex items-start gap-3 hover:bg-white/[0.02] transition-colors ${!n.is_read ? 'bg-primary-500/[0.03]' : ''
-                                            }`}
+                                        className={`px-4 py-3 border-b border-zinc-100 last:border-b-0 flex items-start gap-3 hover:bg-zinc-50 transition-colors ${!n.is_read ? 'bg-zinc-50/50' : ''}`}
                                     >
-                                        <div className={`p-1.5 rounded-lg shrink-0 mt-0.5 ${color}`}>
+                                        <div className={`p-1.5 rounded-[6px] shrink-0 mt-0.5 ${color}`}>
                                             <Icon className="w-3.5 h-3.5" />
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className={`text-xs font-semibold ${!n.is_read ? 'text-white' : 'text-slate-300'}`}>{n.title}</p>
-                                            {n.message && <p className="text-[11px] text-slate-500 mt-0.5 line-clamp-2">{n.message}</p>}
-                                            <p className="text-[10px] text-slate-600 mt-1">{timeAgo(n.created_at)}</p>
+                                            <p className={`text-[13px] font-semibold ${!n.is_read ? 'text-zinc-900' : 'text-zinc-600'}`}>{n.title}</p>
+                                            {n.message && <p className="text-[12px] text-zinc-500 mt-0.5 line-clamp-2">{n.message}</p>}
+                                            <p className="text-[11px] text-zinc-400 mt-1">{timeAgo(n.created_at)}</p>
                                         </div>
                                         {!n.is_read && (
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); handleMarkRead(n.id); }}
-                                                className="p-1 rounded hover:bg-white/5 shrink-0"
+                                                className="p-1 rounded-[4px] hover:bg-zinc-100 shrink-0 transition-colors"
                                                 title="Mark as read"
                                             >
-                                                <Check className="w-3.5 h-3.5 text-slate-500" />
+                                                <Check className="w-3.5 h-3.5 text-zinc-400" />
                                             </button>
                                         )}
                                     </div>

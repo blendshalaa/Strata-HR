@@ -4,6 +4,7 @@ import api from '../services/api';
 import { useToast } from '../context/ToastContext';
 import { Target, Plus, ChevronDown, ChevronRight, Trash2, Edit3, CheckCircle2, Clock, AlertCircle, X, Save } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import ConfirmDialog from '../components/ui/ConfirmDialog';
 
 const STATUS_CFG = {
     active: { label: 'Active', color: 'bg-blue-50 text-blue-700 border-blue-100', icon: Clock },
@@ -46,6 +47,9 @@ const GoalsPage = ({ embedded = false }) => {
     const [addingKR, setAddingKR] = useState(null);
     const [newKR, setNewKR] = useState({ title: '', target_value: 100, unit: '%' });
 
+    // Delete confirm
+    const [deleteConfirm, setDeleteConfirm] = useState(null);
+
     useEffect(() => {
         fetchGoals();
         if (isHR) fetchUsers();
@@ -84,9 +88,9 @@ const GoalsPage = ({ embedded = false }) => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm(t('goals.deleteGoalConfirm'))) return;
         try { await api.delete(`/goals/${id}`); toast.success(t('goals.goalDeleted')); fetchGoals(); }
         catch { toast.error(t('goals.deleteFailed')); }
+        finally { setDeleteConfirm(null); }
     };
 
     const handleStatusChange = async (id, status) => {
@@ -157,6 +161,7 @@ const GoalsPage = ({ embedded = false }) => {
     const inputClass = "w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors placeholder-zinc-400";
 
     return (
+        <>
         <div className="space-y-6 animate-fadeIn">
             {/* Header */}
             {!embedded && (
@@ -257,7 +262,7 @@ const GoalsPage = ({ embedded = false }) => {
                     <option value="">{t('goals.allStatuses')}</option>
                     {Object.entries(STATUS_CFG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
                 </select>
-                <span className="text-[12px] font-bold text-zinc-400 uppercase tracking-wider">{filtered.length} goal{filtered.length !== 1 ? 's' : ''} total</span>
+                <span className="text-[12px] font-bold text-zinc-400 uppercase tracking-wider">{filtered.length} {filtered.length !== 1 ? 'goals' : 'goal'} total</span>
             </div>
 
             {/* Goals List */}
@@ -297,7 +302,7 @@ const GoalsPage = ({ embedded = false }) => {
                                                 <div className="flex items-center gap-4 text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
                                                     {isHR && goal.owner_name && <span className="flex items-center gap-1.5"><Save className="w-3 h-3" /> {goal.owner_name}</span>}
                                                     {goal.target_date && <span className="flex items-center gap-1.5"><Clock className="w-3 h-3" /> {new Date(goal.target_date).toLocaleDateString()}</span>}
-                                                    <span className="flex items-center gap-1.5"><Target className="w-3 h-3" /> {goal.kr_count || 0} {t('goals.krs')}</span>
+                                                    <span className="flex items-center gap-1.5"><Target className="w-3 h-3" /> {goal.kr_count || 0} Key Results</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -314,7 +319,7 @@ const GoalsPage = ({ embedded = false }) => {
                                                     className="px-2 py-1 bg-white border border-zinc-200 rounded-md text-zinc-700 text-[11px] font-bold uppercase tracking-wider focus:outline-none focus:border-zinc-900">
                                                     {Object.entries(STATUS_CFG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
                                                 </select>
-                                                <button onClick={() => handleDelete(goal.id)} className="p-1.5 text-zinc-400 hover:text-red-600 border border-transparent hover:border-red-100 hover:bg-red-50 rounded-md transition-all">
+                                                <button onClick={() => setDeleteConfirm(goal.id)} className="p-1.5 text-zinc-400 hover:text-red-600 border border-transparent hover:border-red-100 hover:bg-red-50 rounded-md transition-all">
                                                     <Trash2 className="w-3.5 h-3.5" />
                                                 </button>
                                             </div>
@@ -389,8 +394,8 @@ const GoalsPage = ({ embedded = false }) => {
                                                 <input type="text" value={newKR.unit} onChange={e => setNewKR({ ...newKR, unit: e.target.value })}
                                                     className={`${inputClass} w-20`} placeholder="Unit" />
                                                 <div className="flex items-center gap-2">
-                                                    <button onClick={() => handleAddKR(expandedGoal.id)} className="px-4 py-2 bg-zinc-900 text-white text-[11px] font-bold uppercase tracking-wider rounded-md hover:bg-zinc-800 transition-colors">Add</button>
-                                                    <button onClick={() => setAddingKR(null)} className="px-4 py-2 bg-white text-zinc-500 border border-zinc-200 text-[11px] font-bold uppercase tracking-wider rounded-md hover:bg-zinc-50 transition-colors">Cancel</button>
+                                                    <button onClick={() => handleAddKR(expandedGoal.id)} className="px-4 py-2 bg-zinc-900 text-white text-[11px] font-bold uppercase tracking-wider rounded-md hover:bg-zinc-800 transition-colors">{t('common.add')}</button>
+                                                    <button onClick={() => setAddingKR(null)} className="px-4 py-2 bg-white text-zinc-500 border border-zinc-200 text-[11px] font-bold uppercase tracking-wider rounded-md hover:bg-zinc-50 transition-colors">{t('common.cancel')}</button>
                                                 </div>
                                             </div>
                                         )}
@@ -402,6 +407,16 @@ const GoalsPage = ({ embedded = false }) => {
                 </div>
             )}
         </div>
+
+        <ConfirmDialog
+            isOpen={!!deleteConfirm}
+            onClose={() => setDeleteConfirm(null)}
+            onConfirm={() => handleDelete(deleteConfirm)}
+            title={t('common.confirmDeleteTitle')}
+            message={t('goals.deleteGoalConfirm')}
+            confirmLabel={t('common.delete')}
+        />
+        </>
     );
 };
 
