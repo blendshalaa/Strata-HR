@@ -14,8 +14,6 @@ const Register = () => {
     name: '',
     email: '',
     password: '',
-    department: '',
-    hire_date: '',
     org_name: '',
     invite_code: inviteQuery || '',
   });
@@ -146,18 +144,7 @@ const Register = () => {
               </div>
             </div>
 
-            <div>
-              <label className="block text-[13px] font-medium text-zinc-700 mb-1.5">{t('auth.department')}</label>
-              <div className="relative">
-                <Building className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                <input type="text" name="department" value={formData.department} onChange={handleChange} className={inputClass} placeholder="Engineering" />
-              </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">{t('auth.hireDate')}</label>
-              <input type="date" name="hire_date" value={formData.hire_date} onChange={handleChange} className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all text-sm" />
-            </div>
 
             <button
               type="submit"

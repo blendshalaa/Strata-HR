@@ -15,6 +15,7 @@ const pool = require('./config/database');
 // SQL files are run directly via the pg pool (no psql CLI needed)
 // JS files are run as child processes
 const migrations = [
+    'db-migrate-base.js',
     'schema.sql',
     'db-migrate.js',
     'db-migrate-attendance.js',
