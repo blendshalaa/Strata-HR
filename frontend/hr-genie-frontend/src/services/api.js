@@ -26,13 +26,20 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      const isLoginRequest = error.config?.url?.includes('/auth/login');
+      if (!isLoginRequest) {
+        // Session expired — show a message before redirecting
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        // Store a flag so the login page can show a "session expired" message
+        sessionStorage.setItem('session_expired', '1');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
 );
+
 
 // Auth endpoints
 export const authAPI = {

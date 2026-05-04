@@ -1,8 +1,24 @@
 import React, { useState } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Bot, Mail, Lock, User, Building, AlertCircle, ArrowRight, Hash } from 'lucide-react';
+import { Bot, Mail, Lock, User, Building, AlertCircle, ArrowRight, Hash, Eye, EyeOff } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+
+// Password strength scorer
+const getStrength = (password) => {
+  if (!password) return { score: 0, label: '', color: '' };
+  let score = 0;
+  if (password.length >= 8) score++;
+  if (password.length >= 12) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/[0-9]/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+
+  if (score <= 1) return { score, label: 'Weak', color: 'bg-red-500' };
+  if (score <= 2) return { score, label: 'Fair', color: 'bg-yellow-500' };
+  if (score <= 3) return { score, label: 'Good', color: 'bg-blue-500' };
+  return { score, label: 'Strong', color: 'bg-green-500' };
+};
 
 const Register = () => {
   const { t } = useTranslation();
@@ -14,13 +30,19 @@ const Register = () => {
     name: '',
     email: '',
     password: '',
+    confirmPassword: '',
     org_name: '',
     invite_code: inviteQuery || '',
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
+
+  const strength = getStrength(formData.password);
+  const passwordsMatch = !formData.confirmPassword || formData.password === formData.confirmPassword;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -29,10 +51,20 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters.');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const payload = { ...formData };
+      const { confirmPassword, ...payload } = formData;
       if (mode === 'create') {
         delete payload.invite_code;
         if (!payload.org_name.trim()) {
@@ -58,7 +90,7 @@ const Register = () => {
     }
   };
 
-  const inputClass = "w-full pl-10 pr-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all text-sm";
+  const inputClass = "w-full pl-10 pr-10 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all text-sm";
 
   return (
     <div className="min-h-screen bg-zinc-50 flex items-center justify-center p-4 relative overflow-hidden font-sans">
@@ -106,7 +138,7 @@ const Register = () => {
                 <label className="block text-[13px] font-medium text-zinc-700 mb-1.5">{t('auth.organizationName')}</label>
                 <div className="relative">
                   <Building className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                  <input type="text" name="org_name" value={formData.org_name} onChange={handleChange} className={inputClass} placeholder="Acme Corp" required />
+                  <input type="text" name="org_name" value={formData.org_name} onChange={handleChange} className={inputClass} placeholder="Acme Corp" autoComplete="organization" required />
                 </div>
                 <p className="text-[12px] text-zinc-500 mt-1.5">{t('auth.youllBeAdmin')}</p>
               </div>
@@ -115,40 +147,114 @@ const Register = () => {
                 <label className="block text-[13px] font-medium text-zinc-700 mb-1.5">{t('auth.inviteCode')}</label>
                 <div className="relative">
                   <Hash className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                  <input type="text" name="invite_code" value={formData.invite_code} onChange={handleChange} className={inputClass} placeholder={t('auth.pasteInviteCode')} required />
+                  <input type="text" name="invite_code" value={formData.invite_code} onChange={handleChange} className={inputClass} placeholder={t('auth.pasteInviteCode')} autoComplete="off" required />
                 </div>
+                <p className="text-[12px] text-zinc-500 mt-1.5">Ask your HR admin for your invite code.</p>
               </div>
             )}
 
+            {/* Full Name */}
             <div>
               <label className="block text-[13px] font-medium text-zinc-700 mb-1.5">{t('auth.fullName')}</label>
               <div className="relative">
                 <User className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                <input type="text" name="name" value={formData.name} onChange={handleChange} className={inputClass} placeholder="John Doe" required />
+                <input type="text" name="name" value={formData.name} onChange={handleChange} className={inputClass} placeholder="John Doe" autoComplete="name" required />
               </div>
             </div>
 
+            {/* Email */}
             <div>
               <label className="block text-[13px] font-medium text-zinc-700 mb-1.5">{t('auth.emailAddress')}</label>
               <div className="relative">
                 <Mail className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                <input type="email" name="email" value={formData.email} onChange={handleChange} className={inputClass} placeholder="you@company.com" required />
+                <input type="email" name="email" value={formData.email} onChange={handleChange} className={inputClass} placeholder="you@company.com" autoComplete="email" required />
               </div>
             </div>
 
+            {/* Password */}
             <div>
               <label className="block text-[13px] font-medium text-zinc-700 mb-1.5">{t('auth.password')}</label>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                <input type="password" name="password" value={formData.password} onChange={handleChange} className={inputClass} placeholder="••••••••" required minLength={6} />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className={inputClass}
+                  placeholder="Min. 8 characters"
+                  autoComplete="new-password"
+                  required
+                  minLength={8}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors"
+                  tabIndex={-1}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
+
+              {/* Strength indicator */}
+              {formData.password && (
+                <div className="mt-2">
+                  <div className="flex gap-1 mb-1">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div
+                        key={i}
+                        className={`h-1 flex-1 rounded-full transition-all duration-300 ${
+                          strength.score >= i ? strength.color : 'bg-zinc-200'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <p className={`text-[11px] font-medium ${
+                    strength.label === 'Weak' ? 'text-red-500' :
+                    strength.label === 'Fair' ? 'text-yellow-600' :
+                    strength.label === 'Good' ? 'text-blue-600' : 'text-green-600'
+                  }`}>
+                    {strength.label} password
+                  </p>
+                </div>
+              )}
             </div>
 
-
+            {/* Confirm Password */}
+            <div>
+              <label className="block text-[13px] font-medium text-zinc-700 mb-1.5">Confirm Password</label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                <input
+                  type={showConfirm ? 'text' : 'password'}
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className={`${inputClass} ${!passwordsMatch ? 'border-red-300 focus:border-red-400 focus:ring-red-400' : ''}`}
+                  placeholder="Re-enter your password"
+                  autoComplete="new-password"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors"
+                  tabIndex={-1}
+                  aria-label={showConfirm ? 'Hide password' : 'Show password'}
+                >
+                  {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              {!passwordsMatch && (
+                <p className="text-[11px] text-red-500 mt-1">Passwords do not match.</p>
+              )}
+            </div>
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !passwordsMatch}
               className="w-full mt-2 py-2.5 bg-zinc-900 text-white rounded-md text-sm font-medium hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group"
             >
               {loading ? t('auth.creatingAccount') : (

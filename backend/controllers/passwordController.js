@@ -57,7 +57,7 @@ const resetPassword = async (req, res, next) => {
     try {
         const { token, password } = req.body;
         if (!token || !password) return res.status(400).json({ error: 'Token and new password are required' });
-        if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
+        if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
 
         const user = await pool.query(
             `SELECT id FROM users WHERE reset_token = $1 AND reset_token_expires > CURRENT_TIMESTAMP`,
@@ -88,7 +88,7 @@ const changePassword = async (req, res, next) => {
     try {
         const { current_password, new_password } = req.body;
         if (!current_password || !new_password) return res.status(400).json({ error: 'Current and new passwords are required' });
-        if (new_password.length < 6) return res.status(400).json({ error: 'New password must be at least 6 characters' });
+        if (new_password.length < 8) return res.status(400).json({ error: 'New password must be at least 8 characters' });
 
         const user = await pool.query('SELECT password_hash FROM users WHERE id = $1', [req.user.id]);
         if (user.rows.length === 0) return res.status(404).json({ error: 'User not found' });

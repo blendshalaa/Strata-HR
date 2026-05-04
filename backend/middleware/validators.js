@@ -20,7 +20,7 @@ const validate = (req, res, next) => {
 
 const registerRules = [
     body('email').isEmail().withMessage('Must be a valid email address').normalizeEmail(),
-    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+    body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
     body('name').trim().notEmpty().withMessage('Name is required').isLength({ max: 100 }).withMessage('Name too long'),
     body('department').optional({ checkFalsy: true }).trim().isLength({ max: 100 }),
     body('hire_date').optional({ checkFalsy: true }).isISO8601().withMessage('Hire date must be a valid date (YYYY-MM-DD)'),
