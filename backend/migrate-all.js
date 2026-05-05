@@ -20,9 +20,9 @@ const migrations = [
     'db-migrate.js',
     'db-migrate-attendance.js',
     'db-migrate-medium.js',
-    'db-migrate-documents.js',
     'db-migrate-goals.js',
     'db-migrate-multitenant.js',
+    'db-migrate-documents.js',
     'db-migrate-shifts.js',
     'db-migrate-indexes.js',
 ];

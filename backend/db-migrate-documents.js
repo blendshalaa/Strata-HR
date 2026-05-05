@@ -13,7 +13,6 @@ const migrate = async () => {
       CREATE TABLE IF NOT EXISTS employee_documents (
         id SERIAL PRIMARY KEY,
         user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-        org_id INTEGER REFERENCES organizations(id) ON DELETE CASCADE,
         name VARCHAR(255) NOT NULL,
         category VARCHAR(100) NOT NULL DEFAULT 'other',
         file_url VARCHAR(500) NOT NULL,
