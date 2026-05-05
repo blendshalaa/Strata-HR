@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Send, Loader } from 'lucide-react';
+import { Send, Loader, Zap } from 'lucide-react';
 
 const ChatInput = ({ onSend, loading }) => {
   const [message, setMessage] = useState('');
@@ -19,7 +19,7 @@ const ChatInput = ({ onSend, loading }) => {
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Ask me anything about HR policies, leave, benefits..."
+          placeholder="Ask anything or give a command — I can take actions for you..."
           className="w-full px-4 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
           disabled={loading}
         />
@@ -35,8 +35,9 @@ const ChatInput = ({ onSend, loading }) => {
           )}
         </button>
       </div>
-      <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mt-3">
-        💡 Try: "What's the sick leave policy?" or "I need vacation from Dec 20-27"
+      <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mt-3 flex items-center gap-1.5">
+        <Zap className="w-3 h-3" />
+        Copilot — "Who's on leave today?" · "Approve leave #4" · "Show overtime this month"
       </p>
     </form>
   );

@@ -51,6 +51,7 @@ export const authAPI = {
 // Chat endpoints
 export const chatAPI = {
   sendMessage: (data) => api.post('/chat/message', data),
+  confirmAction: (data) => api.post('/chat/confirm', data),
   getConversations: () => api.get('/chat/conversations'),
   getConversationMessages: (id) => api.get(`/chat/conversations/${id}`),
   deleteConversation: (id) => api.delete(`/chat/conversations/${id}`),

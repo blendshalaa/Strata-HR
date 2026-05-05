@@ -3,15 +3,19 @@ import { chatAPI } from '../services/api';
 import MessageBubble from '../components/chat/MessageBubble';
 import ChatInput from '../components/chat/ChatInput';
 import ConversationList from '../components/chat/ConversationList';
-import { Bot, Menu, Sparkles } from 'lucide-react';
+import ConfirmationCard from '../components/chat/ConfirmationCard';
+import { Bot, Menu, Sparkles, Zap } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
+import { useAuth } from '../context/AuthContext';
 
 const ChatPage = () => {
   const { t } = useTranslation();
+  const { isHR } = useAuth();
   const [conversations, setConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [confirmations, setConfirmations] = useState([]); // pending confirmation cards
   const [loading, setLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
@@ -24,12 +28,13 @@ const ChatPage = () => {
   useEffect(() => {
     if (activeConversation) {
       fetchMessages(activeConversation);
+      setConfirmations([]); // clear confirmations when switching convos
     }
   }, [activeConversation]);
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, confirmations]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -55,6 +60,7 @@ const ChatPage = () => {
 
   const handleSendMessage = async (content) => {
     setLoading(true);
+    setConfirmations([]);
 
     const userMessage = {
       role: 'user',
@@ -77,6 +83,14 @@ const ChatPage = () => {
       }
 
       setMessages((prev) => [...prev, response.data.message]);
+
+      // Handle confirmations from AI copilot
+      if (response.data.confirmations && response.data.confirmations.length > 0) {
+        setConfirmations(response.data.confirmations.map(c => ({
+          ...c,
+          conversation_id: newConversationId
+        })));
+      }
     } catch (error) {
       console.error('Failed to send message:', error);
       setMessages((prev) => prev.slice(0, -1));
@@ -85,9 +99,35 @@ const ChatPage = () => {
     }
   };
 
+  const handleConfirmAction = async (confirmation) => {
+    const response = await chatAPI.confirmAction({
+      action: confirmation.action,
+      params: confirmation.params,
+      conversation_id: confirmation.conversation_id || activeConversation,
+    });
+
+    // Add the success message to chat
+    setMessages((prev) => [...prev, {
+      role: 'assistant',
+      content: `✅ ${response.data.message}`,
+      created_at: new Date().toISOString(),
+    }]);
+
+    return response.data;
+  };
+
+  const handleRejectAction = (confirmation) => {
+    setMessages((prev) => [...prev, {
+      role: 'assistant',
+      content: `🚫 Cancelled: ${confirmation.summary}`,
+      created_at: new Date().toISOString(),
+    }]);
+  };
+
   const handleNewConversation = () => {
     setActiveConversation(null);
     setMessages([]);
+    setConfirmations([]);
     setSidebarOpen(false);
   };
 
@@ -105,7 +145,12 @@ const ChatPage = () => {
     }
   };
 
-  const suggestions = [
+  const suggestions = isHR ? [
+    'Who hasn\'t clocked in today?',
+    'Show me all pending leave requests',
+    'How much overtime did Engineering log this month?',
+    'What are the dashboard stats?'
+  ] : [
     t('chat.sickLeavePolicy'),
     t('chat.vacationDays'),
     t('chat.needLeave'),
@@ -159,7 +204,12 @@ const ChatPage = () => {
             <Bot className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h2 className="text-[14px] font-bold text-zinc-900">{t('chat.hrAssistant')}</h2>
+            <h2 className="text-[14px] font-bold text-zinc-900 flex items-center gap-1.5">
+              {t('chat.hrAssistant')}
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px] font-bold uppercase tracking-wider">
+                <Zap className="w-2.5 h-2.5" /> Copilot
+              </span>
+            </h2>
             <div className="flex items-center gap-1.5">
                 <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
                 <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">{t('chat.aiPoweredOnline')}</p>
@@ -178,11 +228,16 @@ const ChatPage = () => {
                 <h3 className="text-[18px] font-bold text-zinc-900 mb-2 tracking-tight">
                   {t('chat.welcomeToHrGenie')}
                 </h3>
-                <p className="text-zinc-500 mb-8 text-[13px] leading-relaxed">
+                <p className="text-zinc-500 mb-2 text-[13px] leading-relaxed">
                   {t('chat.imYourAiAssistant')}
                 </p>
+                <p className="text-zinc-400 mb-8 text-[12px] leading-relaxed">
+                  I can query employees, check attendance, manage leave requests, and more. {isHR ? 'As HR, I can also approve leave and create shifts for you.' : ''}
+                </p>
                 <div className="space-y-3 text-left">
-                  <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-4">{t('chat.commonQuestions')}</p>
+                  <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-4">
+                    {isHR ? '⚡ Try these copilot commands' : t('chat.commonQuestions')}
+                  </p>
                   <div className="space-y-2">
                     {suggestions.map((example, i) => (
                       <button
@@ -205,6 +260,17 @@ const ChatPage = () => {
               {messages.map((message, index) => (
                 <MessageBubble key={index} message={message} />
               ))}
+
+              {/* Confirmation cards */}
+              {confirmations.map((conf, index) => (
+                <ConfirmationCard
+                  key={`confirm-${index}`}
+                  confirmation={conf}
+                  onConfirm={handleConfirmAction}
+                  onReject={handleRejectAction}
+                />
+              ))}
+
               {loading && (
                 <div className="flex gap-3">
                   <div className="w-8 h-8 rounded-md bg-zinc-900 flex items-center justify-center flex-shrink-0">
