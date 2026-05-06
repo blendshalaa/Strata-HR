@@ -182,23 +182,55 @@ const DocumentsPage = () => {
                 </div>
             )}
 
-            {/* Filters */}
-            <div className="flex flex-wrap items-center gap-4">
-                <div className="relative flex-1 min-w-[240px] max-w-sm">
+            {/* Category Tabs + Search */}
+            <div className="space-y-3">
+                {/* Search bar */}
+                <div className="relative max-w-sm">
                     <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
                     <input type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
                         className="w-full pl-10 pr-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 text-sm font-medium outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all shadow-sm"
                         placeholder={t('documents.searchDocuments')} />
                 </div>
-                <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-md shadow-sm">
-                        <Filter className="w-4 h-4 text-zinc-400" />
-                        <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)}
-                            className="bg-transparent text-zinc-900 text-sm font-medium outline-none border-none cursor-pointer">
-                            <option value="">{t('documents.allCategories')}</option>
-                            {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-                        </select>
-                    </div>
+
+                {/* Category tab pills */}
+                <div className="flex flex-wrap gap-2">
+                    <button
+                        onClick={() => setFilterCategory('')}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-bold uppercase tracking-wider border transition-colors ${
+                            filterCategory === ''
+                                ? 'bg-zinc-900 text-white border-zinc-900'
+                                : 'bg-white text-zinc-500 border-zinc-200 hover:border-zinc-400'
+                        }`}
+                    >
+                        All
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${
+                            filterCategory === '' ? 'bg-white/20 text-white' : 'bg-zinc-100 text-zinc-500'
+                        }`}>{documents.length}</span>
+                    </button>
+                    {CATEGORIES.map(cat => {
+                        const count = documents.filter(d => d.category === cat.value).length;
+                        if (count === 0) return null;
+                        const isActive = filterCategory === cat.value;
+                        return (
+                            <button
+                                key={cat.value}
+                                onClick={() => setFilterCategory(isActive ? '' : cat.value)}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-bold uppercase tracking-wider border transition-colors ${
+                                    isActive ? 'bg-zinc-900 text-white border-zinc-900' : `${cat.color} hover:opacity-80`
+                                }`}
+                            >
+                                {cat.label}
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${
+                                    isActive ? 'bg-white/20 text-white' : 'bg-white/60'
+                                }`}>{count}</span>
+                            </button>
+                        );
+                    })}
+                    {filterCategory && (
+                        <span className="text-[12px] text-zinc-400 font-medium self-center">
+                            {filtered.length} result{filtered.length !== 1 ? 's' : ''}
+                        </span>
+                    )}
                 </div>
             </div>
 

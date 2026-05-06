@@ -20,7 +20,8 @@ import {
   AlertOctagon,
   ShieldAlert,
   AlertTriangle,
-  UserCheck
+  UserCheck,
+  X
 } from 'lucide-react';
 import api from '../services/api';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -434,10 +435,14 @@ const OnboardingWidget = () => {
   const { t } = useTranslation();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [dismissed, setDismissed] = useState(() => {
+    return localStorage.getItem('onboarding_dismissed') === 'true';
+  });
+  const [autoDismissing, setAutoDismissing] = useState(false);
 
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    if (!dismissed) fetchTasks();
+  }, [dismissed]);
 
   const fetchTasks = async () => {
     try {
@@ -453,13 +458,25 @@ const OnboardingWidget = () => {
   const handleToggle = async (taskId) => {
     try {
       const res = await api.put(`/onboarding/${taskId}`);
-      setTasks(tasks.map(t => t.id === taskId ? res.data.task : t));
+      const updated = tasks.map(t => t.id === taskId ? res.data.task : t);
+      setTasks(updated);
+      // Auto-dismiss 3s after all tasks complete
+      const allDone = updated.every(t => t.is_completed);
+      if (allDone) {
+        setAutoDismissing(true);
+        setTimeout(() => handleDismiss(), 3000);
+      }
     } catch (err) {
       console.error('Failed to toggle task status', err);
     }
   };
 
-  if (loading) return null;
+  const handleDismiss = () => {
+    localStorage.setItem('onboarding_dismissed', 'true');
+    setDismissed(true);
+  };
+
+  if (dismissed || loading) return null;
   if (tasks.length === 0) return null;
 
   const completed = tasks.filter(t => t.is_completed).length;
@@ -467,8 +484,17 @@ const OnboardingWidget = () => {
   const isAllDone = completed === tasks.length;
 
   return (
-    <div className="card mb-6">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+    <div className="card mb-6 relative">
+      {/* Dismiss button */}
+      <button
+        onClick={handleDismiss}
+        className="absolute top-4 right-4 p-1.5 text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 rounded-md transition-colors"
+        title="Dismiss permanently"
+      >
+        <X className="w-4 h-4" />
+      </button>
+
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6 pr-8">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-zinc-100 rounded-md border border-zinc-200">
             <Trophy className={`w-4 h-4 ${isAllDone ? 'text-amber-500' : 'text-zinc-500'}`} />
@@ -479,7 +505,11 @@ const OnboardingWidget = () => {
               {isAllDone && <span className="text-[10px] font-medium px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full">{t('common.completed')}</span>}
             </h3>
             <p className="text-[13px] text-zinc-500">
-              {isAllDone ? t('dashboard.completedAllTasks') : t('dashboard.letsGetSetUp')}
+              {autoDismissing
+                ? 'All done! Dismissing in a moment…'
+                : isAllDone
+                ? t('dashboard.completedAllTasks')
+                : t('dashboard.letsGetSetUp')}
             </p>
           </div>
         </div>
@@ -491,7 +521,7 @@ const OnboardingWidget = () => {
           </div>
           <div className="h-1.5 w-full md:w-32 bg-zinc-100 rounded-full overflow-hidden shrink-0">
             <div
-              className="h-full bg-zinc-900 transition-all duration-1000 ease-out"
+              className={`h-full transition-all duration-1000 ease-out ${isAllDone ? 'bg-emerald-500' : 'bg-zinc-900'}`}
               style={{ width: `${progress}%` }}
             />
           </div>
