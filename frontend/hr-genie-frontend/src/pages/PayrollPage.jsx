@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { DollarSign, FileText, CheckCircle, Clock, Download, Zap } from 'lucide-react';
+import { DollarSign, FileText, CheckCircle, Clock, Download, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
 import PayrollModal from '../components/modals/PayrollModal';
 import PayslipModal from '../components/modals/PayslipModal';
+import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { useToast } from '../context/ToastContext';
 import { useTranslation } from 'react-i18next';
 
@@ -15,14 +16,30 @@ const PayrollPage = () => {
     const [selectedPayslip, setSelectedPayslip] = useState(null);
     const [isUpdating, setIsUpdating] = useState(null);
     const [filterStatus, setFilterStatus] = useState('all');
+    const [confirmPayId, setConfirmPayId] = useState(null);
+
+    // Month navigation: 0 = current month, -1 = last month, etc.
+    const [monthOffset, setMonthOffset] = useState(0);
+
+    const getMonthRange = () => {
+        const d = new Date();
+        d.setMonth(d.getMonth() + monthOffset);
+        const y = d.getFullYear();
+        const m = d.getMonth();
+        const from = new Date(y, m, 1).toISOString().split('T')[0];
+        const to = new Date(y, m + 1, 0).toISOString().split('T')[0];
+        const label = new Date(y, m, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+        return { from, to, label };
+    };
 
     useEffect(() => {
         fetchPayrolls();
-    }, []);
+    }, [monthOffset]);
 
     const fetchPayrolls = async () => {
         try {
-            const res = await api.get('/payroll');
+            const { from, to } = getMonthRange();
+            const res = await api.get('/payroll', { params: { from, to } });
             setPayrolls(res.data.payrolls || []);
         } catch (err) {
             console.error('Error fetching payroll', err);
@@ -34,6 +51,7 @@ const PayrollPage = () => {
 
     const handleMarkAsPaid = async (payrollId) => {
         setIsUpdating(payrollId);
+        setConfirmPayId(null);
         try {
             await api.put(`/payroll/${payrollId}/pay`, { status: 'paid' });
             setPayrolls(prev =>
@@ -129,6 +147,28 @@ const PayrollPage = () => {
                 </div>
             </div>
 
+            {/* Month navigation */}
+            <div className="flex items-center justify-between bg-white border border-zinc-200 rounded-md px-5 py-3 shadow-sm">
+                <button onClick={() => setMonthOffset(o => o - 1)} className="p-1.5 hover:bg-zinc-100 rounded-md transition-colors">
+                    <ChevronLeft className="w-5 h-5 text-zinc-600" />
+                </button>
+                <div className="text-center">
+                    <p className="text-[15px] font-black text-zinc-900">{getMonthRange().label}</p>
+                    {monthOffset !== 0 && (
+                        <button onClick={() => setMonthOffset(0)} className="text-[11px] text-zinc-400 hover:text-zinc-700 font-bold uppercase tracking-wider mt-0.5">
+                            Back to current
+                        </button>
+                    )}
+                </div>
+                <button
+                    onClick={() => setMonthOffset(o => o + 1)}
+                    disabled={monthOffset >= 0}
+                    className="p-1.5 hover:bg-zinc-100 rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                    <ChevronRight className="w-5 h-5 text-zinc-600" />
+                </button>
+            </div>
+
             {/* Filter bar */}
             <div className="flex items-center gap-3">
                 <p className="text-[11px] font-black text-zinc-400 uppercase tracking-widest">Filter:</p>
@@ -185,7 +225,7 @@ const PayrollPage = () => {
                                                     <Clock className="w-3 h-3" /> {t('common.pending')}
                                                 </span>
                                                 <button
-                                                    onClick={() => handleMarkAsPaid(pay.id)}
+                                                    onClick={() => setConfirmPayId(pay.id)}
                                                     disabled={isUpdating === pay.id}
                                                     className="px-2.5 py-1 text-[11px] font-bold text-white bg-zinc-900 rounded-md hover:bg-zinc-800 transition-colors disabled:opacity-50 whitespace-nowrap uppercase tracking-wider"
                                                 >
@@ -251,7 +291,7 @@ const PayrollPage = () => {
                             </div>
                             <div className="flex items-center gap-2 pt-3 border-t border-zinc-100">
                                 {pay.status !== 'paid' && (
-                                    <button onClick={() => handleMarkAsPaid(pay.id)} disabled={isUpdating === pay.id}
+                                    <button onClick={() => setConfirmPayId(pay.id)} disabled={isUpdating === pay.id}
                                         className="flex-1 py-1.5 text-[12px] font-bold uppercase tracking-wider text-white bg-zinc-900 rounded-md hover:bg-zinc-800 transition-colors disabled:opacity-50">
                                         {isUpdating === pay.id ? t('common.updating') : t('payroll.markAsPaid')}
                                     </button>
@@ -268,6 +308,14 @@ const PayrollPage = () => {
 
             <PayrollModal isOpen={isPayrollModalOpen} onClose={() => setIsPayrollModalOpen(false)} onPayrollAdded={(newPayroll) => setPayrolls([newPayroll, ...payrolls])} />
             <PayslipModal isOpen={!!selectedPayslip} onClose={() => setSelectedPayslip(null)} payroll={selectedPayslip} />
+            <ConfirmDialog
+                isOpen={!!confirmPayId}
+                onClose={() => setConfirmPayId(null)}
+                onConfirm={() => handleMarkAsPaid(confirmPayId)}
+                title="Mark as Paid?"
+                message={`This will mark the payroll entry for ${payrolls.find(p => p.id === confirmPayId)?.employee_name || 'this employee'} as paid. This action cannot be undone.`}
+                confirmLabel="Mark as Paid"
+            />
         </div>
     );
 };

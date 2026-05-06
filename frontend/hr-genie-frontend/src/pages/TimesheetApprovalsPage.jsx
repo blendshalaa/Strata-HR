@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle2, XCircle, Clock, User, Calendar, ShieldAlert, Download, Edit3, X, Save, FileText } from 'lucide-react';
+import { CheckCircle2, XCircle, Clock, User, Calendar, ShieldAlert, Download, Edit3, X, Save, FileText, CheckCheck } from 'lucide-react';
 import api from '../services/api';
 import { useToast } from '../context/ToastContext';
 import { useTranslation } from 'react-i18next';
@@ -25,6 +25,7 @@ const TimesheetApprovalsPage = () => {
     const [editingTs, setEditingTs] = useState(null);
     const [editForm, setEditForm] = useState({ clock_in: '', clock_out: '', notes: '' });
     const [editLoading, setEditLoading] = useState(false);
+    const [approveAllLoading, setApproveAllLoading] = useState(false);
 
     useEffect(() => {
         if (!isHR) { navigate('/dashboard'); return; }
@@ -84,6 +85,21 @@ const TimesheetApprovalsPage = () => {
             toast.error(t('timesheetApprovals.failedToUpdate'));
         } finally {
             setActionLoading(null);
+        }
+    };
+
+    const handleApproveAll = async () => {
+        const pendingIds = timesheets.filter(t => t.status === 'pending').map(t => t.id);
+        if (!pendingIds.length) return;
+        setApproveAllLoading(true);
+        try {
+            await Promise.all(pendingIds.map(id => api.put(`/attendance/${id}/status`, { status: 'approved' })));
+            setTimesheets(prev => prev.map(t => pendingIds.includes(t.id) ? { ...t, status: 'approved' } : t));
+            toast.success(`${pendingIds.length} timesheets approved`);
+        } catch (err) {
+            toast.error(t('timesheetApprovals.failedToUpdate'));
+        } finally {
+            setApproveAllLoading(false);
         }
     };
 
@@ -149,20 +165,34 @@ const TimesheetApprovalsPage = () => {
                     <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-1">{t('timesheetApprovals.title')}</h1>
                     <p className="text-zinc-500 text-sm">{t('timesheetApprovals.subtitle')}</p>
                 </div>
-                <button
-                    onClick={async () => {
-                        try {
-                            const res = await api.get('/export/timesheets', { responseType: 'blob' });
-                            const url = window.URL.createObjectURL(new Blob([res.data]));
-                            const a = document.createElement('a'); a.href = url; a.download = 'timesheets_export.csv'; a.click();
-                            window.URL.revokeObjectURL(url);
-                            toast.success(t('timesheetApprovals.csvDownloaded'));
-                        } catch { toast.error(t('timesheetApprovals.exportFailed')); }
-                    }}
-                    className="flex items-center gap-2 bg-white border border-zinc-200 text-zinc-700 px-4 py-2.5 rounded-md hover:bg-zinc-50 font-bold text-sm shadow-sm transition-colors"
-                >
-                    <Download className="w-4 h-4" /> {t('timesheetApprovals.exportCsv')}
-                </button>
+                <div className="flex items-center gap-2">
+                    {pending.length > 0 && (
+                        <button
+                            onClick={handleApproveAll}
+                            disabled={approveAllLoading}
+                            className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2.5 rounded-md hover:bg-emerald-700 font-bold text-sm shadow-sm transition-colors disabled:opacity-50"
+                        >
+                            {approveAllLoading
+                                ? <><div className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" /> Approving...</>
+                                : <><CheckCheck className="w-4 h-4" /> Approve All ({pending.length})</>
+                            }
+                        </button>
+                    )}
+                    <button
+                        onClick={async () => {
+                            try {
+                                const res = await api.get('/export/timesheets', { responseType: 'blob' });
+                                const url = window.URL.createObjectURL(new Blob([res.data]));
+                                const a = document.createElement('a'); a.href = url; a.download = 'timesheets_export.csv'; a.click();
+                                window.URL.revokeObjectURL(url);
+                                toast.success(t('timesheetApprovals.csvDownloaded'));
+                            } catch { toast.error(t('timesheetApprovals.exportFailed')); }
+                        }}
+                        className="flex items-center gap-2 bg-white border border-zinc-200 text-zinc-700 px-4 py-2.5 rounded-md hover:bg-zinc-50 font-bold text-sm shadow-sm transition-colors"
+                    >
+                        <Download className="w-4 h-4" /> {t('timesheetApprovals.exportCsv')}
+                    </button>
+                </div>
             </div>
 
             {/* Filters */}

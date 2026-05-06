@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Plus, X, Clock, Users, Trash2, Edit3, Save } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, X, Clock, Users, Trash2, Edit3, Save, Copy } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import api from '../services/api';
@@ -40,6 +40,7 @@ const ShiftSchedulePage = () => {
 
     // Delete confirm
     const [deleteConfirm, setDeleteConfirm] = useState(null);
+    const [copyLoading, setCopyLoading] = useState(false);
 
     // Week calculation
     const weekDays = useMemo(() => {
@@ -105,6 +106,25 @@ const ShiftSchedulePage = () => {
         return map;
     }, [shifts]);
 
+    // Compute weekly hours per employee
+    const weeklyHours = useMemo(() => {
+        const map = {};
+        Object.entries(employeeShifts).forEach(([uid, emp]) => {
+            let total = 0;
+            Object.values(emp.shifts).forEach(dayShifts => {
+                dayShifts.forEach(s => {
+                    if (s.start_time && s.end_time) {
+                        const [sh, sm] = s.start_time.split(':').map(Number);
+                        const [eh, em] = s.end_time.split(':').map(Number);
+                        total += (eh * 60 + em - (sh * 60 + sm)) / 60;
+                    }
+                });
+            });
+            map[uid] = total;
+        });
+        return map;
+    }, [employeeShifts]);
+
     const employeeIds = Object.keys(employeeShifts);
 
     const handleCreate = async (e) => {
@@ -148,6 +168,54 @@ const ShiftSchedulePage = () => {
             toast.error(t('shifts.failedToDelete'));
         } finally {
             setDeleteConfirm(null);
+        }
+    };
+
+    const handleCopyLastWeek = async () => {
+        if (weekOffset !== 0) {
+            toast.error('Can only copy to current week');
+            return;
+        }
+        setCopyLoading(true);
+        try {
+            // Fetch last week's shifts
+            const lastWeekFrom = new Date(weekDays[0].date);
+            lastWeekFrom.setDate(lastWeekFrom.getDate() - 7);
+            const lastWeekTo = new Date(weekDays[6].date);
+            lastWeekTo.setDate(lastWeekTo.getDate() - 7);
+            const res = await api.get('/shifts', {
+                params: {
+                    from: lastWeekFrom.toISOString().split('T')[0],
+                    to: lastWeekTo.toISOString().split('T')[0]
+                }
+            });
+            const lastWeekShifts = res.data.shifts || [];
+            if (!lastWeekShifts.length) {
+                toast.error('No shifts found last week to copy');
+                return;
+            }
+            // Re-create each shift 7 days forward
+            const created = await Promise.all(
+                lastWeekShifts.map(s => {
+                    const newDate = new Date(s.shift_date);
+                    newDate.setDate(newDate.getDate() + 7);
+                    return api.post('/shifts', {
+                        user_id: s.user_id,
+                        shift_date: newDate.toISOString().split('T')[0],
+                        start_time: s.start_time,
+                        end_time: s.end_time,
+                        shift_type: s.shift_type,
+                        notes: s.notes || ''
+                    });
+                })
+            );
+            const newShifts = created.map(r => r.data.shift).filter(Boolean);
+            setShifts(prev => [...prev, ...newShifts]);
+            toast.success(`${newShifts.length} shifts copied from last week`);
+        } catch (err) {
+            toast.error(err.response?.data?.error || 'Failed to copy shifts');
+        } finally {
+            setCopyLoading(false);
         }
     };
 
@@ -221,6 +289,18 @@ const ShiftSchedulePage = () => {
                         <button onClick={() => setWeekOffset(0)} className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-zinc-600 border border-zinc-200 rounded-md hover:bg-zinc-50 transition-colors">
                             {t('shifts.thisWeek')}
                         </button>
+                        {canManage && weekOffset === 0 && (
+                            <button
+                                onClick={handleCopyLastWeek}
+                                disabled={copyLoading}
+                                className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-zinc-600 border border-zinc-200 rounded-md hover:bg-zinc-50 transition-colors disabled:opacity-50"
+                            >
+                                {copyLoading
+                                    ? <div className="w-3 h-3 border border-zinc-400 border-t-zinc-900 rounded-full animate-spin" />
+                                    : <Copy className="w-3 h-3" />}
+                                Copy Last Week
+                            </button>
+                        )}
                     </div>
                 </div>
 
@@ -237,6 +317,7 @@ const ShiftSchedulePage = () => {
                                         <p className={`text-[14px] font-black mt-0.5 ${day.isToday ? 'text-zinc-900' : 'text-zinc-600'}`}>{day.dayNum}</p>
                                     </th>
                                 ))}
+                                <th className="px-3 py-3 text-center text-[10px] font-black uppercase tracking-widest text-zinc-400 w-[60px]">Total</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -284,6 +365,12 @@ const ShiftSchedulePage = () => {
                                                 </td>
                                             );
                                         })}
+                                        {/* Weekly total */}
+                                        <td className="px-3 py-2 text-center align-middle">
+                                            <span className={`text-[12px] font-black ${
+                                                weeklyHours[uid] > 40 ? 'text-red-600' : 'text-zinc-900'
+                                            }`}>{weeklyHours[uid]?.toFixed(1) ?? '0.0'}h</span>
+                                        </td>
                                     </tr>
                                 );
                             })}
