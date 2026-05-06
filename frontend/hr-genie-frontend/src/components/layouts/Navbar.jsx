@@ -2,6 +2,7 @@ import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Menu, LogOut, User, ChevronDown, Globe } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import NotificationBell from '../notifications/NotificationBell';
 
@@ -14,6 +15,7 @@ const LANGUAGES = [
 const Navbar = ({ onMenuClick }) => {
   const { user, logout } = useAuth();
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -135,7 +137,7 @@ const Navbar = ({ onMenuClick }) => {
 
                   <div className="border-t border-zinc-100 px-1.5 pt-1 space-y-0.5">
                     <button
-                      onClick={() => { setDropdownOpen(false); window.location.href = '/profile'; }}
+                      onClick={() => { setDropdownOpen(false); navigate('/profile'); }}
                       className="w-full flex items-center gap-2 px-2.5 py-1.5 text-[13px] text-zinc-700 hover:bg-zinc-100 rounded-md transition-colors font-medium"
                     >
                       <User className="w-3.5 h-3.5" />
