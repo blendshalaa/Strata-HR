@@ -14,6 +14,7 @@ const PayrollPage = () => {
     const [isPayrollModalOpen, setIsPayrollModalOpen] = useState(false);
     const [selectedPayslip, setSelectedPayslip] = useState(null);
     const [isUpdating, setIsUpdating] = useState(null);
+    const [filterStatus, setFilterStatus] = useState('all');
 
     useEffect(() => {
         fetchPayrolls();
@@ -73,6 +74,18 @@ const PayrollPage = () => {
         </div>
     );
 
+    // Summary stats computed from loaded data
+    const totalPending = payrolls
+        .filter(p => p.status === 'pending')
+        .reduce((s, p) => s + parseFloat(p.net_salary || 0), 0);
+    const thisMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
+    const totalPaidThisMonth = payrolls
+        .filter(p => p.status === 'paid' && p.pay_period_end?.slice(0, 7) === thisMonth)
+        .reduce((s, p) => s + parseFloat(p.net_salary || 0), 0);
+    const uniqueEmployees = new Set(payrolls.map(p => p.user_id)).size;
+
+    const filteredPayrolls = filterStatus === 'all' ? payrolls : payrolls.filter(p => p.status === filterStatus);
+
     return (
         <div className="space-y-6 animate-fadeIn">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -97,6 +110,44 @@ const PayrollPage = () => {
                 </div>
             </div>
 
+            {/* Summary Stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
+                    <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">Pending Payout</p>
+                    <p className="text-2xl font-black text-amber-600">${totalPending.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
+                    <p className="text-[11px] text-zinc-400 mt-1">{payrolls.filter(p => p.status === 'pending').length} pending entries</p>
+                </div>
+                <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
+                    <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">Paid This Month</p>
+                    <p className="text-2xl font-black text-emerald-600">${totalPaidThisMonth.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
+                    <p className="text-[11px] text-zinc-400 mt-1">{payrolls.filter(p => p.status === 'paid' && p.pay_period_end?.slice(0, 7) === thisMonth).length} payslips</p>
+                </div>
+                <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
+                    <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">Employees</p>
+                    <p className="text-2xl font-black text-zinc-900">{uniqueEmployees}</p>
+                    <p className="text-[11px] text-zinc-400 mt-1">on payroll</p>
+                </div>
+            </div>
+
+            {/* Filter bar */}
+            <div className="flex items-center gap-3">
+                <p className="text-[11px] font-black text-zinc-400 uppercase tracking-widest">Filter:</p>
+                {['all', 'pending', 'paid'].map(s => (
+                    <button
+                        key={s}
+                        onClick={() => setFilterStatus(s)}
+                        className={`px-3 py-1.5 rounded-md text-[12px] font-bold uppercase tracking-wider transition-colors border ${
+                            filterStatus === s
+                                ? 'bg-zinc-900 text-white border-zinc-900'
+                                : 'bg-white text-zinc-500 border-zinc-200 hover:border-zinc-400'
+                        }`}
+                    >
+                        {s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
+                    </button>
+                ))}
+                <span className="text-[12px] text-zinc-400 ml-auto">{filteredPayrolls.length} record{filteredPayrolls.length !== 1 ? 's' : ''}</span>
+            </div>
+
             {/* Desktop Table */}
             <div className="card p-0 overflow-hidden hidden md:block">
                 <div className="px-6 py-4 border-b border-zinc-200 bg-zinc-50/50">
@@ -116,7 +167,7 @@ const PayrollPage = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-zinc-200">
-                            {payrolls.map(pay => (
+                            {filteredPayrolls.map(pay => (
                                 <tr key={pay.id} className="bg-white hover:bg-zinc-50 transition-colors">
                                     <td className="py-3.5 px-5 font-bold text-zinc-900 text-[13px]">{pay.employee_name}</td>
                                     <td className="py-3.5 px-5 text-right text-[13px] text-zinc-600">${parseFloat(pay.base_salary).toLocaleString()}</td>
@@ -154,7 +205,7 @@ const PayrollPage = () => {
                                     </td>
                                 </tr>
                             ))}
-                            {payrolls.length === 0 && (
+                            {filteredPayrolls.length === 0 && (
                                 <tr>
                                     <td colSpan="7" className="py-12 text-center text-zinc-500 text-[13px]">{t('payroll.noPayrollRecords')}</td>
                                 </tr>
@@ -167,10 +218,10 @@ const PayrollPage = () => {
             {/* Mobile Cards */}
             <div className="md:hidden space-y-3">
                 <h2 className="text-[14px] font-bold text-zinc-900">{t('payroll.recentPayrolls')}</h2>
-                {payrolls.length === 0 ? (
+                {filteredPayrolls.length === 0 ? (
                     <div className="card p-8 text-center text-zinc-500 text-[13px]">{t('payroll.noPayrollRecords')}</div>
                 ) : (
-                    payrolls.map(pay => (
+                    filteredPayrolls.map(pay => (
                         <div key={pay.id} className="card p-4">
                             <div className="flex items-center justify-between mb-3">
                                 <span className="text-zinc-900 font-bold text-[14px]">{pay.employee_name}</span>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { analyticsAPI, leaveAPI } from '../services/api';
 import StatsCard from '../components/dashboard/StatsCard';
+import TimeClockWidget from '../components/dashboard/TimeClockWidget';
 import {
   MessageSquare,
   Calendar,
@@ -15,11 +16,11 @@ import {
   CheckCircle2,
   Circle,
   Trophy,
-  Play,
-  Square,
   Clock,
   AlertOctagon,
-  ShieldAlert
+  ShieldAlert,
+  AlertTriangle,
+  UserCheck
 } from 'lucide-react';
 import api from '../services/api';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -220,6 +221,95 @@ const DashboardPage = () => {
 
       {/* Flight Risk Analytics */}
       {isHR && <FlightRiskWidget />}
+
+      {/* HR Attention + Attendance Today */}
+      {isHR && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Needs Your Attention */}
+          <div className="card">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="p-2 bg-amber-50 rounded-md border border-amber-200">
+                <AlertTriangle className="w-4 h-4 text-amber-600" />
+              </div>
+              <div>
+                <h3 className="text-[14px] font-bold text-zinc-900">Needs Your Attention</h3>
+                <p className="text-[12px] text-zinc-500 mt-0.5">Pending items requiring action</p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <button
+                onClick={() => navigate('/leave/approvals')}
+                className={`w-full flex items-center justify-between p-3 rounded-md border transition-all hover:shadow-sm group ${
+                  stats?.stats?.pending_leave_requests > 0
+                    ? 'bg-amber-50 border-amber-200 hover:border-amber-300'
+                    : 'bg-zinc-50 border-zinc-200 hover:border-zinc-300'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Calendar className={`w-4 h-4 ${stats?.stats?.pending_leave_requests > 0 ? 'text-amber-600' : 'text-zinc-400'}`} />
+                  <span className="text-[13px] font-medium text-zinc-900">Pending Leave Requests</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`text-[13px] font-black ${
+                    stats?.stats?.pending_leave_requests > 0 ? 'text-amber-700' : 'text-zinc-400'
+                  }`}>{stats?.stats?.pending_leave_requests ?? 0}</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-zinc-400 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </button>
+              <button
+                onClick={() => navigate('/timesheets/approvals')}
+                className={`w-full flex items-center justify-between p-3 rounded-md border transition-all hover:shadow-sm group ${
+                  stats?.stats?.pending_timesheets > 0
+                    ? 'bg-amber-50 border-amber-200 hover:border-amber-300'
+                    : 'bg-zinc-50 border-zinc-200 hover:border-zinc-300'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Clock className={`w-4 h-4 ${stats?.stats?.pending_timesheets > 0 ? 'text-amber-600' : 'text-zinc-400'}`} />
+                  <span className="text-[13px] font-medium text-zinc-900">Pending Timesheet Approvals</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`text-[13px] font-black ${
+                    stats?.stats?.pending_timesheets > 0 ? 'text-amber-700' : 'text-zinc-400'
+                  }`}>{stats?.stats?.pending_timesheets ?? 0}</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-zinc-400 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </button>
+            </div>
+          </div>
+
+          {/* Attendance Today */}
+          <div className="card">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="p-2 bg-emerald-50 rounded-md border border-emerald-200">
+                <UserCheck className="w-4 h-4 text-emerald-600" />
+              </div>
+              <div>
+                <h3 className="text-[14px] font-bold text-zinc-900">Attendance Today</h3>
+                <p className="text-[12px] text-zinc-500 mt-0.5">{new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}</p>
+              </div>
+            </div>
+            <div className="flex items-end gap-4 mb-4">
+              <div>
+                <span className="text-4xl font-black text-zinc-900">{stats?.stats?.attendance_today ?? 0}</span>
+                <span className="text-lg font-bold text-zinc-400 ml-1">/ {stats?.stats?.total_users ?? 0}</span>
+              </div>
+              <span className="text-[12px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">clocked in</span>
+            </div>
+            <div className="h-2.5 bg-zinc-100 rounded-full overflow-hidden mb-2">
+              <div
+                className="h-full bg-emerald-500 rounded-full transition-all duration-700"
+                style={{ width: `${stats?.stats?.total_users > 0 ? Math.round((stats.stats.attendance_today / stats.stats.total_users) * 100) : 0}%` }}
+              />
+            </div>
+            <p className="text-[12px] text-zinc-400 font-medium">
+              {stats?.stats?.total_users > 0
+                ? `${Math.round((( stats.stats.attendance_today ?? 0) / stats.stats.total_users) * 100)}% attendance rate today`
+                : 'No employee data'}
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Knowledge Base Preview */}
       {stats?.stats?.total_knowledge_articles > 0 && (
@@ -428,114 +518,6 @@ const OnboardingWidget = () => {
             </span>
           </button>
         ))}
-      </div>
-    </div>
-  );
-};
-
-// Time Clock Widget
-const TimeClockWidget = () => {
-  const { t } = useTranslation();
-  const [activeShift, setActiveShift] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [elapsed, setElapsed] = useState('00:00:00');
-
-  useEffect(() => {
-    fetchStatus();
-  }, []);
-
-  useEffect(() => {
-    let interval;
-    if (activeShift) {
-      interval = setInterval(() => {
-        const start = new Date(activeShift.clock_in).getTime();
-        const now = new Date().getTime();
-        const diff = now - start;
-
-        const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
-        const m = Math.floor((diff / (1000 * 60)) % 60).toString().padStart(2, '0');
-        const s = Math.floor((diff / 1000) % 60).toString().padStart(2, '0');
-
-        setElapsed(`${h}:${m}:${s}`);
-      }, 1000);
-    } else {
-      setElapsed('00:00:00');
-    }
-    return () => clearInterval(interval);
-  }, [activeShift]);
-
-  const fetchStatus = async () => {
-    try {
-      const res = await api.get('/attendance/me');
-      const latest = res.data.timesheets[0];
-      if (latest && !latest.clock_out) {
-        setActiveShift(latest);
-      } else {
-        setActiveShift(null);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handlePunch = async () => {
-    try {
-      setLoading(true);
-      if (activeShift) {
-        await api.post('/attendance/clock-out');
-        setActiveShift(null);
-      } else {
-        const res = await api.post('/attendance/clock-in');
-        setActiveShift(res.data.timesheet);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading && !activeShift && elapsed === '00:00:00') {
-    return <div className="card h-full flex items-center justify-center"><div className="w-5 h-5 border-2 border-zinc-900 rounded-full animate-spin border-t-transparent" /></div>;
-  }
-
-  const isClockedIn = !!activeShift;
-
-  return (
-    <div className={`card h-full flex flex-col items-center justify-center p-8 transition-colors ${isClockedIn ? 'bg-zinc-50 border-zinc-200' : ''}`}>
-      <div className="mb-2 text-center">
-        <h3 className="text-zinc-900 font-bold text-[16px] mb-1">{isClockedIn ? t('dashboard.shiftInProgress') : t('dashboard.readyToWork')}</h3>
-        <p className="text-zinc-500 text-[13px]">{isClockedIn ? 'Click "Clock Out" when you finish your shift' : 'Click "Clock In" to start tracking your work hours'}</p>
-      </div>
-
-      <div className={`text-4xl sm:text-5xl font-black tabular-nums tracking-tight my-6 ${isClockedIn ? 'text-emerald-600' : 'text-zinc-400'}`}>
-        {elapsed}
-      </div>
-
-      <button
-        onClick={handlePunch}
-        disabled={loading}
-        className={`w-full max-w-[200px] flex items-center justify-center gap-2 py-3.5 rounded-md font-semibold text-sm transition-all ${isClockedIn
-          ? 'bg-white text-zinc-900 border border-zinc-300 hover:bg-zinc-100'
-          : 'bg-zinc-900 text-white border border-transparent hover:bg-zinc-800'
-          }`}
-      >
-        {isClockedIn ? (
-          <>
-            <Square className="w-4 h-4 fill-current" /> Clock Out
-          </>
-        ) : (
-          <>
-            <Play className="w-4 h-4 fill-current" /> Clock In
-          </>
-        )}
-      </button>
-
-      <div className="mt-4 flex items-center gap-1.5 text-[12px] font-medium text-zinc-500">
-        <Clock className="w-3.5 h-3.5" />
-        {new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}
       </div>
     </div>
   );

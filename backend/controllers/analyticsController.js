@@ -72,15 +72,32 @@ const getDashboardStats = async (req, res, next) => {
     }
 
     let openPositions = 0;
+    let pendingTimesheets = 0;
+    let attendanceToday = 0;
     if (isAdmin) {
       const openPosResult = await pool.query("SELECT COUNT(*) as count FROM job_postings WHERE status = 'open' AND org_id = $1", [orgId]);
       openPositions = parseInt(openPosResult.rows[0].count);
+
+      const pendingTsResult = await pool.query(
+        "SELECT COUNT(*) as count FROM timesheets WHERE status = 'pending' AND org_id = $1",
+        [orgId]
+      );
+      pendingTimesheets = parseInt(pendingTsResult.rows[0].count);
+
+      const today = new Date().toISOString().split('T')[0];
+      const attendanceResult = await pool.query(
+        'SELECT COUNT(DISTINCT user_id) as count FROM timesheets WHERE org_id = $1 AND DATE(clock_in) = $2',
+        [orgId, today]
+      );
+      attendanceToday = parseInt(attendanceResult.rows[0].count);
     }
 
     res.json({
       stats: {
         total_users: totalUsers,
         pending_leave_requests: pendingLeave,
+        pending_timesheets: pendingTimesheets,
+        attendance_today: attendanceToday,
         total_conversations: totalConversations,
         total_knowledge_articles: totalKnowledge,
         open_positions: openPositions
