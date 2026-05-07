@@ -1,5 +1,7 @@
 const pool = require('../config/database');
 const { sendEmail } = require('../utils/mailer');
+const { payrollPaid } = require('../utils/emailTemplates');
+const { createNotification } = require('./notificationController');
 
 const getAllPayrolls = async (req, res, next) => {
     try {
@@ -99,27 +101,30 @@ const updatePayrollStatus = async (req, res, next) => {
 
         const payroll = result.rows[0];
 
-        // Send email notification to employee if payroll was marked as paid
+        // In-app notification + email to employee when marked as paid
         if (status === 'paid') {
             const userRes = await pool.query('SELECT name, email FROM users WHERE id = $1', [payroll.user_id]);
             const employee = userRes.rows[0];
-            if (employee && employee.email) {
-                const emailHtml = `
-                  <div style="font-family: Arial, sans-serif; max-width: 500px;">
-                    <h2 style="color: #10b981;">Payroll Processed</h2>
-                    <p>Hi ${employee.name},</p>
-                    <p>Your payroll for the period <strong>${new Date(payroll.pay_period_start).toLocaleDateString()} to ${new Date(payroll.pay_period_end).toLocaleDateString()}</strong> has been processed and marked as <strong>paid</strong>.</p>
-                    <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
-                      <tr><td style="padding: 8px; border-bottom: 1px solid #e2e8f0; color: #64748b;">Base Salary</td><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">$${parseFloat(payroll.base_salary).toLocaleString()}</td></tr>
-                      <tr><td style="padding: 8px; border-bottom: 1px solid #e2e8f0; color: #64748b;">Bonus</td><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">$${parseFloat(payroll.bonus).toLocaleString()}</td></tr>
-                      <tr><td style="padding: 8px; border-bottom: 1px solid #e2e8f0; color: #64748b;">Tax Deduction</td><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">$${parseFloat(payroll.tax_deduction).toLocaleString()}</td></tr>
-                      <tr><td style="padding: 8px; font-weight: bold; color: #0f172a;">Net Pay</td><td style="padding: 8px; font-weight: bold; color: #10b981;">$${parseFloat(payroll.net_salary).toLocaleString()}</td></tr>
-                    </table>
-                    <p>You can view and download your full payslip from the HR Genie dashboard.</p>
-                    <p style="color: #94a3b8; font-size: 13px;">— HR Genie</p>
-                  </div>
-                `;
-                sendEmail(employee.email, 'Your Payroll Has Been Processed', emailHtml).catch(console.error);
+
+            // In-app
+            await createNotification(
+                payroll.user_id, 'payroll',
+                'Payroll Processed',
+                `Your payroll has been marked as paid. Net pay: $${parseFloat(payroll.net_salary).toLocaleString()}.`
+            );
+
+            // Email
+            if (employee?.email) {
+                const tmpl = payrollPaid({
+                    employeeName: employee.name,
+                    periodStart: payroll.pay_period_start,
+                    periodEnd: payroll.pay_period_end,
+                    baseSalary: payroll.base_salary,
+                    bonus: payroll.bonus,
+                    taxDeduction: payroll.tax_deduction,
+                    netSalary: payroll.net_salary,
+                });
+                sendEmail(employee.email, tmpl.subject, tmpl.html).catch(console.error);
             }
         }
 

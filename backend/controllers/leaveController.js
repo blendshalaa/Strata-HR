@@ -1,6 +1,7 @@
 const pool = require('../config/database');
 const { createNotification } = require('./notificationController');
 const { sendEmail } = require('../utils/mailer');
+const { leaveSubmitted, leaveDecision } = require('../utils/emailTemplates');
 
 const getMyLeaveRequests = async (req, res, next) => {
   try {
@@ -90,16 +91,30 @@ const createLeaveRequest = async (req, res, next) => {
     const employeeName = userRes.rows[0]?.name || 'An employee';
 
     const hrEmail = process.env.HR_EMAIL_ADDRESS || 'hr@hrgenie.example.com';
-    const emailHtml = `
-        <h2>New Leave Request Requires Approval</h2>
-        <p><strong>Employee:</strong> ${employeeName}</p>
-        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Leave</p>
-        <p><strong>Duration:</strong> ${days} Day(s) (${new Date(start_date).toLocaleDateString()} - ${new Date(end_date).toLocaleDateString()})</p>
-        <p><strong>Reason:</strong> ${reason || 'No reason provided'}</p>
-        <hr>
-        <p>Please log in to the HR Genie dashboard to approve or reject this request.</p>
-    `;
-    sendEmail(hrEmail, `Pending Leave Request: ${employeeName}`, emailHtml).catch(console.error);
+    const tmpl = leaveSubmitted({
+        employeeName,
+        type,
+        days,
+        startDate: start_date,
+        endDate: end_date,
+        reason,
+        dashboardUrl: `${process.env.APP_URL || 'https://hrgenie.app'}/leave/approvals`,
+    });
+    sendEmail(hrEmail, tmpl.subject, tmpl.html).catch(console.error);
+
+    // In-app notif to all HR/admin users in the org
+    try {
+        const hrUsers = await pool.query(
+            `SELECT id FROM users WHERE org_id = $1 AND role IN ('hr', 'admin')`,
+            [req.user.org_id]
+        );
+        await Promise.all(hrUsers.rows.map(u =>
+            createNotification(u.id, 'leave',
+                'New Leave Request',
+                `${employeeName} requested ${days} day${days !== 1 ? 's' : ''} of ${type} leave.`
+            )
+        ));
+    } catch (e) { console.error('Failed to notify HR users:', e); }
 
     res.status(201).json({ message: 'Leave request submitted successfully', leave_request: result.rows[0] });
   } catch (error) {
@@ -163,22 +178,16 @@ const updateLeaveRequestStatus = async (req, res, next) => {
       if (emp?.email) {
         const approverRes = await pool.query('SELECT name FROM users WHERE id = $1', [approverId]);
         const approverName = approverRes.rows[0]?.name || 'HR';
-        const statusColor = status === 'approved' ? '#10b981' : '#ef4444';
-        const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
-        const emailHtml = `
-          <div style="font-family: Arial, sans-serif; max-width: 500px;">
-            <h2 style="color: ${statusColor};">Leave Request ${statusLabel}</h2>
-            <p>Hi ${emp.name},</p>
-            <p>Your <strong>${request.type}</strong> leave request has been <strong style="color: ${statusColor};">${status}</strong> by ${approverName}.</p>
-            <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
-              <tr><td style="padding: 8px; border-bottom: 1px solid #e2e8f0; color: #64748b;">Type</td><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">${request.type.charAt(0).toUpperCase() + request.type.slice(1)}</td></tr>
-              <tr><td style="padding: 8px; border-bottom: 1px solid #e2e8f0; color: #64748b;">Duration</td><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">${request.days} day(s)</td></tr>
-              <tr><td style="padding: 8px; border-bottom: 1px solid #e2e8f0; color: #64748b;">Period</td><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">${new Date(request.start_date).toLocaleDateString()} – ${new Date(request.end_date).toLocaleDateString()}</td></tr>
-            </table>
-            <p style="color: #94a3b8; font-size: 13px;">— HR Genie System</p>
-          </div>
-        `;
-        sendEmail(emp.email, `Leave Request ${statusLabel} – ${request.days} day(s) ${request.type}`, emailHtml).catch(console.error);
+        const tmpl = leaveDecision({
+            employeeName: emp.name,
+            type: request.type,
+            days: request.days,
+            startDate: request.start_date,
+            endDate: request.end_date,
+            status,
+            approverName,
+        });
+        sendEmail(emp.email, tmpl.subject, tmpl.html).catch(console.error);
       }
 
       res.json({ message: `Leave request ${status} successfully`, leave_request: updated.rows[0] });
