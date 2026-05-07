@@ -13,7 +13,7 @@ const ChatPage = lazy(() => import('./pages/ChatPage'));
 const TimesheetApprovalsPage = lazy(() => import('./pages/TimesheetApprovalsPage'));
 const LeavePage = lazy(() => import('./pages/LeavePage'));
 const KnowledgePage = lazy(() => import('./pages/KnowledgePage'));
-const UserManagementPage = lazy(() => import('./pages/UserManagmentPage'));
+const UserManagementPage = lazy(() => import('./pages/UserManagementPage'));
 const LeaveApprovalsPage = lazy(() => import('./pages/LeaveApprovalsPage'));
 const DepartmentsPage = lazy(() => import('./pages/DepartmentsPage'));
 const RecruitmentPage = lazy(() => import('./pages/RecruitmentPage'));

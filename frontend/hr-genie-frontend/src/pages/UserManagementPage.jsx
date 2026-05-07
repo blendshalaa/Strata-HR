@@ -29,9 +29,14 @@ const UserManagementPage = () => {
       navigate('/dashboard');
       return;
     }
-    fetchUsers();
     fetchDepartments();
   }, [isHR]);
+
+  // Fetch users whenever filters change (also runs on mount)
+  useEffect(() => {
+    if (!isHR) return;
+    fetchUsers();
+  }, [isHR, filterDepartment, filterRole]);
 
   const fetchUsers = async () => {
     try {
@@ -55,10 +60,6 @@ const UserManagementPage = () => {
       console.error('Failed to fetch departments:', error);
     }
   };
-
-  useEffect(() => {
-    fetchUsers();
-  }, [filterDepartment, filterRole]);
 
   const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -102,7 +103,21 @@ const UserManagementPage = () => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
-  const getInitialsColor = () => 'bg-zinc-100 border border-zinc-200 text-zinc-900';
+  // Deterministic colour from name so each person always gets the same hue
+  const INITIALS_COLORS = [
+    'bg-blue-100 border-blue-200 text-blue-900',
+    'bg-emerald-100 border-emerald-200 text-emerald-900',
+    'bg-violet-100 border-violet-200 text-violet-900',
+    'bg-amber-100 border-amber-200 text-amber-900',
+    'bg-rose-100 border-rose-200 text-rose-900',
+    'bg-sky-100 border-sky-200 text-sky-900',
+    'bg-orange-100 border-orange-200 text-orange-900',
+    'bg-teal-100 border-teal-200 text-teal-900',
+  ];
+  const getInitialsColor = (name = '') => {
+    const hash = [...name].reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    return INITIALS_COLORS[hash % INITIALS_COLORS.length];
+  };
 
   if (loading) {
     return (
@@ -186,29 +201,29 @@ const UserManagementPage = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
-          <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">{t('users.totalUsers')}</p>
-          <p className="text-2xl font-black text-zinc-900">{users.length}</p>
-        </div>
-        {isAdmin && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
-            <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">{t('users.admins')}</p>
-            <p className="text-2xl font-black text-zinc-900">{users.filter(u => u.role === 'admin').length}</p>
+            <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">{t('users.totalUsers')}</p>
+            <p className="text-2xl font-black text-zinc-900">{users.length}</p>
           </div>
-        )}
-        <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
-          <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">{t('users.hrStaff')}</p>
-          <p className="text-2xl font-black text-zinc-900">{users.filter(u => u.role === 'hr').length}</p>
+          {isAdmin && (
+            <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
+              <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">{t('users.admins')}</p>
+              <p className="text-2xl font-black text-zinc-900">{users.filter(u => u.role === 'admin').length}</p>
+            </div>
+          )}
+          <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
+            <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">{t('users.hrStaff')}</p>
+            <p className="text-2xl font-black text-zinc-900">{users.filter(u => u.role === 'hr').length}</p>
+          </div>
+          <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
+            <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">{t('users.employees')}</p>
+            <p className="text-2xl font-black text-zinc-900">{users.filter(u => u.role === 'employee').length}</p>
+          </div>
         </div>
-        <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
-          <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">Employees</p>
-          <p className="text-2xl font-black text-zinc-900">{users.filter(u => u.role === 'employee').length}</p>
-        </div>
-      </div>
 
-      {/* Users Table */}
-      <div className="bg-white border border-zinc-200 rounded-md overflow-hidden shadow-sm">
+      {/* Desktop Users Table */}
+      <div className="bg-white border border-zinc-200 rounded-md overflow-hidden shadow-sm hidden md:block">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead className="bg-zinc-50 border-b border-zinc-200">
@@ -274,6 +289,56 @@ const UserManagementPage = () => {
         </div>
       </div>
 
+      {/* Mobile User Cards */}
+      <div className="md:hidden space-y-3">
+        {filteredUsers.map((user) => (
+          <div key={user.id} className="bg-white border border-zinc-200 rounded-md p-4 shadow-sm">
+            <div className="flex items-center gap-3 mb-3">
+              <div className={`w-10 h-10 rounded-md flex items-center justify-center font-black text-[12px] border ${getInitialsColor(user.name)}`}>
+                {getInitials(user.name)}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-zinc-900 text-[14px] truncate">{user.name}</p>
+                <p className="text-[12px] text-zinc-500 truncate">{user.email}</p>
+              </div>
+              {getRoleBadge(user.role)}
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-[12px] bg-zinc-50 rounded-md p-3 border border-zinc-100 mb-3">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-wider text-zinc-400 mb-0.5">{t('nav.departments')}</p>
+                <p className="font-medium text-zinc-700">{user.department || <span className="text-zinc-400 italic">{t('common.unassigned')}</span>}</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-wider text-zinc-400 mb-0.5">{t('leave.startDate')}</p>
+                <p className="font-medium text-zinc-700">{user.hire_date ? new Date(user.hire_date).toLocaleDateString() : '—'}</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-wider text-zinc-400 mb-0.5">{t('users.sick')}</p>
+                <p className="font-bold text-zinc-900">{user.sick_leave_balance}d</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-wider text-zinc-400 mb-0.5">{t('users.vacationLabel')}</p>
+                <p className="font-bold text-zinc-900">{user.vacation_balance}d</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-2 border-t border-zinc-100 pt-3">
+              <button onClick={() => handleEdit(user)} className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-bold text-zinc-600 border border-zinc-200 rounded-md hover:bg-zinc-50 transition-colors">
+                <Edit className="w-3.5 h-3.5" /> {t('common.edit')}
+              </button>
+              <button onClick={() => setShowDeleteConfirm(user)} className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-bold text-red-600 border border-red-100 rounded-md hover:bg-red-50 transition-colors">
+                <Trash2 className="w-3.5 h-3.5" /> {t('common.delete')}
+              </button>
+            </div>
+          </div>
+        ))}
+        {filteredUsers.length === 0 && (
+          <div className="bg-white border border-zinc-200 rounded-md p-12 text-center">
+            <Users className="w-10 h-10 text-zinc-200 mx-auto mb-3" />
+            <p className="text-[13px] font-bold text-zinc-500">{t('users.noUsersFound')}</p>
+          </div>
+        )}
+      </div>
+
       {/* Edit User Modal */}
       {showEditModal && editingUser && (
         <EditUserModal
@@ -308,11 +373,11 @@ const UserManagementPage = () => {
               <p className="text-sm text-zinc-500">{t('users.cannotBeUndone')}</p>
             </div>
             <div className="border-t border-zinc-200 p-4 flex gap-3">
-              <button
+            <button
                 onClick={() => setShowDeleteConfirm(null)}
                 className="flex-1 px-4 py-2.5 bg-white text-zinc-700 border border-zinc-200 rounded-md hover:bg-zinc-50 transition-colors font-bold text-sm"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={() => handleDelete(showDeleteConfirm.id)}
@@ -575,6 +640,7 @@ const EditUserModal = ({ user, departments, isAdmin, isHR, onClose, onSuccess })
     name: user.name,
     department: user.department || '',
     role: user.role,
+    hire_date: user.hire_date ? user.hire_date.split('T')[0] : '',
     sick_leave_balance: user.sick_leave_balance,
     vacation_balance: user.vacation_balance,
   });
@@ -659,6 +725,16 @@ const EditUserModal = ({ user, departments, isAdmin, isHR, onClose, onSuccess })
               <option value="hr">HR</option>
               {isAdmin && <option value="admin">Admin</option>}
             </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-zinc-700 mb-1.5">Hire Date</label>
+            <input
+              type="date"
+              value={formData.hire_date}
+              onChange={(e) => setFormData({ ...formData, hire_date: e.target.value })}
+              className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+            />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

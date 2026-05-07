@@ -103,6 +103,12 @@ const updateDepartment = async (req, res, next) => {
 const deleteDepartment = async (req, res, next) => {
     try {
         const { id } = req.params;
+        // First: un-assign all employees in this department so they show as 'Unassigned'
+        await pool.query(
+            'UPDATE users SET department = NULL WHERE department = (SELECT name FROM departments WHERE id = $1 AND org_id = $2) AND org_id = $2',
+            [id, req.user.org_id]
+        );
+
         const deletedDepartment = await pool.query(
             'DELETE FROM departments WHERE id = $1 AND org_id = $2 RETURNING *',
             [id, req.user.org_id]

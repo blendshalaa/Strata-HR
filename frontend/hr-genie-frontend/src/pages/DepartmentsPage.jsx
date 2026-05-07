@@ -32,7 +32,9 @@ const DepartmentsPage = () => {
         } finally { setLoading(false); }
     };
 
-    const getEmployeeCount = (deptName) => users.filter(u => u.department === deptName).length;
+    const getDeptMembers = (deptName) => users.filter(u => u.department === deptName);
+    const getEmployeeCount = (deptName) => getDeptMembers(deptName).length;
+    const unassignedCount = users.filter(u => !u.department).length;
 
     const handleEdit = (dept) => { setEditingDepartment(dept); setIsDeptModalOpen(true); };
 
@@ -80,6 +82,15 @@ const DepartmentsPage = () => {
                         <p className="text-xl font-bold text-zinc-900">{departments.length}</p>
                     </div>
                 </div>
+                {unassignedCount > 0 && (
+                    <div className="card flex items-center gap-3 flex-shrink-0 p-3 sm:p-4 border-amber-200 bg-amber-50">
+                        <div className="p-2 bg-amber-100 rounded-md border border-amber-200"><Users className="w-5 h-5 text-amber-600" /></div>
+                        <div>
+                            <p className="text-[12px] text-amber-600 font-medium">Unassigned</p>
+                            <p className="text-xl font-bold text-amber-900">{unassignedCount}</p>
+                        </div>
+                    </div>
+                )}
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-400 w-5 h-5" />
                     <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('departments.searchDepartments')}
@@ -104,7 +115,29 @@ const DepartmentsPage = () => {
                                     </div>
                                 </div>
                             </div>
-                            <p className="text-zinc-600 text-[13px] mb-5 line-clamp-2 min-h-[2.5rem]">{dept.description || t('common.noDescription')}</p>
+                            <p className="text-zinc-600 text-[13px] mb-4 line-clamp-2 min-h-[2.5rem]">{dept.description || t('common.noDescription')}</p>
+
+                            {/* Member avatar row */}
+                            {getDeptMembers(dept.name).length > 0 && (
+                                <div className="flex items-center gap-1.5 mb-4">
+                                    {getDeptMembers(dept.name).slice(0, 4).map((member) => {
+                                        const initials = member.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                                        return (
+                                            <div key={member.id}
+                                                title={member.name}
+                                                className="w-7 h-7 rounded-md bg-zinc-100 border border-zinc-200 flex items-center justify-center text-[10px] font-black text-zinc-700 shrink-0">
+                                                {initials}
+                                            </div>
+                                        );
+                                    })}
+                                    {getDeptMembers(dept.name).length > 4 && (
+                                        <div className="w-7 h-7 rounded-md bg-zinc-100 border border-zinc-200 flex items-center justify-center text-[10px] font-black text-zinc-500">
+                                            +{getDeptMembers(dept.name).length - 4}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
                             <div className="flex items-center justify-between pt-4 border-t border-zinc-100">
                                 <div className="flex items-center gap-1.5 text-sm">
                                     <div className="px-2 py-0.5 rounded-md bg-zinc-100 border border-zinc-200 text-zinc-600 font-medium text-[11px] flex items-center gap-1">

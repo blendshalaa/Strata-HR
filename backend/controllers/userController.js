@@ -2,6 +2,7 @@ const pool = require('../config/database');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const { sendEmail } = require('../utils/mailer');
+const { newEmployeeRegistered } = require('../utils/emailTemplates');
 
 const getDirectory = async (req, res, next) => {
   try {
@@ -78,7 +79,7 @@ const getUserById = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, department, role, sick_leave_balance, vacation_balance } = req.body;
+    const { name, department, role, sick_leave_balance, vacation_balance, hire_date } = req.body;
 
     if (req.user.id !== parseInt(id) && !['admin', 'hr'].includes(req.user.role)) {
       return res.status(403).json({ error: 'You can only update your own profile' });
@@ -96,8 +97,9 @@ const updateUser = async (req, res, next) => {
     let paramCount = 1;
 
     if (name) { updates.push(`name = $${paramCount}`); params.push(name); paramCount++; }
-    if (department && ['admin', 'hr'].includes(req.user.role)) { updates.push(`department = $${paramCount}`); params.push(department); paramCount++; }
+    if (department !== undefined && ['admin', 'hr'].includes(req.user.role)) { updates.push(`department = $${paramCount}`); params.push(department || null); paramCount++; }
     if (role && req.user.role === 'admin') { updates.push(`role = $${paramCount}`); params.push(role); paramCount++; }
+    if (hire_date !== undefined && ['admin', 'hr'].includes(req.user.role)) { updates.push(`hire_date = $${paramCount}`); params.push(hire_date || null); paramCount++; }
     if (sick_leave_balance !== undefined && ['admin', 'hr'].includes(req.user.role)) { updates.push(`sick_leave_balance = $${paramCount}`); params.push(sick_leave_balance); paramCount++; }
     if (vacation_balance !== undefined && ['admin', 'hr'].includes(req.user.role)) { updates.push(`vacation_balance = $${paramCount}`); params.push(vacation_balance); paramCount++; }
 
@@ -181,21 +183,45 @@ const createUser = async (req, res, next) => {
     const orgRes = await pool.query('SELECT name FROM organizations WHERE id = $1', [currentOrgId]);
     const orgName = orgRes.rows[0]?.name || 'the organization';
 
-    const loginUrl = process.env.FRONTEND_URL || 'http://localhost:5173/login';
-    const emailHtml = `
-      <div style="font-family: Arial, sans-serif; max-width: 500px;">
-        <h2>Welcome to ${orgName}!</h2>
-        <p>Hi ${name},</p>
-        <p>An account has been created for you on HR Genie.</p>
-        <div style="background-color: #f1f5f9; padding: 15px; border-radius: 8px; margin: 15px 0;">
-          <p style="margin: 0 0 10px 0;"><strong>Login email:</strong> ${email}</p>
-          <p style="margin: 0;"><strong>Temporary password:</strong> ${password}</p>
-        </div>
-        <p>Please <a href="${loginUrl}" style="color: #4f46e5; text-decoration: none; font-weight: bold;">click here to log in</a> and change your password immediately.</p>
-        <p style="color: #64748b; font-size: 13px; margin-top: 20px;">— HR Genie</p>
-      </div>
-    `;
-    sendEmail(email, `Your HR Genie Account for ${orgName}`, emailHtml).catch(console.error);
+    // Generate a 24h set-password token so we NEVER send a plaintext password by email
+    const setPasswordToken = crypto.randomBytes(32).toString('hex');
+    const tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    await pool.query(
+      'UPDATE users SET reset_token = $1, reset_token_expires = $2 WHERE id = $3',
+      [setPasswordToken, tokenExpiry, result.rows[0].id]
+    );
+
+    const setPasswordUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${setPasswordToken}`;
+
+    // Branded welcome email — no plaintext password
+    const welcomeTmpl = {
+      subject: `Welcome to ${orgName} — Set Your Password`,
+      html: `<!DOCTYPE html><html><head><meta charset="UTF-8"/></head>
+<body style="margin:0;padding:0;background:#f4f4f5;font-family:'Helvetica Neue',Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f5;padding:32px 0;">
+<tr><td align="center">
+<table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;overflow:hidden;border:1px solid #e4e4e7;">
+<tr><td style="background:#18181b;padding:20px 32px;"><span style="color:#fff;font-size:18px;font-weight:700;">HR Genie</span></td></tr>
+<tr><td style="padding:32px;">
+<h2 style="margin:0 0 8px;font-size:20px;color:#18181b;">Welcome to ${orgName}!</h2>
+<p style="color:#52525b;font-size:14px;line-height:1.6;">Hi <strong>${name}</strong>,<br/>An HR Genie account has been created for you. Click the button below to set your password and access your account.</p>
+<p style="margin:24px 0;"><a href="${setPasswordUrl}" style="background:#18181b;color:#fff;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:700;font-size:14px;display:inline-block;">Set Your Password</a></p>
+<p style="font-size:12px;color:#a1a1aa;">This link expires in 24 hours. If you did not expect this email, please contact your HR team.</p>
+</td></tr>
+<tr><td style="padding:16px 32px;border-top:1px solid #f4f4f5;background:#fafafa;"><p style="margin:0;font-size:12px;color:#a1a1aa;">Automated message from HR Genie. Do not reply.</p></td></tr>
+</table></td></tr></table></body></html>`
+    };
+    sendEmail(email, welcomeTmpl.subject, welcomeTmpl.html).catch(console.error);
+
+    // Notify HR users in org that a new employee registered
+    try {
+      const hrUsers = await pool.query(
+        `SELECT email FROM users WHERE org_id = $1 AND role IN ('hr','admin') AND id != $2`,
+        [currentOrgId, req.user.id]
+      );
+      const hrTmpl = newEmployeeRegistered({ newEmployeeName: name, newEmployeeEmail: email, orgName });
+      hrUsers.rows.forEach(u => sendEmail(u.email, hrTmpl.subject, hrTmpl.html).catch(console.error));
+    } catch (e) { console.error('HR notification failed:', e); }
 
     res.status(201).json({ message: 'User created successfully', user: result.rows[0] });
   } catch (error) {
@@ -230,22 +256,22 @@ const inviteUser = async (req, res, next) => {
 
     const registerUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/register?invite=${org.invite_code}`;
 
-    const emailHtml = `
-      <div style="font-family: Arial, sans-serif; max-width: 500px;">
-        <h2>You're invited to join ${org.name}!</h2>
-        <p>Hi there,</p>
-        <p>You've been invited by HR to join <strong>${org.name}</strong> on HR Genie.</p>
-        <p>Click the link below to create your account. Your organization's invite code will be automatically applied.</p>
-        <p style="margin: 25px 0;">
-          <a href="${registerUrl}" style="background-color: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Accept Invitation</a>
-        </p>
-        <p style="color: #64748b; font-size: 14px;">If the button doesn't work, copy and paste this link into your browser:<br>${registerUrl}</p>
-        <p style="color: #64748b; font-size: 13px; margin-top: 20px;">— HR Genie</p>
-      </div>
-    `;
+    const inviteHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"/></head>
+<body style="margin:0;padding:0;background:#f4f4f5;font-family:'Helvetica Neue',Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f5;padding:32px 0;">
+<tr><td align="center">
+<table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;overflow:hidden;border:1px solid #e4e4e7;">
+<tr><td style="background:#18181b;padding:20px 32px;"><span style="color:#fff;font-size:18px;font-weight:700;">HR Genie</span></td></tr>
+<tr><td style="padding:32px;">
+<h2 style="margin:0 0 8px;font-size:20px;color:#18181b;">You're invited to join ${org.name}</h2>
+<p style="color:#52525b;font-size:14px;line-height:1.6;">Hi there,<br/>You've been invited by HR to join <strong>${org.name}</strong> on HR Genie. Click the button below — your invite code will be applied automatically.</p>
+<p style="margin:24px 0;"><a href="${registerUrl}" style="background:#18181b;color:#fff;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:700;font-size:14px;display:inline-block;">Accept Invitation</a></p>
+<p style="font-size:12px;color:#a1a1aa;">Or copy this link: ${registerUrl}</p>
+</td></tr>
+<tr><td style="padding:16px 32px;border-top:1px solid #f4f4f5;background:#fafafa;"><p style="margin:0;font-size:12px;color:#a1a1aa;">Automated message from HR Genie. Do not reply.</p></td></tr>
+</table></td></tr></table></body></html>`;
 
-    // We await this so we can confirm the invite was actually sent
-    const success = await sendEmail(email, `Invitation to join ${org.name} on HR Genie`, emailHtml);
+    const success = await sendEmail(email, `Invitation to join ${org.name} — HR Genie`, inviteHtml);
     if (!success) {
       return res.status(500).json({ error: 'Failed to send invite email' });
     }
