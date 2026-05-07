@@ -142,18 +142,25 @@ const deleteDocument = async (req, res, next) => {
 
         // Delete file from Cloudinary (fire and forget)
         const fileUrl = doc.rows[0].file_url;
-        if (fileUrl && fileUrl.includes('res.cloudinary.com')) {
+        const publicId = doc.rows[0].cloudinary_public_id;
+        if (publicId) {
+            // Use stored public_id if available (most reliable)
+            cloudinary.uploader.destroy(publicId, { resource_type: 'image' }).catch(() => {});
+            cloudinary.uploader.destroy(publicId, { resource_type: 'raw' }).catch(() => {});
+        } else if (fileUrl && fileUrl.includes('res.cloudinary.com')) {
             try {
-                // extract the public id: folder/filename without extension
-                const urlParts = fileUrl.split('/');
-                const filenameWithExt = urlParts.pop();
-                const folder = urlParts.pop();
-                const filename = filenameWithExt.split('.')[0];
-                const publicId = `${folder}/${filename}`;
-
-                // Try both image and raw
-                cloudinary.uploader.destroy(publicId, { resource_type: 'image' }).catch(() => { });
-                cloudinary.uploader.destroy(publicId, { resource_type: 'raw' }).catch(() => { });
+                // Fallback: extract public_id from URL
+                // URL format: https://res.cloudinary.com/<cloud>/image/upload/v123456/<folder>/<name>.<ext>
+                const uploadIndex = fileUrl.indexOf('/upload/');
+                if (uploadIndex !== -1) {
+                    const afterUpload = fileUrl.substring(uploadIndex + 8); // skip '/upload/'
+                    // Strip version segment if present (v1234567890/...)
+                    const withoutVersion = afterUpload.replace(/^v\d+\//, '');
+                    // Strip extension
+                    const publicIdFull = withoutVersion.replace(/\.[^/.]+$/, '');
+                    cloudinary.uploader.destroy(publicIdFull, { resource_type: 'image' }).catch(() => {});
+                    cloudinary.uploader.destroy(publicIdFull, { resource_type: 'raw' }).catch(() => {});
+                }
             } catch (e) {
                 console.error('Failed to delete from Cloudinary:', e);
             }

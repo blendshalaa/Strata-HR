@@ -1,10 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { useToast } from '../context/ToastContext';
-import { FileText, Upload, Trash2, Download, Filter, Search, FolderOpen } from 'lucide-react';
+import { FileText, FileSpreadsheet, Image, Upload, Trash2, Download, Search, FolderOpen, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
+
+// File-type icon by MIME
+const FileIcon = ({ mime }) => {
+    if (!mime) return <FileText className="w-5 h-5 text-zinc-400" />;
+    if (mime.startsWith('image/')) return <Image className="w-5 h-5 text-sky-500" />;
+    if (mime.includes('pdf')) return <FileText className="w-5 h-5 text-red-500" />;
+    if (mime.includes('sheet') || mime.includes('excel') || mime.includes('csv'))
+        return <FileSpreadsheet className="w-5 h-5 text-emerald-600" />;
+    if (mime.includes('word') || mime.includes('document'))
+        return <FileText className="w-5 h-5 text-blue-500" />;
+    return <FileText className="w-5 h-5 text-zinc-400" />;
+};
+
+// Coloured file badge bg by MIME
+const fileBg = (mime) => {
+    if (!mime) return 'bg-zinc-100';
+    if (mime.startsWith('image/')) return 'bg-sky-50';
+    if (mime.includes('pdf')) return 'bg-red-50';
+    if (mime.includes('sheet') || mime.includes('excel')) return 'bg-emerald-50';
+    if (mime.includes('word') || mime.includes('document')) return 'bg-blue-50';
+    return 'bg-zinc-100';
+};
 
 const CATEGORIES = [
     { value: 'contract', label: 'Contract', color: 'bg-blue-50 text-blue-700 border-blue-200' },
@@ -25,6 +47,7 @@ const DocumentsPage = () => {
     const [loading, setLoading] = useState(true);
     const [showUpload, setShowUpload] = useState(false);
     const [filterCategory, setFilterCategory] = useState('');
+    const [filterEmployee, setFilterEmployee] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [deleteConfirm, setDeleteConfirm] = useState(null);
 
@@ -34,6 +57,9 @@ const DocumentsPage = () => {
     const [uploadUserId, setUploadUserId] = useState('');
     const [uploadFile, setUploadFile] = useState(null);
     const [uploading, setUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [dragOver, setDragOver] = useState(false);
+    const fileInputRef = useRef(null);
 
     // Users list for HR/admin upload targeting
     const [users, setUsers] = useState([]);
@@ -68,6 +94,7 @@ const DocumentsPage = () => {
         if (!uploadName.trim()) { toast.error(t('documents.nameRequired')); return; }
 
         setUploading(true);
+        setUploadProgress(0);
         const formData = new FormData();
         formData.append('file', uploadFile);
         formData.append('name', uploadName);
@@ -76,7 +103,10 @@ const DocumentsPage = () => {
 
         try {
             await api.post('/documents', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+                headers: { 'Content-Type': 'multipart/form-data' },
+                onUploadProgress: (e) => {
+                    if (e.total) setUploadProgress(Math.round((e.loaded / e.total) * 100));
+                }
             });
             toast.success(t('documents.documentUploaded'));
             setShowUpload(false);
@@ -84,6 +114,7 @@ const DocumentsPage = () => {
             setUploadCategory('other');
             setUploadUserId('');
             setUploadFile(null);
+            setUploadProgress(0);
             fetchDocuments();
         } catch (err) {
             toast.error(err.response?.data?.error || t('documents.uploadFailed'));
@@ -91,6 +122,19 @@ const DocumentsPage = () => {
             setUploading(false);
         }
     };
+
+    const handleDrop = useCallback((e) => {
+        e.preventDefault();
+        setDragOver(false);
+        const file = e.dataTransfer.files?.[0];
+        if (file) {
+            setUploadFile(file);
+            if (!uploadName) setUploadName(file.name.replace(/\.[^/.]+$/, ''));
+        }
+    }, [uploadName]);
+
+    const handleDragOver = (e) => { e.preventDefault(); setDragOver(true); };
+    const handleDragLeave = () => setDragOver(false);
 
     const handleDelete = async (id) => {
         try {
@@ -104,9 +148,21 @@ const DocumentsPage = () => {
         }
     };
 
-    const handleDownload = (fileUrl) => {
-        const baseUrl = api.defaults.baseURL?.replace('/api', '') || 'http://localhost:5000';
-        window.open(`${baseUrl}${fileUrl}`, '_blank');
+    // Documents are stored on Cloudinary — the file_url IS the full public URL
+    const handleDownload = (fileUrl, fileName) => {
+        if (!fileUrl) return;
+        // For Cloudinary URLs, add fl_attachment to force download instead of browser preview
+        const downloadUrl = fileUrl.includes('res.cloudinary.com')
+            ? fileUrl.replace('/upload/', '/upload/fl_attachment/')
+            : fileUrl;
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = fileName || 'document';
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     };
 
     const formatFileSize = (bytes) => {
@@ -119,6 +175,7 @@ const DocumentsPage = () => {
     const filtered = documents.filter(d => {
         if (filterCategory && d.category !== filterCategory) return false;
         if (searchTerm && !d.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+        if (filterEmployee && !d.employee_name?.toLowerCase().includes(filterEmployee.toLowerCase())) return false;
         return true;
     });
 
@@ -144,7 +201,12 @@ const DocumentsPage = () => {
             {/* Upload Panel */}
             {showUpload && (
                 <div className="bg-white border border-zinc-200 rounded-md p-6 shadow-sm animate-fadeIn">
-                    <h3 className="text-[14px] font-black text-zinc-900 uppercase tracking-widest mb-5">{t('documents.uploadNewDocument')}</h3>
+                    <div className="flex items-center justify-between mb-5">
+                        <h3 className="text-[14px] font-black text-zinc-900 uppercase tracking-widest">{t('documents.uploadNewDocument')}</h3>
+                        <button onClick={() => setShowUpload(false)} className="p-1.5 hover:bg-zinc-100 rounded-md transition-colors">
+                            <X className="w-4 h-4 text-zinc-400" />
+                        </button>
+                    </div>
                     <form onSubmit={handleUpload} className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
                             <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2">{t('documents.documentName')}</label>
@@ -161,21 +223,78 @@ const DocumentsPage = () => {
                             <div>
                                 <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2">{t('common.employee')}</label>
                                 <select value={uploadUserId} onChange={e => setUploadUserId(e.target.value)} className={inputClass}>
-                                <option value="">{t('common.myself')}</option>
+                                    <option value="">{t('common.myself')}</option>
                                     {users.map(u => <option key={u.id} value={u.id}>{u.name} ({u.email})</option>)}
                                 </select>
                             </div>
                         )}
-                        <div>
+
+                        {/* Drag-and-drop zone */}
+                        <div className={isHR ? '' : 'md:col-span-2'}>
                             <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2">{t('documents.file')}</label>
-                            <input type="file" onChange={e => setUploadFile(e.target.files[0])}
-                                accept=".pdf,.doc,.docx,.xlsx,.xls,.jpg,.jpeg,.png,.webp"
-                                className="w-full text-sm text-zinc-600 file:mr-4 file:py-2.5 file:px-5 file:rounded-md file:border-0 file:bg-zinc-100 file:text-zinc-900 file:text-sm file:font-bold hover:file:bg-zinc-200 file:cursor-pointer cursor-pointer file:transition-colors border border-zinc-200 rounded-md p-1" required />
+                            <div
+                                onDrop={handleDrop}
+                                onDragOver={handleDragOver}
+                                onDragLeave={handleDragLeave}
+                                onClick={() => fileInputRef.current?.click()}
+                                className={`relative border-2 border-dashed rounded-md p-6 text-center cursor-pointer transition-colors ${
+                                    dragOver ? 'border-zinc-900 bg-zinc-50' : 'border-zinc-200 hover:border-zinc-400 bg-white'
+                                }`}
+                            >
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    onChange={e => {
+                                        const f = e.target.files?.[0];
+                                        if (f) {
+                                            setUploadFile(f);
+                                            if (!uploadName) setUploadName(f.name.replace(/\.[^/.]+$/, ''));
+                                        }
+                                    }}
+                                    accept=".pdf,.doc,.docx,.xlsx,.xls,.jpg,.jpeg,.png,.webp"
+                                    className="hidden"
+                                />
+                                {uploadFile ? (
+                                    <div className="flex items-center justify-center gap-3">
+                                        <div className={`w-9 h-9 rounded-md flex items-center justify-center ${fileBg(uploadFile.type)}`}>
+                                            <FileIcon mime={uploadFile.type} />
+                                        </div>
+                                        <div className="text-left">
+                                            <p className="text-[13px] font-bold text-zinc-900 truncate max-w-[200px]">{uploadFile.name}</p>
+                                            <p className="text-[11px] text-zinc-400">{(uploadFile.size / 1024).toFixed(0)} KB</p>
+                                        </div>
+                                        <button type="button" onClick={e => { e.stopPropagation(); setUploadFile(null); }}
+                                            className="ml-auto p-1 hover:bg-zinc-100 rounded-md transition-colors">
+                                            <X className="w-4 h-4 text-zinc-400" />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <Upload className="w-8 h-8 text-zinc-300 mx-auto mb-2" />
+                                        <p className="text-[13px] font-bold text-zinc-500">Drop file here or <span className="text-zinc-900 underline">browse</span></p>
+                                        <p className="text-[11px] text-zinc-400 mt-1">PDF, Word, Excel, JPG, PNG · max 10 MB</p>
+                                    </>
+                                )}
+                            </div>
                         </div>
+
+                        {/* Progress bar */}
+                        {uploading && (
+                            <div className="md:col-span-2">
+                                <div className="flex items-center justify-between mb-1">
+                                    <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider">Uploading…</span>
+                                    <span className="text-[11px] font-bold text-zinc-900">{uploadProgress}%</span>
+                                </div>
+                                <div className="h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                                    <div className="h-full bg-zinc-900 transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                                </div>
+                            </div>
+                        )}
+
                         <div className="md:col-span-2 flex justify-end gap-3 mt-2">
                             <button type="button" onClick={() => setShowUpload(false)} className="px-5 py-2 text-sm font-bold text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded-md transition-colors">{t('common.cancel')}</button>
-                            <button type="submit" disabled={uploading} className="bg-zinc-900 hover:bg-zinc-800 text-white px-6 py-2 rounded-md font-bold text-sm transition-colors disabled:opacity-50">
-                                {uploading ? t('documents.uploading') : t('documents.upload')}
+                            <button type="submit" disabled={uploading || !uploadFile} className="bg-zinc-900 hover:bg-zinc-800 text-white px-6 py-2 rounded-md font-bold text-sm transition-colors disabled:opacity-50">
+                                {uploading ? `${uploadProgress}%` : t('documents.upload')}
                             </button>
                         </div>
                     </form>
@@ -184,12 +303,22 @@ const DocumentsPage = () => {
 
             {/* Category Tabs + Search */}
             <div className="space-y-3">
-                {/* Search bar */}
-                <div className="relative max-w-sm">
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-                    <input type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 text-sm font-medium outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all shadow-sm"
-                        placeholder={t('documents.searchDocuments')} />
+                {/* Search row */}
+                <div className="flex flex-wrap gap-3">
+                    <div className="relative flex-1 min-w-[200px] max-w-sm">
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                        <input type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
+                            className="w-full pl-10 pr-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 text-sm font-medium outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all shadow-sm"
+                            placeholder={t('documents.searchDocuments')} />
+                    </div>
+                    {isHR && (
+                        <div className="relative min-w-[180px]">
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                            <input type="text" value={filterEmployee} onChange={e => setFilterEmployee(e.target.value)}
+                                className="w-full pl-10 pr-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 text-sm font-medium outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all shadow-sm"
+                                placeholder="Filter by employee…" />
+                        </div>
+                    )}
                 </div>
 
                 {/* Category tab pills */}
@@ -267,12 +396,12 @@ const DocumentsPage = () => {
                                         <tr key={doc.id} className="hover:bg-zinc-50/50 transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 rounded-md bg-zinc-100 border border-zinc-200 flex items-center justify-center shrink-0">
-                                                        <FileText className="w-5 h-5 text-zinc-500" />
+                                                    <div className={`w-10 h-10 rounded-md border border-zinc-200 flex items-center justify-center shrink-0 ${fileBg(doc.mime_type)}`}>
+                                                        <FileIcon mime={doc.mime_type} />
                                                     </div>
                                                     <div>
                                                         <p className="text-zinc-900 font-bold text-[14px]">{doc.name}</p>
-                                                        <p className="text-zinc-500 font-medium text-[12px]">{doc.mime_type}</p>
+                                                        <p className="text-zinc-500 font-medium text-[12px] uppercase">{doc.mime_type?.split('/')[1] || '—'}</p>
                                                     </div>
                                                 </div>
                                             </td>
@@ -297,7 +426,7 @@ const DocumentsPage = () => {
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 <div className="flex items-center justify-end gap-2">
-                                                    <button onClick={() => handleDownload(doc.file_url)}
+                                                    <button onClick={() => handleDownload(doc.file_url, doc.name)}
                                                         className="p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 rounded-md transition-colors"
                                                         title="Download">
                                                         <Download className="w-4 h-4" />
@@ -326,12 +455,12 @@ const DocumentsPage = () => {
                                 <div key={doc.id} className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
                                     <div className="flex items-start justify-between gap-4 mb-4">
                                         <div className="flex items-center gap-4 min-w-0">
-                                            <div className="w-10 h-10 rounded-md bg-zinc-100 border border-zinc-200 flex items-center justify-center shrink-0">
-                                                <FileText className="w-5 h-5 text-zinc-500" />
+                                            <div className={`w-10 h-10 rounded-md border border-zinc-200 flex items-center justify-center shrink-0 ${fileBg(doc.mime_type)}`}>
+                                                <FileIcon mime={doc.mime_type} />
                                             </div>
                                             <div className="min-w-0">
                                                 <p className="text-zinc-900 font-bold text-[14px] truncate">{doc.name}</p>
-                                                <p className="text-zinc-500 font-medium text-[12px]">{doc.mime_type}</p>
+                                                <p className="text-zinc-500 font-medium text-[12px] uppercase">{doc.mime_type?.split('/')[1] || '—'}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -360,7 +489,7 @@ const DocumentsPage = () => {
                                     </div>
                                     
                                     <div className="flex items-center justify-end gap-2 border-t border-zinc-100 pt-4">
-                                        <button onClick={() => handleDownload(doc.file_url)}
+                                        <button onClick={() => handleDownload(doc.file_url, doc.name)}
                                             className="px-4 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-md font-bold text-[12px] flex items-center gap-2 transition-colors">
                                             <Download className="w-3.5 h-3.5" /> {t('documents.download')}
                                         </button>
