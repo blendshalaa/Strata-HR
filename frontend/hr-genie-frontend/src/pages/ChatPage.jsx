@@ -9,6 +9,27 @@ import { useTranslation } from 'react-i18next';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { useAuth } from '../context/AuthContext';
 
+// Translates axios errors into a friendly, actionable message
+const resolveChatError = (error) => {
+  if (!error.response) {
+    // Network failure or CORS block
+    return '⚠️ Could not reach the server. This usually means the API URL is misconfigured or the backend is offline. Check your VITE_API_URL environment variable and make sure CORS is set correctly on the server.';
+  }
+  const status = error.response.status;
+  const serverMsg = error.response.data?.error || error.response.data?.message;
+  if (status === 401) return '🔒 Your session has expired. Please refresh the page and log in again.';
+  if (status === 403) return '🚫 You do not have permission to perform this action.';
+  if (status === 429) return '⏳ Too many requests — you\'ve hit the AI rate limit. Please wait a minute and try again.';
+  if (status === 500 || status === 502 || status === 503) {
+    if (serverMsg?.toLowerCase().includes('openai') || serverMsg?.toLowerCase().includes('api key')) {
+      return '🤖 The AI service is unavailable. The OPENAI_API_KEY may not be set on the server. Please contact your administrator.';
+    }
+    return `❌ Server error (${status}): ${serverMsg || 'Something went wrong on the backend. Check the server logs.'}` ;
+  }
+  return `❌ Error ${status}: ${serverMsg || 'An unexpected error occurred.'}`;
+};
+
+
 const ChatPage = () => {
   const { t } = useTranslation();
   const { isHR } = useAuth();
@@ -92,28 +113,46 @@ const ChatPage = () => {
         })));
       }
     } catch (error) {
-      console.error('Failed to send message:', error);
+      console.error('Chat error:', error);
+      // Remove the optimistically added user message on failure
       setMessages((prev) => prev.slice(0, -1));
+      // Push a typed error bubble
+      const errMsg = resolveChatError(error);
+      setMessages((prev) => [...prev, userMessage, {
+        role: 'error',
+        content: errMsg,
+        created_at: new Date().toISOString(),
+      }]);
     } finally {
       setLoading(false);
     }
   };
 
   const handleConfirmAction = async (confirmation) => {
-    const response = await chatAPI.confirmAction({
-      action: confirmation.action,
-      params: confirmation.params,
-      conversation_id: confirmation.conversation_id || activeConversation,
-    });
+    try {
+      const response = await chatAPI.confirmAction({
+        action: confirmation.action,
+        params: confirmation.params,
+        conversation_id: confirmation.conversation_id || activeConversation,
+      });
 
-    // Add the success message to chat
-    setMessages((prev) => [...prev, {
-      role: 'assistant',
-      content: `✅ ${response.data.message}`,
-      created_at: new Date().toISOString(),
-    }]);
+      setMessages((prev) => [...prev, {
+        role: 'assistant',
+        content: `✅ ${response.data.message}`,
+        created_at: new Date().toISOString(),
+      }]);
 
-    return response.data;
+      return response.data;
+    } catch (error) {
+      console.error('Confirm action error:', error);
+      const errMsg = resolveChatError(error);
+      setMessages((prev) => [...prev, {
+        role: 'error',
+        content: errMsg,
+        created_at: new Date().toISOString(),
+      }]);
+      throw error;
+    }
   };
 
   const handleRejectAction = (confirmation) => {

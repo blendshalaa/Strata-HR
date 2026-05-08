@@ -525,6 +525,16 @@ const sendMessage = async (req, res, next) => {
 
     res.json({ conversation_id: conversationId, message: saved.rows[0] });
   } catch (error) {
+    // Surface OpenAI-specific errors so the frontend can give actionable advice
+    const isOpenAIError = error?.constructor?.name === 'APIError'
+      || error?.status != null
+      || error?.code === 'insufficient_quota'
+      || error?.code === 'ENOTFOUND'
+      || error?.code === 'ECONNREFUSED';
+    if (isOpenAIError) {
+      const msg = error.message || 'OpenAI API error';
+      return res.status(502).json({ error: 'OpenAI API error: ' + msg });
+    }
     next(error);
   }
 };

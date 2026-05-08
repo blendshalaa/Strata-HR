@@ -1,8 +1,9 @@
 import React from 'react';
-import { Bot, User, CheckCircle } from 'lucide-react';
+import { Bot, User, CheckCircle, AlertTriangle } from 'lucide-react';
 
 const MessageBubble = ({ message }) => {
   const isUser = message.role === 'user';
+  const isError = message.role === 'error';
   const isFunction = message.function_call;
 
   if (isFunction) {
@@ -17,6 +18,23 @@ const MessageBubble = ({ message }) => {
           <span className="text-[12px] font-bold text-zinc-900 uppercase tracking-wider">
             Action: {functionData.name.replace(/_/g, ' ')}
           </span>
+        </div>
+      </div>
+    );
+  }
+
+  // Error bubble — shown when the API call fails
+  if (isError) {
+    return (
+      <div className="flex gap-3 justify-start animate-fadeIn">
+        <div className="w-8 h-8 rounded-md bg-red-100 border border-red-200 flex items-center justify-center flex-shrink-0">
+          <AlertTriangle className="w-4 h-4 text-red-600" />
+        </div>
+        <div className="max-w-[80%] sm:max-w-[70%] rounded-lg px-4 py-3 bg-red-50 border border-red-200">
+          <p className="text-[13px] leading-relaxed text-red-800 whitespace-pre-wrap">{message.content}</p>
+          <p className="text-[10px] font-bold uppercase tracking-wider mt-2 text-red-400">
+            {new Date(message.created_at).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' })}
+          </p>
         </div>
       </div>
     );
