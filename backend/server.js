@@ -28,6 +28,7 @@ const orgRoutes = require('./routes/organizations');
 const documentRoutes = require('./routes/documents');
 const shiftRoutes = require('./routes/shifts');
 const errorHandler = require('./middleware/errorHandler');
+const runStartupPatch = require('./db-patch-startup');
 const { generalLimiter } = require('./middleware/rateLimiter');
 const logger = require('./utils/logger');
 const pool = require('./config/database');
@@ -99,11 +100,15 @@ app.use((req, res) => {
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  logger.info(`HR Assistant API running on port ${PORT}`);
-  logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  logger.info(`Health check: http://localhost:${PORT}/health`);
-});
+// Start server — run DB patch first so missing columns are always present
+(async () => {
+  await runStartupPatch();
+  app.listen(PORT, () => {
+    logger.info(`HR Assistant API running on port ${PORT}`);
+    logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    logger.info(`Health check: http://localhost:${PORT}/health`);
+  });
+})();
 
 process.on('SIGTERM', () => {
   logger.warn('SIGTERM signal received: closing HTTP server');
