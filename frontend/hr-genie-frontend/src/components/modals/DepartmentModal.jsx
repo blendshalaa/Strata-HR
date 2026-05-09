@@ -76,8 +76,8 @@ const DepartmentModal = ({ isOpen, onClose, onDepartmentSaved, onDepartmentAdded
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={onClose}>
-            <div className="bg-white border border-zinc-200 rounded-lg shadow-lg w-full max-w-lg overflow-hidden animate-slideUp" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 flex items-center justify-center p-4 animate-fadeIn" style={{backgroundColor:"rgba(15,13,46,0.45)"}} onClick={onClose}>
+            <div className="bg-white rounded-lg w-full max-w-lg overflow-hidden animate-slideUp" onClick={e => e.stopPropagation()}>
                 <div className="flex items-center justify-between p-5 border-b border-zinc-100">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-zinc-100 border border-zinc-200 rounded-md">
@@ -161,7 +161,7 @@ const DepartmentModal = ({ isOpen, onClose, onDepartmentSaved, onDepartmentAdded
                         <button
                             type="submit"
                             disabled={loading}
-                            className={`px-4 py-2 text-[13px] font-bold text-white bg-zinc-900 border border-zinc-900 rounded-md hover:bg-zinc-800 transition-colors ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            className={`px-4 py-2 text-[13px] font-bold text-white bg-[#5B4FE8] border border-[#5B4FE8] rounded-md hover:bg-[#4a3fd4] transition-colors ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                             {loading
                                 ? (isEditMode ? t('common.saving') : t('departmentModal.creating'))

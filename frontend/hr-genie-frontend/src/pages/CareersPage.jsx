@@ -63,8 +63,8 @@ const CareersPage = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
-                <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
+            <div className="min-h-screen bg-[#F5F4FF] flex items-center justify-center">
+                <div className="w-6 h-6 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin" />
             </div>
         );
     }
@@ -72,8 +72,8 @@ const CareersPage = () => {
     // Success State
     if (submitted) {
         return (
-            <div className="min-h-screen bg-zinc-50 flex items-center justify-center p-4">
-                <div className="bg-white border border-zinc-200 rounded-md max-w-md w-full p-10 text-center animate-fadeIn shadow-sm">
+            <div className="min-h-screen bg-[#F5F4FF] flex items-center justify-center p-4">
+                <div className="bg-white border border-zinc-200 rounded-md max-w-md w-full p-10 text-center animate-fadeIn">
                     <div className="w-20 h-20 bg-emerald-50 border border-emerald-200 rounded-md flex items-center justify-center mx-auto mb-6">
                         <CheckCircle className="w-10 h-10 text-emerald-600" />
                     </div>
@@ -86,7 +86,7 @@ const CareersPage = () => {
                     </p>
                     <button
                         onClick={resetForm}
-                        className="w-full bg-zinc-900 text-white py-3 rounded-md font-bold hover:bg-zinc-800 transition-colors"
+                        className="w-full bg-[#5B4FE8] text-white py-3 rounded-md font-bold hover:bg-[#4a3fd4] transition-colors"
                     >
                         {t('careers.browseOther')}
                     </button>
@@ -98,7 +98,7 @@ const CareersPage = () => {
     // Application Form
     if (selectedJob) {
         return (
-            <div className="min-h-screen bg-zinc-50 py-12 px-4">
+            <div className="min-h-screen bg-[#F5F4FF] py-12 px-4">
                 <div className="max-w-2xl mx-auto">
                     <button
                         onClick={resetForm}
@@ -108,7 +108,7 @@ const CareersPage = () => {
                         {t('careers.backToAll')}
                     </button>
 
-                    <div className="bg-white border border-zinc-200 rounded-md overflow-hidden animate-fadeIn shadow-sm">
+                    <div className="bg-white border border-zinc-200 rounded-md overflow-hidden animate-fadeIn">
                         {/* Job Header */}
                         <div className="bg-zinc-900 p-8">
                             <div className="flex items-center gap-2 text-zinc-400 text-sm mb-3">
@@ -155,7 +155,7 @@ const CareersPage = () => {
                                     type="text"
                                     value={formData.applicant_name}
                                     onChange={(e) => setFormData({ ...formData, applicant_name: e.target.value })}
-                                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+                                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
                                     placeholder={t('careers.yourFullName')}
                                     required
                                 />
@@ -167,7 +167,7 @@ const CareersPage = () => {
                                     type="email"
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+                                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
                                     placeholder="your.email@example.com"
                                     required
                                 />
@@ -179,7 +179,7 @@ const CareersPage = () => {
                                     type="file"
                                     accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                                     onChange={(e) => setFormData({ ...formData, resume: e.target.files[0] })}
-                                    className="w-full px-4 py-2 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-bold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200"
+                                    className="w-full px-4 py-2 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-bold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200"
                                 />
                                 <p className="text-xs text-zinc-500 mt-1">{t('careers.maxFileSize')}</p>
                             </div>
@@ -187,7 +187,7 @@ const CareersPage = () => {
                             <button
                                 type="submit"
                                 disabled={submitting}
-                                className="w-full bg-zinc-900 text-white py-3.5 rounded-md font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="w-full bg-[#5B4FE8] text-white py-3.5 rounded-md font-bold hover:bg-[#4a3fd4] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                             >
                                 <Send className="w-5 h-5" />
                                 {submitting ? t('careers.submitting') : t('careers.submitApplication')}
@@ -205,7 +205,7 @@ const CareersPage = () => {
             {/* Hero */}
             <div className="text-center pt-16 pb-12 px-4 bg-white border-b border-zinc-200">
                 <div className="flex items-center justify-center gap-3 mb-6">
-                    <div className="w-12 h-12 bg-zinc-900 rounded-md flex items-center justify-center">
+                    <div className="w-12 h-12 bg-[#5B4FE8] rounded-md flex items-center justify-center">
                         <Bot className="w-7 h-7 text-white" />
                     </div>
                     <h1 className="text-3xl font-black text-zinc-900 tracking-tight">HR Genie</h1>
@@ -229,11 +229,11 @@ const CareersPage = () => {
                             <div
                                 key={job.id}
                                 onClick={() => setSelectedJob(job)}
-                                className="bg-white border border-zinc-200 rounded-md p-6 hover:border-zinc-400 transition-colors cursor-pointer group shadow-sm"
+                                className="bg-white border border-zinc-200 rounded-md p-6 hover:border-[#5B4FE8] transition-colors cursor-pointer group"
                             >
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="flex items-start gap-4">
-                                        <div className="p-3 bg-zinc-100 border border-zinc-200 text-zinc-600 rounded-md group-hover:bg-zinc-900 group-hover:text-white group-hover:border-zinc-900 transition-colors">
+                                        <div className="p-3 bg-zinc-100 border border-zinc-200 text-zinc-600 rounded-md group-hover:bg-[#5B4FE8] group-hover:text-white group-hover:border-[#5B4FE8] transition-colors">
                                             <Briefcase className="w-6 h-6" />
                                         </div>
                                         <div>

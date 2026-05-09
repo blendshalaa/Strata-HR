@@ -108,7 +108,7 @@ const MyTimesheetsPage = () => {
         const configs = {
             approved: { icon: CheckCircle2, label: 'Approved', classes: 'bg-green-50 text-green-700 border-green-100' },
             rejected: { icon: XCircle, label: 'Rejected', classes: 'bg-red-50 text-red-700 border-red-100' },
-            processed: { icon: Timer, label: 'Processed', classes: 'bg-blue-50 text-blue-700 border-blue-100' },
+            processed: { icon: Timer, label: 'Processed', classes: 'bg-[#EEF0FF] text-[#5B4FE8] border-blue-100' },
             pending: { icon: Clock, label: 'Pending', classes: 'bg-zinc-100 text-zinc-900 border-zinc-200' },
         };
         return configs[status] || configs.pending;
@@ -160,12 +160,12 @@ const MyTimesheetsPage = () => {
     const pendingCount = timesheets.filter(t => t.status === 'pending').length;
     const approvedCount = timesheets.filter(t => t.status === 'approved').length;
 
-    const inputClass = "w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors placeholder-zinc-400";
+    const inputClass = "w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors placeholder-zinc-400";
 
     if (loading && timesheets.length === 0) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
+                <div className="w-6 h-6 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin" />
             </div>
         );
     }
@@ -180,7 +180,7 @@ const MyTimesheetsPage = () => {
                 </div>
                 <button
                     onClick={() => setShowManualEntry(!showManualEntry)}
-                    className="px-4 py-2 bg-zinc-900 text-white text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-zinc-800 transition-colors flex items-center gap-2"
+                    className="px-4 py-2 bg-[#5B4FE8] text-white text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-[#4a3fd4] transition-colors flex items-center gap-2"
                     title="Add a timesheet entry manually if you forgot to clock in or out"
                 >
                     <Plus className="w-3.5 h-3.5" />
@@ -193,7 +193,7 @@ const MyTimesheetsPage = () => {
 
             {/* Manual Entry Form */}
             {showManualEntry && (
-                <div className="bg-white border border-zinc-200 rounded-md p-6 animate-fadeIn shadow-sm">
+                <div className="bg-white border border-zinc-200 rounded-md p-6 animate-fadeIn">
                     <div className="flex items-center justify-between mb-5">
                         <h3 className="text-[15px] font-bold text-zinc-900">{t('timesheets.submitManualEntry')}</h3>
                         <button onClick={() => setShowManualEntry(false)} className="p-1.5 hover:bg-zinc-100 rounded-md transition-colors">
@@ -217,7 +217,7 @@ const MyTimesheetsPage = () => {
                         </div>
                         <div className="flex justify-end gap-3 pt-2">
                             <button type="button" onClick={() => setShowManualEntry(false)} className="px-4 py-2 text-[12px] font-bold uppercase tracking-wider text-zinc-700 border border-zinc-200 rounded-md hover:bg-zinc-50 transition-colors">{t('common.cancel')}</button>
-                            <button type="submit" disabled={manualLoading} className="px-5 py-2 bg-zinc-900 text-white text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-zinc-800 transition-colors">
+                            <button type="submit" disabled={manualLoading} className="px-5 py-2 bg-[#5B4FE8] text-white text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-[#4a3fd4] transition-colors">
                                 {manualLoading ? t('common.submitting') : t('common.submit')}
                             </button>
                         </div>
@@ -227,15 +227,15 @@ const MyTimesheetsPage = () => {
 
             {/* Summary Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
+                <div className="bg-white border border-zinc-200 rounded-md p-5">
                     <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">{t('timesheets.totalHours')}</p>
                     <p className="text-2xl font-black text-zinc-900">{totalHours.toFixed(1)}<span className="text-[12px] text-zinc-400 font-bold ml-1.5 uppercase">{t('timesheets.hrs')}</span></p>
                 </div>
-                <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
+                <div className="bg-white border border-zinc-200 rounded-md p-5">
                     <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">{t('common.pending')}</p>
                     <p className="text-2xl font-black text-zinc-900">{pendingCount}</p>
                 </div>
-                <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
+                <div className="bg-white border border-zinc-200 rounded-md p-5">
                     <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">{t('common.approved')}</p>
                     <p className="text-2xl font-black text-zinc-900">{approvedCount}</p>
                 </div>
@@ -254,7 +254,7 @@ const MyTimesheetsPage = () => {
 
                 <div className="flex items-center gap-2 flex-wrap">
                     <select value={filterRange} onChange={e => setFilterRange(e.target.value)}
-                        className="px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] font-bold text-zinc-900 focus:outline-none focus:border-zinc-900">
+                        className="px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] font-bold text-zinc-900 focus:outline-none focus:border-[#5B4FE8]">
                         <option value="all">{t('timesheets.allTime')}</option>
                         <option value="this-week">{t('timesheets.thisWeek')}</option>
                         <option value="last-week">{t('timesheets.lastWeek')}</option>
@@ -263,9 +263,9 @@ const MyTimesheetsPage = () => {
                     </select>
                     {filterRange === 'custom' && (
                         <>
-                            <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)} className="px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900" />
+                            <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)} className="px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8]" />
                             <span className="text-zinc-400 text-[12px] font-bold">to</span>
-                            <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)} className="px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900" />
+                            <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)} className="px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8]" />
                         </>
                     )}
                 </div>
@@ -281,7 +281,7 @@ const MyTimesheetsPage = () => {
                             <p className="text-[12px] text-zinc-500 mt-1">{t('timesheets.tryChangingRange')}</p>
                         </div>
                     ) : (
-                        <div className="bg-white border border-zinc-200 rounded-md overflow-hidden shadow-sm">
+                        <div className="bg-white border border-zinc-200 rounded-md overflow-hidden">
                             <table className="w-full text-left text-sm border-collapse">
                                 <thead className="bg-zinc-50 border-b border-zinc-200">
                                     <tr>
@@ -344,7 +344,7 @@ const MyTimesheetsPage = () => {
             {activeTab === 'weekly' && (
                 <div className="space-y-4">
                     {/* Week Navigation */}
-                    <div className="flex items-center justify-between bg-white border border-zinc-200 rounded-md px-5 py-3 shadow-sm">
+                    <div className="flex items-center justify-between bg-white border border-zinc-200 rounded-md px-5 py-3">
                         <button onClick={() => setWeekOffset(w => w - 1)} className="p-1.5 hover:bg-zinc-100 rounded-md transition-colors">
                             <ChevronLeft className="w-5 h-5 text-zinc-600" />
                         </button>
@@ -386,13 +386,13 @@ const MyTimesheetsPage = () => {
                     </div>
 
                     {/* Weekly Total Bar */}
-                    <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
+                    <div className="bg-white border border-zinc-200 rounded-md p-5">
                         <div className="flex items-center justify-between mb-3">
                             <span className="text-[11px] font-black text-zinc-400 uppercase tracking-widest">{t('timesheets.weeklyProgress')}</span>
                             <span className="text-[13px] font-black text-zinc-900">{weeklyData.weekTotal.toFixed(1)} / 40h</span>
                         </div>
                         <div className="h-2 bg-zinc-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-zinc-900 rounded-full transition-all duration-500" style={{ width: `${Math.min((weeklyData.weekTotal / 40) * 100, 100)}%` }} />
+                            <div className="h-full bg-[#5B4FE8] rounded-full transition-all duration-500" style={{ width: `${Math.min((weeklyData.weekTotal / 40) * 100, 100)}%` }} />
                         </div>
                         {weeklyData.weekOvertime > 0 && (
                             <p className="text-[11px] font-bold text-red-600 mt-2">{t('timesheets.overtimeThisWeek', { hours: weeklyData.weekOvertime.toFixed(1) })}</p>

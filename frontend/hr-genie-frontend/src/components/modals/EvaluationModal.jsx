@@ -98,8 +98,8 @@ const EvaluationModal = ({ isOpen, onClose, onEvaluationAdded }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4 animate-fadeIn">
-            <div className="bg-white border border-zinc-200 rounded-lg shadow-lg w-full max-w-lg overflow-hidden animate-slideUp">
+        <div className="fixed inset-0 flex items-center justify-center p-4 z-50 animate-fadeIn" style={{backgroundColor:"rgba(15,13,46,0.45)"}}>
+            <div className="bg-white rounded-lg w-full max-w-lg overflow-hidden animate-slideUp">
                 <div className="flex items-center justify-between p-5 border-b border-zinc-100">
                     <h2 className="text-[16px] font-bold text-zinc-900">{t('evaluationModal.title')}</h2>
                     <button
@@ -206,7 +206,7 @@ const EvaluationModal = ({ isOpen, onClose, onEvaluationAdded }) => {
                             <button
                                 type="submit"
                                 disabled={loading || !userId}
-                                className={`w-full sm:w-auto px-4 py-2 text-[13px] font-bold text-white bg-zinc-900 border border-zinc-900 rounded-md hover:bg-zinc-800 transition-colors ${(loading || !userId) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={`w-full sm:w-auto px-4 py-2 text-[13px] font-bold text-white bg-[#5B4FE8] border border-[#5B4FE8] rounded-md hover:bg-[#4a3fd4] transition-colors ${(loading || !userId) ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 {loading ? t('common.submitting') : t('evaluationModal.submitEvaluation')}
                             </button>

@@ -23,76 +23,84 @@ const Navbar = ({ onMenuClick }) => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);
-      }
-      if (langRef.current && !langRef.current.contains(event.target)) {
-        setLangOpen(false);
-      }
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setDropdownOpen(false);
+      if (langRef.current && !langRef.current.contains(event.target)) setLangOpen(false);
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';
-  };
-
-  const changeLanguage = (code) => {
-    i18n.changeLanguage(code);
-    setLangOpen(false);
-  };
+  const handleLogout = () => { logout(); window.location.href = '/login'; };
+  const changeLanguage = (code) => { i18n.changeLanguage(code); setLangOpen(false); };
 
   return (
-    <nav className="bg-white border-b border-zinc-200 sticky top-0 z-30">
+    <nav
+      className="sticky top-0 z-30"
+      style={{
+        backgroundColor: '#FFFFFF',
+        borderBottom: '0.5px solid rgba(0,0,0,0.08)',
+      }}
+    >
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Left side */}
+
+          {/* Left */}
           <div className="flex items-center gap-4">
             <button
               onClick={onMenuClick}
-              className="lg:hidden p-2 hover:bg-zinc-100 rounded-md transition-colors"
+              className="lg:hidden p-2 rounded-md transition-colors"
+              style={{ color: '#6B7280' }}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = '#F5F4FF'}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
             >
-              <Menu className="w-6 h-6 text-zinc-600" />
+              <Menu className="w-5 h-5" />
             </button>
 
             <div className="hidden lg:block">
-              <h2 className="text-[15px] font-semibold text-zinc-900 tracking-tight">
+              <h2 className="text-[15px] font-semibold" style={{ color: '#0F0D2E' }}>
                 {user?.name?.split(' ')[0]}
               </h2>
-              <p className="text-[13px] text-zinc-500">
-                {user?.org_name && <span className="text-zinc-700 font-medium">{user.org_name}</span>}
+              <p className="text-[13px]" style={{ color: '#6B7280' }}>
+                {user?.org_name && <span style={{ color: '#0F0D2E', fontWeight: 500 }}>{user.org_name}</span>}
                 {user?.org_name && user?.department && <span> · </span>}
                 {user?.department}
               </p>
             </div>
           </div>
 
-          {/* Right side - Language + Notifications + User menu */}
-          <div className="flex items-center gap-2">
-            {/* Language Switcher */}
+          {/* Right */}
+          <div className="flex items-center gap-1">
+
+            {/* Language switcher */}
             <div className="relative" ref={langRef}>
               <button
                 onClick={() => setLangOpen(!langOpen)}
-                className="flex items-center gap-1.5 px-2 py-1.5 hover:bg-zinc-100 rounded-md transition-all duration-200 text-zinc-500 hover:text-zinc-900"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[12px] font-bold uppercase tracking-wider transition-colors"
+                style={{ color: '#6B7280' }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#F5F4FF'; e.currentTarget.style.color = '#5B4FE8'; }}
+                onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#6B7280'; }}
               >
                 <Globe className="w-4 h-4" />
-                <span className="text-[12px] font-bold uppercase tracking-wider">{i18n.language?.substring(0, 2).toUpperCase()}</span>
+                {i18n.language?.substring(0, 2).toUpperCase()}
               </button>
 
               {langOpen && (
-                <div className="absolute right-0 mt-1 w-28 bg-white rounded-md shadow-sm border border-zinc-200 py-1 animate-slideUp z-50">
+                <div
+                  className="absolute right-0 mt-1 w-28 rounded-lg py-1 animate-slideUp z-50"
+                  style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.08)', boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}
+                >
                   {LANGUAGES.map((lang) => (
                     <button
                       key={lang.code}
                       onClick={() => changeLanguage(lang.code)}
-                      className={`w-full text-left px-3 py-1.5 text-[13px] transition-colors ${
-                        i18n.language === lang.code
-                          ? 'bg-zinc-100 text-zinc-900 font-semibold'
-                          : 'text-zinc-600 hover:bg-zinc-50'
-                      }`}
+                      className="w-full text-left px-3 py-1.5 text-[13px] transition-colors"
+                      style={{
+                        color: i18n.language === lang.code ? '#5B4FE8' : '#6B7280',
+                        fontWeight: i18n.language === lang.code ? '600' : '400',
+                        backgroundColor: i18n.language === lang.code ? '#EEF0FF' : 'transparent',
+                      }}
+                      onMouseEnter={e => { if (i18n.language !== lang.code) e.currentTarget.style.backgroundColor = '#F5F4FF'; }}
+                      onMouseLeave={e => { if (i18n.language !== lang.code) e.currentTarget.style.backgroundColor = 'transparent'; }}
                     >
                       {t(`language.${lang.code}`)}
                     </button>
@@ -103,52 +111,72 @@ const Navbar = ({ onMenuClick }) => {
 
             <NotificationBell />
 
+            {/* User menu */}
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center gap-2 px-2 py-1.5 hover:bg-zinc-100 rounded-md transition-all duration-200"
+                className="flex items-center gap-2 px-2 py-1.5 rounded-md transition-colors"
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = '#F5F4FF'}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
               >
-                <div className="w-8 h-8 bg-zinc-900 rounded-md flex items-center justify-center">
-                  <User className="w-4 h-4 text-white" />
+                <div
+                  className="w-8 h-8 rounded-md flex items-center justify-center text-white font-bold text-[12px]"
+                  style={{ backgroundColor: '#5B4FE8' }}
+                >
+                  {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || <User className="w-4 h-4" />}
                 </div>
-                <ChevronDown className={`w-3.5 h-3.5 text-zinc-400 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}
+                  style={{ color: '#9CA3AF' }}
+                />
               </button>
 
-              {/* Dropdown */}
               {dropdownOpen && (
-                <div className="absolute right-0 mt-1 w-64 bg-white rounded-md shadow-sm border border-zinc-200 py-1.5 animate-slideUp">
-                  <div className="px-4 py-2.5 border-b border-zinc-100">
-                    <p className="text-[14px] font-medium text-zinc-900">{user?.name}</p>
-                    <p className="text-[13px] text-zinc-500">{user?.email}</p>
+                <div
+                  className="absolute right-0 mt-1 w-64 rounded-lg py-1.5 animate-slideUp z-50"
+                  style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.08)', boxShadow: '0 8px 24px rgba(0,0,0,0.08)' }}
+                >
+                  {/* User info */}
+                  <div className="px-4 py-2.5" style={{ borderBottom: '0.5px solid rgba(0,0,0,0.06)' }}>
+                    <p className="text-[14px] font-semibold" style={{ color: '#0F0D2E' }}>{user?.name}</p>
+                    <p className="text-[12px]" style={{ color: '#6B7280' }}>{user?.email}</p>
                   </div>
 
+                  {/* Leave balances */}
                   <div className="px-3 py-2">
-                    <div className="px-3 py-2 bg-zinc-50 rounded-md">
-                      <div className="flex justify-between mb-1 text-[13px] text-zinc-500">
-                        <span>{t('navbar.sickLeave')}</span>
-                        <span className="font-medium text-zinc-900">{user?.sick_leave_balance}d</span>
+                    <div className="px-3 py-2 rounded-md" style={{ backgroundColor: '#F5F4FF' }}>
+                      <div className="flex justify-between mb-1 text-[13px]">
+                        <span style={{ color: '#6B7280' }}>{t('navbar.sickLeave')}</span>
+                        <span className="font-semibold" style={{ color: '#0F0D2E' }}>{user?.sick_leave_balance}d</span>
                       </div>
-                      <div className="flex justify-between text-[13px] text-zinc-500">
-                        <span>{t('navbar.vacation')}</span>
-                        <span className="font-medium text-zinc-900">{user?.vacation_balance}d</span>
+                      <div className="flex justify-between text-[13px]">
+                        <span style={{ color: '#6B7280' }}>{t('navbar.vacation')}</span>
+                        <span className="font-semibold" style={{ color: '#0F0D2E' }}>{user?.vacation_balance}d</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="border-t border-zinc-100 px-1.5 pt-1 space-y-0.5">
+                  {/* Actions */}
+                  <div className="px-1.5 pt-1 space-y-0.5" style={{ borderTop: '0.5px solid rgba(0,0,0,0.06)' }}>
                     <button
                       onClick={() => { setDropdownOpen(false); navigate('/profile'); }}
-                      className="w-full flex items-center gap-2 px-2.5 py-1.5 text-[13px] text-zinc-700 hover:bg-zinc-100 rounded-md transition-colors font-medium"
+                      className="w-full flex items-center gap-2 px-2.5 py-1.5 text-[13px] rounded-md transition-colors font-medium"
+                      style={{ color: '#0F0D2E' }}
+                      onMouseEnter={e => e.currentTarget.style.backgroundColor = '#F5F4FF'}
+                      onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
-                      <User className="w-3.5 h-3.5" />
-                      <span>{t('navbar.myProfile')}</span>
+                      <User className="w-3.5 h-3.5" style={{ color: '#6B7280' }} />
+                      {t('navbar.myProfile')}
                     </button>
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-2 px-2.5 py-1.5 text-[13px] text-zinc-700 hover:bg-zinc-100 rounded-md transition-colors font-medium"
+                      className="w-full flex items-center gap-2 px-2.5 py-1.5 text-[13px] rounded-md transition-colors font-medium"
+                      style={{ color: '#DC2626' }}
+                      onMouseEnter={e => e.currentTarget.style.backgroundColor = '#FEF2F2'}
+                      onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
                       <LogOut className="w-3.5 h-3.5" />
-                      <span>{t('auth.signOut')}</span>
+                      {t('auth.signOut')}
                     </button>
                   </div>
                 </div>

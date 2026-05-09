@@ -94,7 +94,7 @@ const CalendarPage = () => {
 
     if (loading) return (
         <div className="flex items-center justify-center h-64">
-            <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
+            <div className="w-6 h-6 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin" />
         </div>
     );
 
@@ -110,7 +110,7 @@ const CalendarPage = () => {
                     {(isHR || isAdmin) && (
                         <button
                             onClick={() => setIsEventModalOpen(true)}
-                            className="px-4 py-2 bg-zinc-900 text-white text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-zinc-800 transition-colors flex items-center gap-2"
+                            className="px-4 py-2 bg-[#5B4FE8] text-white text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-[#4a3fd4] transition-colors flex items-center gap-2"
                         >
                             <Plus className="w-3.5 h-3.5" />
                             {t('calendar.addEvent')}
@@ -177,7 +177,7 @@ const CalendarPage = () => {
                                     <span className={`
                                         text-[13px] font-bold leading-none
                                         ${isTodayCell
-                                            ? 'bg-zinc-900 text-white w-7 h-7 rounded-full flex items-center justify-center'
+                                            ? 'bg-[#5B4FE8] text-white w-7 h-7 rounded-full flex items-center justify-center'
                                             : cell.inMonth ? 'text-zinc-900' : 'text-zinc-300'
                                         }
                                     `}>
@@ -225,7 +225,7 @@ const CalendarPage = () => {
                         </div>
                         <div className="p-5 space-y-4">
                             <div className="flex items-center gap-3">
-                                <div className="bg-zinc-900 p-2.5 rounded-md flex flex-col items-center justify-center min-w-[3.5rem] text-white">
+                                <div className="bg-[#5B4FE8] p-2.5 rounded-md flex flex-col items-center justify-center min-w-[3.5rem] text-white">
                                     <span className="text-[10px] font-black uppercase tracking-widest opacity-70">
                                         {new Date(selectedEvent.event_date).toLocaleString('default', { month: 'short' })}
                                     </span>

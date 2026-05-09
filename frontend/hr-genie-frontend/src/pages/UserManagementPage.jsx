@@ -122,7 +122,7 @@ const UserManagementPage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin" />
       </div>
     );
   }
@@ -137,14 +137,14 @@ const UserManagementPage = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowInviteModal(true)}
-            className="hidden sm:flex items-center gap-2 bg-white text-zinc-700 border border-zinc-200 px-5 py-2.5 rounded-md hover:bg-zinc-50 transition-colors font-bold text-sm shadow-sm"
+            className="hidden sm:flex items-center gap-2 bg-white text-zinc-700 border border-zinc-200 px-5 py-2.5 rounded-md hover:bg-zinc-50 transition-colors font-bold text-sm"
           >
             <Mail className="w-4 h-4" />
             {t('users.invite')}
           </button>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 bg-zinc-900 text-white px-5 py-2.5 rounded-md hover:bg-zinc-800 transition-colors font-bold text-sm"
+            className="flex items-center gap-2 bg-[#5B4FE8] text-white px-5 py-2.5 rounded-md hover:bg-[#4a3fd4] transition-colors font-bold text-sm"
           >
             <UserPlus className="w-4 h-4" />
             {t('users.addUser')}
@@ -153,7 +153,7 @@ const UserManagementPage = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
+      <div className="bg-white border border-zinc-200 rounded-md p-5">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="md:col-span-1">
             <div className="relative">
@@ -163,7 +163,7 @@ const UserManagementPage = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t('users.searchPlaceholder')}
-                className="w-full px-4 py-2.5 pl-10 bg-white border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 text-sm font-medium outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+                className="w-full px-4 py-2.5 pl-10 bg-white border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 text-sm font-medium outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
               />
             </div>
           </div>
@@ -171,7 +171,7 @@ const UserManagementPage = () => {
             <select
               value={filterRole}
               onChange={(e) => setFilterRole(e.target.value)}
-              className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 text-sm font-medium outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+              className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 text-sm font-medium outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
             >
               <option value="">{t('users.allRoles')}</option>
               <option value="employee">Employee</option>
@@ -183,7 +183,7 @@ const UserManagementPage = () => {
             <select
               value={filterDepartment}
               onChange={(e) => setFilterDepartment(e.target.value)}
-              className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 text-sm font-medium outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+              className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 text-sm font-medium outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
             >
               <option value="">{t('users.allDepartments')}</option>
               {(() => {
@@ -202,21 +202,21 @@ const UserManagementPage = () => {
 
       {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
+          <div className="bg-white border border-zinc-200 rounded-md p-5">
             <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">{t('users.totalUsers')}</p>
             <p className="text-2xl font-black text-zinc-900">{users.length}</p>
           </div>
           {isAdmin && (
-            <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
+            <div className="bg-white border border-zinc-200 rounded-md p-5">
               <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">{t('users.admins')}</p>
               <p className="text-2xl font-black text-zinc-900">{users.filter(u => u.role === 'admin').length}</p>
             </div>
           )}
-          <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
+          <div className="bg-white border border-zinc-200 rounded-md p-5">
             <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">{t('users.hrStaff')}</p>
             <p className="text-2xl font-black text-zinc-900">{users.filter(u => u.role === 'hr').length}</p>
           </div>
-          <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
+          <div className="bg-white border border-zinc-200 rounded-md p-5">
             <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">{t('users.employees')}</p>
             <p className="text-2xl font-black text-zinc-900">{users.filter(u => u.role === 'employee').length}</p>
           </div>
@@ -292,7 +292,7 @@ const UserManagementPage = () => {
       {/* Mobile User Cards */}
       <div className="md:hidden space-y-3">
         {filteredUsers.map((user) => (
-          <div key={user.id} className="bg-white border border-zinc-200 rounded-md p-4 shadow-sm">
+          <div key={user.id} className="bg-white border border-zinc-200 rounded-md p-4">
             <div className="flex items-center gap-3 mb-3">
               <div className={`w-10 h-10 rounded-md flex items-center justify-center font-black text-[12px] border ${getInitialsColor(user.name)}`}>
                 {getInitials(user.name)}
@@ -361,7 +361,7 @@ const UserManagementPage = () => {
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={() => setShowDeleteConfirm(null)}>
-          <div className="bg-white border border-zinc-200 rounded-lg max-w-md w-full animate-fadeIn shadow-2xl" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-lg max-w-md w-full animate-fadeIn shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="p-6 text-center">
               <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <AlertTriangle className="w-7 h-7 text-red-600" />
@@ -434,7 +434,7 @@ const InviteUserModal = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white border border-zinc-200 rounded-lg max-w-lg w-full animate-fadeIn shadow-2xl" onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded-lg max-w-lg w-full animate-fadeIn shadow-2xl" onClick={e => e.stopPropagation()}>
         <div className="border-b border-zinc-200 p-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-zinc-100 rounded-md">
@@ -469,7 +469,7 @@ const InviteUserModal = ({ onClose }) => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 text-zinc-900 outline-none transition-all"
+                className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] text-zinc-900 outline-none transition-all"
                 placeholder="employee@company.com"
                 required
               />
@@ -477,7 +477,7 @@ const InviteUserModal = ({ onClose }) => {
             </div>
             <div className="pt-4 flex justify-end gap-3 border-t border-zinc-200 mt-6">
               <button type="button" onClick={onClose} className="px-5 py-2.5 text-sm font-bold text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 rounded-md transition-colors">Cancel</button>
-              <button type="submit" disabled={loading} className="px-5 py-2.5 text-sm font-bold bg-zinc-900 text-white rounded-md hover:bg-zinc-800 transition-colors disabled:opacity-50">
+              <button type="submit" disabled={loading} className="px-5 py-2.5 text-sm font-bold bg-[#5B4FE8] text-white rounded-md hover:bg-[#4a3fd4] transition-colors disabled:opacity-50">
                 {loading ? 'Sending...' : 'Send Invitation'}
               </button>
             </div>
@@ -518,7 +518,7 @@ const CreateUserModal = ({ departments, isAdmin, onClose, onSuccess }) => {
 
   return (
     <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white border border-zinc-200 rounded-lg max-w-lg w-full animate-fadeIn shadow-2xl" onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded-lg max-w-lg w-full animate-fadeIn shadow-2xl" onClick={e => e.stopPropagation()}>
         <div className="border-b border-zinc-200 p-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-zinc-100 rounded-md">
@@ -546,7 +546,7 @@ const CreateUserModal = ({ departments, isAdmin, onClose, onSuccess }) => {
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+                className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
                 placeholder="John Doe"
                 required
               />
@@ -557,7 +557,7 @@ const CreateUserModal = ({ departments, isAdmin, onClose, onSuccess }) => {
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+                className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
                 placeholder="john@company.com"
                 required
               />
@@ -568,7 +568,7 @@ const CreateUserModal = ({ departments, isAdmin, onClose, onSuccess }) => {
                 type="password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+                className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
                 placeholder="Minimum 6 characters"
                 minLength={6}
                 required
@@ -579,7 +579,7 @@ const CreateUserModal = ({ departments, isAdmin, onClose, onSuccess }) => {
               <select
                 value={formData.department}
                 onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+                className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
               >
                 <option value="">Select department</option>
                 {departments.map(dept => (
@@ -592,7 +592,7 @@ const CreateUserModal = ({ departments, isAdmin, onClose, onSuccess }) => {
               <select
                 value={formData.role}
                 onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+                className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
                 required
               >
                 <option value="employee">Employee</option>
@@ -606,7 +606,7 @@ const CreateUserModal = ({ departments, isAdmin, onClose, onSuccess }) => {
                 type="date"
                 value={formData.hire_date}
                 onChange={(e) => setFormData({ ...formData, hire_date: e.target.value })}
-                className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+                className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
               />
             </div>
           </div>
@@ -615,7 +615,7 @@ const CreateUserModal = ({ departments, isAdmin, onClose, onSuccess }) => {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-zinc-900 text-white px-4 py-3 rounded-md hover:bg-zinc-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2 font-bold text-sm"
+              className="flex-1 bg-[#5B4FE8] text-white px-4 py-3 rounded-md hover:bg-[#4a3fd4] transition-all disabled:opacity-50 flex items-center justify-center gap-2 font-bold text-sm"
             >
               <UserPlus className="w-5 h-5" />
               {loading ? 'Creating...' : 'Create User'}
@@ -664,7 +664,7 @@ const EditUserModal = ({ user, departments, isAdmin, isHR, onClose, onSuccess })
 
   return (
     <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white border border-zinc-200 rounded-lg max-w-lg w-full animate-fadeIn shadow-2xl" onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded-lg max-w-lg w-full animate-fadeIn shadow-2xl" onClick={e => e.stopPropagation()}>
         <div className="border-b border-zinc-200 p-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-zinc-100 rounded-md">
@@ -694,7 +694,7 @@ const EditUserModal = ({ user, departments, isAdmin, isHR, onClose, onSuccess })
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+              className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
               required
             />
           </div>
@@ -704,7 +704,7 @@ const EditUserModal = ({ user, departments, isAdmin, isHR, onClose, onSuccess })
             <select
               value={formData.department}
               onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-              className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+              className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
             >
               <option value="">Select department</option>
               {departments.map(dept => (
@@ -718,7 +718,7 @@ const EditUserModal = ({ user, departments, isAdmin, isHR, onClose, onSuccess })
             <select
               value={formData.role}
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+              className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
               required
             >
               <option value="employee">Employee</option>
@@ -733,7 +733,7 @@ const EditUserModal = ({ user, departments, isAdmin, isHR, onClose, onSuccess })
               type="date"
               value={formData.hire_date}
               onChange={(e) => setFormData({ ...formData, hire_date: e.target.value })}
-              className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+              className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
             />
           </div>
 
@@ -744,7 +744,7 @@ const EditUserModal = ({ user, departments, isAdmin, isHR, onClose, onSuccess })
                 type="number"
                 value={formData.sick_leave_balance}
                 onChange={(e) => setFormData({ ...formData, sick_leave_balance: parseInt(e.target.value) })}
-                className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+                className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
                 min="0"
               />
             </div>
@@ -754,7 +754,7 @@ const EditUserModal = ({ user, departments, isAdmin, isHR, onClose, onSuccess })
                 type="number"
                 value={formData.vacation_balance}
                 onChange={(e) => setFormData({ ...formData, vacation_balance: parseInt(e.target.value) })}
-                className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+                className="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
                 min="0"
               />
             </div>
@@ -764,7 +764,7 @@ const EditUserModal = ({ user, departments, isAdmin, isHR, onClose, onSuccess })
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-zinc-900 text-white px-4 py-3 rounded-md hover:bg-zinc-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2 font-bold text-sm"
+              className="flex-1 bg-[#5B4FE8] text-white px-4 py-3 rounded-md hover:bg-[#4a3fd4] transition-all disabled:opacity-50 flex items-center justify-center gap-2 font-bold text-sm"
             >
               <Save className="w-5 h-5" />
               {loading ? 'Saving...' : 'Save Changes'}

@@ -13,7 +13,7 @@ const ConversationList = ({
       <div className="p-5 border-b border-zinc-100">
         <button
           onClick={onNew}
-          className="w-full flex items-center justify-center gap-2 bg-zinc-900 text-white px-4 py-2 text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-zinc-800 transition-colors shadow-sm"
+          className="w-full flex items-center justify-center gap-2 bg-[#5B4FE8] text-white px-4 py-2 text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-[#4a3fd4] transition-colors"
         >
           <Plus className="w-3.5 h-3.5" />
           New Chat
@@ -38,7 +38,7 @@ const ConversationList = ({
               onClick={() => onSelect(conv.id)}
             >
               <div className="flex items-start gap-3">
-                <div className={`p-1.5 rounded-md ${activeConversation === conv.id ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-400'}`}>
+                <div className={`p-1.5 rounded-md ${activeConversation === conv.id ? 'bg-[#5B4FE8] text-white' : 'bg-zinc-100 text-zinc-400'}`}>
                     <MessageSquare className="w-3.5 h-3.5" />
                 </div>
                 <div className="flex-1 min-w-0">

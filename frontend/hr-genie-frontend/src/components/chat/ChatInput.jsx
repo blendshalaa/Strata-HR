@@ -20,13 +20,13 @@ const ChatInput = ({ onSend, loading }) => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Ask anything or give a command — I can take actions for you..."
-          className="w-full px-4 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+          className="w-full px-4 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors"
           disabled={loading}
         />
         <button
           type="submit"
           disabled={loading || !message.trim()}
-          className="bg-zinc-900 text-white px-6 py-2 rounded-md hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          className="bg-[#5B4FE8] text-white px-6 py-2 rounded-md hover:bg-[#4a3fd4] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
         >
           {loading ? (
             <Loader className="w-4 h-4 animate-spin" />

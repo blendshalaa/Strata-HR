@@ -88,7 +88,7 @@ const PayrollPage = () => {
 
     if (loading) return (
         <div className="flex items-center justify-center h-64">
-            <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
+            <div className="w-6 h-6 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin" />
         </div>
     );
 
@@ -130,17 +130,17 @@ const PayrollPage = () => {
 
             {/* Summary Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
+                <div className="bg-white border border-zinc-200 rounded-md p-5">
                     <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">Pending Payout</p>
                     <p className="text-2xl font-black text-amber-600">${totalPending.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
                     <p className="text-[11px] text-zinc-400 mt-1">{payrolls.filter(p => p.status === 'pending').length} pending entries</p>
                 </div>
-                <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
+                <div className="bg-white border border-zinc-200 rounded-md p-5">
                     <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">Paid This Month</p>
                     <p className="text-2xl font-black text-emerald-600">${totalPaidThisMonth.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
                     <p className="text-[11px] text-zinc-400 mt-1">{payrolls.filter(p => p.status === 'paid' && p.pay_period_end?.slice(0, 7) === thisMonth).length} payslips</p>
                 </div>
-                <div className="bg-white border border-zinc-200 rounded-md p-5 shadow-sm">
+                <div className="bg-white border border-zinc-200 rounded-md p-5">
                     <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400 mb-2">Employees</p>
                     <p className="text-2xl font-black text-zinc-900">{uniqueEmployees}</p>
                     <p className="text-[11px] text-zinc-400 mt-1">on payroll</p>
@@ -148,7 +148,7 @@ const PayrollPage = () => {
             </div>
 
             {/* Month navigation */}
-            <div className="flex items-center justify-between bg-white border border-zinc-200 rounded-md px-5 py-3 shadow-sm">
+            <div className="flex items-center justify-between bg-white border border-zinc-200 rounded-md px-5 py-3">
                 <button onClick={() => setMonthOffset(o => o - 1)} className="p-1.5 hover:bg-zinc-100 rounded-md transition-colors">
                     <ChevronLeft className="w-5 h-5 text-zinc-600" />
                 </button>
@@ -178,8 +178,8 @@ const PayrollPage = () => {
                         onClick={() => setFilterStatus(s)}
                         className={`px-3 py-1.5 rounded-md text-[12px] font-bold uppercase tracking-wider transition-colors border ${
                             filterStatus === s
-                                ? 'bg-zinc-900 text-white border-zinc-900'
-                                : 'bg-white text-zinc-500 border-zinc-200 hover:border-zinc-400'
+                                ? 'bg-[#5B4FE8] text-white border-[#5B4FE8]'
+                                : 'bg-white text-zinc-500 border-zinc-200 hover:border-[#5B4FE8]'
                         }`}
                     >
                         {s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
@@ -227,7 +227,7 @@ const PayrollPage = () => {
                                                 <button
                                                     onClick={() => setConfirmPayId(pay.id)}
                                                     disabled={isUpdating === pay.id}
-                                                    className="px-2.5 py-1 text-[11px] font-bold text-white bg-zinc-900 rounded-md hover:bg-zinc-800 transition-colors disabled:opacity-50 whitespace-nowrap uppercase tracking-wider"
+                                                    className="px-2.5 py-1 text-[11px] font-bold text-white bg-[#5B4FE8] rounded-md hover:bg-[#4a3fd4] transition-colors disabled:opacity-50 whitespace-nowrap uppercase tracking-wider"
                                                 >
                                                     {isUpdating === pay.id ? t('common.updating') : t('payroll.markPaid')}
                                                 </button>
@@ -292,7 +292,7 @@ const PayrollPage = () => {
                             <div className="flex items-center gap-2 pt-3 border-t border-zinc-100">
                                 {pay.status !== 'paid' && (
                                     <button onClick={() => setConfirmPayId(pay.id)} disabled={isUpdating === pay.id}
-                                        className="flex-1 py-1.5 text-[12px] font-bold uppercase tracking-wider text-white bg-zinc-900 rounded-md hover:bg-zinc-800 transition-colors disabled:opacity-50">
+                                        className="flex-1 py-1.5 text-[12px] font-bold uppercase tracking-wider text-white bg-[#5B4FE8] rounded-md hover:bg-[#4a3fd4] transition-colors disabled:opacity-50">
                                         {isUpdating === pay.id ? t('common.updating') : t('payroll.markAsPaid')}
                                     </button>
                                 )}

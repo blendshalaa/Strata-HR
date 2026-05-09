@@ -33,7 +33,7 @@ const MyPayslipsPage = () => {
     };
 
     if (loading) {
-        return (<div className="flex items-center justify-center h-64"><div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" /></div>);
+        return (<div className="flex items-center justify-center h-64"><div className="w-6 h-6 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin" /></div>);
     }
 
     return (
@@ -51,7 +51,7 @@ const MyPayslipsPage = () => {
             ) : (
                 <div className="space-y-3">
                     {payslips.map((slip) => (
-                        <div key={slip.id} onClick={() => setSelectedSlip(selectedSlip?.id === slip.id ? null : slip)} className="card p-5 cursor-pointer hover:border-zinc-300 transition-colors group">
+                        <div key={slip.id} onClick={() => setSelectedSlip(selectedSlip?.id === slip.id ? null : slip)} className="card p-5 cursor-pointer hover:border-[#C4BDFF] transition-colors group">
                             <div className="flex items-center justify-between gap-4">
                                 <div className="flex items-center gap-4">
                                     <div className="w-10 h-10 bg-zinc-100 border border-zinc-200 rounded-full flex items-center justify-center shrink-0">

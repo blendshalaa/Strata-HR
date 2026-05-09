@@ -34,7 +34,7 @@ const NotFoundPage = () => {
                 </button>
                 <button
                     onClick={() => navigate('/dashboard')}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-zinc-900 text-white rounded-md text-sm font-bold hover:bg-zinc-800 transition-colors"
+                    className="flex items-center gap-2 px-5 py-2.5 bg-[#5B4FE8] text-white rounded-md text-sm font-bold hover:bg-[#4a3fd4] transition-colors"
                 >
                     <Home className="w-4 h-4" />
                     {t('notFound.dashboard')}

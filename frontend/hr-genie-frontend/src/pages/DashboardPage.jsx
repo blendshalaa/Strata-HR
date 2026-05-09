@@ -58,7 +58,7 @@ const DashboardPage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-[#EEF0FF] border-t-[#5B4FE8] rounded-full animate-spin" />
       </div>
     );
   }
@@ -79,44 +79,49 @@ const DashboardPage = () => {
       <button
         key={action.route}
         onClick={() => navigate(action.route)}
-        className="w-full flex items-center gap-3 p-3 bg-white hover:bg-zinc-50 border border-zinc-200 rounded-md transition-all text-left group"
+        className="w-full flex items-center gap-3 p-3 bg-white border rounded-md transition-all text-left group"
+        style={{ borderColor: 'rgba(0,0,0,0.08)' }}
+        onMouseEnter={e => e.currentTarget.style.backgroundColor = '#F5F4FF'}
+        onMouseLeave={e => e.currentTarget.style.backgroundColor = '#fff'}
       >
-        <div className="p-2 bg-zinc-100 rounded-md border border-zinc-200/50">
-          <action.icon className="w-4 h-4 text-zinc-600" />
+        <div className="p-2 rounded-md flex-shrink-0" style={{ backgroundColor: '#EEF0FF' }}>
+          <action.icon className="w-4 h-4" style={{ color: '#5B4FE8' }} />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-medium text-zinc-900 text-[13px]">{action.label}</p>
-          <p className="text-[11px] text-zinc-500 mt-0.5 truncate">{action.desc}</p>
+          <p className="font-semibold text-[13px]" style={{ color: '#0F0D2E' }}>{action.label}</p>
+          <p className="text-[11px] mt-0.5 truncate" style={{ color: '#6B7280' }}>{action.desc}</p>
         </div>
-        <ArrowRight className="w-4 h-4 text-zinc-400 group-hover:translate-x-0.5 transition-transform" />
+        <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" style={{ color: '#9CA3AF' }} />
       </button>
     );
   };
 
   const tooltipStyle = {
     backgroundColor: '#fff',
-    border: '1px solid #e2e8f0',
-    borderRadius: '12px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+    border: '0.5px solid rgba(0,0,0,0.08)',
+    borderRadius: '8px',
+    boxShadow: '0 4px 16px rgba(91,79,232,0.08)',
     fontSize: '13px',
+    color: '#0F0D2E',
   };
 
   return (
     <div className="space-y-6 animate-fadeIn">
       {/* Welcome Banner */}
-      <div className="border border-zinc-200 rounded-lg bg-zinc-900 text-white p-6 sm:p-8">
+      <div className="rounded-lg p-6 sm:p-8" style={{ backgroundColor: '#5B4FE8', border: '0.5px solid rgba(91,79,232,0.3)' }}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl sm:text-2xl font-semibold mb-1.5 tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-semibold mb-1.5 tracking-tight text-white">
               {t('dashboard.welcomeBack', { name: user?.name?.split(' ')[0] })}
             </h1>
-            <p className="text-zinc-400 text-sm">
+            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>
               {t('dashboard.whatsHappening')}
             </p>
           </div>
           <button
             onClick={() => navigate('/chat')}
-            className="hidden sm:flex shrink-0 items-center gap-2 bg-white text-zinc-900 px-4 py-2 rounded-md font-medium hover:bg-zinc-100 transition-colors border border-transparent text-sm"
+            className="hidden sm:flex shrink-0 items-center gap-2 bg-white px-4 py-2 rounded-md font-semibold hover:bg-[#F5F4FF] transition-colors text-sm"
+            style={{ color: '#5B4FE8' }}
           >
             <Sparkles className="w-4 h-4" />
             {t('dashboard.askAiAssistant')}
@@ -166,7 +171,7 @@ const DashboardPage = () => {
                   <XAxis dataKey="name" fontSize={12} stroke="#94a3b8" tickLine={false} axisLine={false} />
                   <YAxis fontSize={12} stroke="#94a3b8" allowDecimals={false} tickLine={false} axisLine={false} />
                   <Tooltip cursor={{ fill: 'rgba(99, 102, 241, 0.04)' }} contentStyle={tooltipStyle} />
-                  <Bar dataKey="count" fill="#18181b" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="count" fill="#5B4FE8" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -196,7 +201,7 @@ const DashboardPage = () => {
                   <XAxis dataKey="date" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => new Date(value).toLocaleDateString('en', { month: 'short', day: 'numeric' })} />
                   <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
                   <Tooltip contentStyle={tooltipStyle} />
-                  <Line type="monotone" dataKey="count" stroke="#18181b" strokeWidth={2.5} dot={{ fill: '#18181b', r: 4, strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6, stroke: '#18181b', strokeWidth: 2, fill: '#fff' }} />
+                  <Line type="monotone" dataKey="count" stroke="#5B4FE8" strokeWidth={2.5} dot={{ fill: '#5B4FE8', r: 4, strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6, stroke: '#5B4FE8', strokeWidth: 2, fill: '#fff' }} />
                 </LineChart>
               </ResponsiveContainer>
             ) : (
@@ -243,7 +248,7 @@ const DashboardPage = () => {
                 className={`w-full flex items-center justify-between p-3 rounded-md border transition-all hover:shadow-sm group ${
                   stats?.stats?.pending_leave_requests > 0
                     ? 'bg-amber-50 border-amber-200 hover:border-amber-300'
-                    : 'bg-zinc-50 border-zinc-200 hover:border-zinc-300'
+                    : 'bg-zinc-50 border-zinc-200 hover:border-[#C4BDFF]'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -262,7 +267,7 @@ const DashboardPage = () => {
                 className={`w-full flex items-center justify-between p-3 rounded-md border transition-all hover:shadow-sm group ${
                   stats?.stats?.pending_timesheets > 0
                     ? 'bg-amber-50 border-amber-200 hover:border-amber-300'
-                    : 'bg-zinc-50 border-zinc-200 hover:border-zinc-300'
+                    : 'bg-zinc-50 border-zinc-200 hover:border-[#C4BDFF]'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -297,7 +302,7 @@ const DashboardPage = () => {
               </div>
               <span className="text-[12px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">clocked in</span>
             </div>
-            <div className="h-2.5 bg-zinc-100 rounded-full overflow-hidden mb-2">
+            <div className="h-2.5 rounded-full overflow-hidden mb-2" style={{ backgroundColor: '#EEF0FF' }}>
               <div
                 className="h-full bg-emerald-500 rounded-full transition-all duration-700"
                 style={{ width: `${stats?.stats?.total_users > 0 ? Math.round((stats.stats.attendance_today / stats.stats.total_users) * 100) : 0}%` }}
@@ -317,7 +322,7 @@ const DashboardPage = () => {
         <div className="card">
           <div className="flex items-center justify-between mb-2.5">
             <h3 className="text-[14px] font-semibold text-zinc-900">{t('dashboard.knowledgeBaseTitle')}</h3>
-            <button onClick={() => navigate('/knowledge')} className="text-[13px] text-zinc-500 hover:text-zinc-900 font-medium transition-colors">
+            <button onClick={() => navigate('/knowledge')} className="text-[13px] font-semibold transition-colors" style={{ color: '#5B4FE8' }}>
               {t('common.viewAll')} &rarr;
             </button>
           </div>
@@ -353,8 +358,8 @@ const FlightRiskWidget = () => {
   if (risks === null) {
     return (
       <div className="card border-zinc-200 bg-white flex flex-col items-center justify-center p-8 text-center min-h-48 mt-6">
-        <div className="p-3 bg-zinc-100 rounded-full mb-4 border border-zinc-200">
-          <Sparkles className="w-6 h-6 text-zinc-900" />
+        <div className="p-3 rounded-full mb-4" style={{ backgroundColor: '#EEF0FF' }}>
+          <Sparkles className="w-6 h-6" style={{ color: '#5B4FE8' }} />
         </div>
         <h3 className="text-[15px] font-bold text-zinc-900 mb-2">{t('dashboard.predictiveRetention')}</h3>
         <p className="text-[13px] text-zinc-500 mb-5 max-w-sm">
@@ -379,7 +384,7 @@ const FlightRiskWidget = () => {
     return (
       <div className="card border-zinc-200 bg-white flex flex-col items-center justify-center p-8 text-center min-h-48 mt-6">
         <p className="text-[13px] text-zinc-500">{error || 'No high-risk employees identified at this time.'}</p>
-        <button onClick={() => setRisks(null)} className="mt-4 text-[13px] text-zinc-900 font-semibold hover:underline">Reset Analysis</button>
+        <button onClick={() => setRisks(null)} className="mt-4 text-[13px] font-semibold hover:underline" style={{ color: '#5B4FE8' }}>Reset Analysis</button>
       </div>
     );
   }
@@ -496,8 +501,8 @@ const OnboardingWidget = () => {
 
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6 pr-8">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-zinc-100 rounded-md border border-zinc-200">
-            <Trophy className={`w-4 h-4 ${isAllDone ? 'text-amber-500' : 'text-zinc-500'}`} />
+          <div className="p-2 rounded-md" style={{ backgroundColor: isAllDone ? '#FFF8EB' : '#EEF0FF' }}>
+            <Trophy className="w-4 h-4" style={{ color: isAllDone ? '#B45309' : '#5B4FE8' }} />
           </div>
           <div>
             <h3 className="text-[15px] font-bold text-zinc-900 flex items-center gap-2 mb-0.5">
@@ -519,10 +524,10 @@ const OnboardingWidget = () => {
             <div className="text-xl font-bold text-zinc-900 leading-none">{progress}%</div>
             <p className="text-[10px] uppercase tracking-wider text-zinc-400 mt-1 font-semibold">{t('common.progress')}</p>
           </div>
-          <div className="h-1.5 w-full md:w-32 bg-zinc-100 rounded-full overflow-hidden shrink-0">
+          <div className="h-1.5 w-full md:w-32 rounded-full overflow-hidden shrink-0" style={{ backgroundColor: '#EEF0FF' }}>
             <div
-              className={`h-full transition-all duration-1000 ease-out ${isAllDone ? 'bg-emerald-500' : 'bg-zinc-900'}`}
-              style={{ width: `${progress}%` }}
+              className="h-full transition-all duration-1000 ease-out"
+              style={{ width: `${progress}%`, backgroundColor: isAllDone ? '#059669' : '#5B4FE8' }}
             />
           </div>
         </div>
@@ -535,7 +540,7 @@ const OnboardingWidget = () => {
             onClick={() => handleToggle(task.id)}
             className={`flex items-center gap-3 p-3 rounded-md border transition-colors text-left ${task.is_completed
               ? 'bg-zinc-50 border-zinc-200 text-zinc-500 hover:bg-zinc-100'
-              : 'bg-white border-zinc-300 hover:border-zinc-400'
+              : 'bg-white border-zinc-300 hover:border-[#5B4FE8]'
               }`}
           >
             {task.is_completed ? (

@@ -43,7 +43,7 @@ const MessageBubble = ({ message }) => {
   return (
     <div className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'} animate-fadeIn`}>
       {!isUser && (
-        <div className="w-8 h-8 rounded-md bg-zinc-900 flex items-center justify-center flex-shrink-0">
+        <div className="w-8 h-8 rounded-md bg-[#5B4FE8] flex items-center justify-center flex-shrink-0">
           <Bot className="w-4 h-4 text-white" />
         </div>
       )}
@@ -51,7 +51,7 @@ const MessageBubble = ({ message }) => {
       <div
         className={`max-w-[80%] sm:max-w-[70%] rounded-lg px-4 py-3 ${
           isUser
-            ? 'bg-zinc-900 text-white'
+            ? 'bg-[#5B4FE8] text-white'
             : 'bg-zinc-50 border border-zinc-200 text-zinc-900'
         }`}
       >

@@ -66,7 +66,7 @@ const KnowledgePage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin"></div>
+        <div className="w-6 h-6 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -85,7 +85,7 @@ const KnowledgePage = () => {
               setEditingArticle(null);
               setShowCreateModal(true);
             }}
-            className="flex items-center gap-2 bg-zinc-900 text-white px-4 py-2 text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-zinc-800 transition-colors shadow-sm"
+            className="flex items-center gap-2 bg-[#5B4FE8] text-white px-4 py-2 text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-[#4a3fd4] transition-colors"
           >
             <Plus className="w-3.5 h-3.5" />
             {t('knowledge.addArticle')}
@@ -104,7 +104,7 @@ const KnowledgePage = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t('knowledge.searchArticles')}
-                className="w-full pl-9 pr-4 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                className="w-full pl-9 pr-4 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors"
               />
             </div>
           </div>
@@ -112,7 +112,7 @@ const KnowledgePage = () => {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+              className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors"
             >
               <option value="">{t('knowledge.allCategories')}</option>
               {categories.map((cat) => (
@@ -175,14 +175,14 @@ const KnowledgePage = () => {
       {/* Article View Modal */}
       {selectedArticle && (
         <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={() => setSelectedArticle(null)}>
-          <div className="bg-white border border-zinc-200 rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto animate-fadeIn shadow-xl" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto animate-fadeIn shadow-xl" onClick={e => e.stopPropagation()}>
             <div className="sticky top-0 bg-white border-b border-zinc-100 p-6 flex items-start justify-between z-10">
               <div>
                 <h2 className="text-[20px] font-bold text-zinc-900 mb-2 leading-tight">
                   {selectedArticle.title}
                 </h2>
                 {selectedArticle.category && (
-                  <span className="inline-block px-2 py-0.5 bg-zinc-900 text-white text-[10px] font-bold uppercase tracking-wider rounded-md">
+                  <span className="inline-block px-2 py-0.5 bg-[#5B4FE8] text-white text-[10px] font-bold uppercase tracking-wider rounded-md">
                     {selectedArticle.category}
                   </span>
                 )}
@@ -290,7 +290,7 @@ const CreateArticleModal = ({ article, onClose, onSuccess }) => {
 
   return (
     <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white border border-zinc-200 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-fadeIn shadow-xl" onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-fadeIn shadow-xl" onClick={e => e.stopPropagation()}>
         <div className="sticky top-0 bg-white border-b border-zinc-100 p-6 flex items-center justify-between z-10">
           <h2 className="text-[18px] font-bold text-zinc-900">
             {article ? t('knowledge.editArticle') : t('knowledge.createArticle')}
@@ -318,7 +318,7 @@ const CreateArticleModal = ({ article, onClose, onSuccess }) => {
               type="text"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+              className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors"
               placeholder={t('knowledge.titlePlaceholder')}
               required
             />
@@ -331,7 +331,7 @@ const CreateArticleModal = ({ article, onClose, onSuccess }) => {
             <select
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+              className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors"
               required
             >
               <option value="policies">Policies</option>
@@ -348,7 +348,7 @@ const CreateArticleModal = ({ article, onClose, onSuccess }) => {
             <textarea
               value={formData.content}
               onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-              className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors min-h-[200px]"
+              className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors min-h-[200px]"
               placeholder={t('knowledge.contentPlaceholder')}
               required
             />
@@ -363,7 +363,7 @@ const CreateArticleModal = ({ article, onClose, onSuccess }) => {
               value={formData.tags}
               onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
               placeholder="e.g., leave, policy, hr"
-              className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+              className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors"
             />
           </div>
 
@@ -371,7 +371,7 @@ const CreateArticleModal = ({ article, onClose, onSuccess }) => {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-zinc-900 text-white px-4 py-2.5 rounded-md hover:bg-zinc-800 transition-colors disabled:opacity-50 text-[12px] font-bold uppercase tracking-wider"
+              className="flex-1 bg-[#5B4FE8] text-white px-4 py-2.5 rounded-md hover:bg-[#4a3fd4] transition-colors disabled:opacity-50 text-[12px] font-bold uppercase tracking-wider"
             >
               {loading ? t('common.saving') : article ? t('knowledge.updateArticle') : t('knowledge.createArticle')}
             </button>

@@ -134,7 +134,7 @@ const NotificationBell = () => {
                     <div className="max-h-80 overflow-y-auto">
                         {loading ? (
                             <div className="p-8 text-center">
-                                <div className="w-5 h-5 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin mx-auto" />
+                                <div className="w-5 h-5 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin mx-auto" />
                             </div>
                         ) : notifications.length === 0 ? (
                             <div className="p-8 text-center">

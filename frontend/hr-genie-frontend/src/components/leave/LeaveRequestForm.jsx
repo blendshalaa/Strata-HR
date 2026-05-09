@@ -130,7 +130,7 @@ const LeaveRequestForm = ({ onSubmit }) => {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-2.5 text-[13px] font-bold uppercase tracking-wider text-white bg-zinc-900 border border-zinc-900 rounded-md hover:bg-zinc-800 transition-colors ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`w-full py-2.5 text-[13px] font-bold uppercase tracking-wider text-white bg-[#5B4FE8] border border-[#5B4FE8] rounded-md hover:bg-[#4a3fd4] transition-colors ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           {loading ? t('common.submitting') : t('leaveForm.submitRequest')}
         </button>

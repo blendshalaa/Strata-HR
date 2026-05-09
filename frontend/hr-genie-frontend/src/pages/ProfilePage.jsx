@@ -49,7 +49,7 @@ const ProfilePage = () => {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
+                <div className="w-6 h-6 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin" />
             </div>
         );
     }
@@ -163,7 +163,7 @@ const ProfilePage = () => {
                     <button
                         onClick={handleSave}
                         disabled={saving}
-                        className="flex items-center gap-2 px-4 py-2 bg-zinc-900 text-white rounded-md text-[13px] font-semibold hover:bg-zinc-800 transition-colors disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 py-2 bg-[#5B4FE8] text-white rounded-md text-[13px] font-semibold hover:bg-[#4a3fd4] transition-colors disabled:opacity-50"
                     >
                         <Save className="w-3 h-3" />
                         {saving ? t('common.saving') : t('profile.saveChanges')}
@@ -186,7 +186,7 @@ const InfoCard = ({ icon: Icon, label, value, editing, editValue, onChange }) =>
                     type="text"
                     value={editValue}
                     onChange={e => onChange(e.target.value)}
-                    className="w-full bg-white border border-zinc-200 rounded-md px-2.5 py-1.5 text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                    className="w-full bg-white border border-zinc-200 rounded-md px-2.5 py-1.5 text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors"
                 />
             ) : (
                 <p className="text-[14px] font-semibold text-zinc-900 truncate">{value}</p>

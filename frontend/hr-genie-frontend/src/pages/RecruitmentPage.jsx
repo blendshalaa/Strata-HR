@@ -126,7 +126,7 @@ const RecruitmentPage = () => {
                 </h2>
                 <button
                     onClick={() => setIsJobModalOpen(true)}
-                    className="flex items-center gap-2 bg-zinc-900 text-white px-4 py-2 text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-zinc-800 transition-colors shadow-sm"
+                    className="flex items-center gap-2 bg-[#5B4FE8] text-white px-4 py-2 text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-[#4a3fd4] transition-colors"
                 >
                     <Plus className="w-3.5 h-3.5" />
                     {t('recruitment.postNewJob')}
@@ -134,7 +134,7 @@ const RecruitmentPage = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {jobs.map(job => (
-                    <div key={job.id} className="card bg-white border border-zinc-200 hover:border-zinc-300 transition-colors group p-6">
+                    <div key={job.id} className="card bg-white border border-zinc-200 hover:border-[#C4BDFF] transition-colors group p-6">
                         <div className="flex items-start gap-4">
                             <div className="p-2.5 bg-zinc-50 border border-zinc-100 rounded-md">
                                 <Briefcase className="w-5 h-5 text-zinc-600" />
@@ -173,7 +173,7 @@ const RecruitmentPage = () => {
                         {job.status === 'open' && (
                             <button
                                 onClick={() => { setSelectedJobId(job.id); setIsAIScreeningModalOpen(true); }}
-                                className="mt-4 w-full flex items-center justify-center gap-2 bg-zinc-50 text-zinc-900 border border-zinc-200 hover:bg-zinc-100 hover:border-zinc-300 px-4 py-2.5 rounded-md text-[12px] font-bold uppercase tracking-wider transition-colors"
+                                className="mt-4 w-full flex items-center justify-center gap-2 bg-zinc-50 text-zinc-900 border border-zinc-200 hover:bg-zinc-100 hover:border-[#C4BDFF] px-4 py-2.5 rounded-md text-[12px] font-bold uppercase tracking-wider transition-colors"
                             >
                                 <Sparkles className="w-3.5 h-3.5 text-zinc-600" />
                                 {t('recruitment.aiScreenResume')}
@@ -196,7 +196,7 @@ const RecruitmentPage = () => {
         <div className="space-y-4">
             {/* Pipeline Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="card bg-white border border-zinc-200 cursor-pointer hover:border-zinc-300 transition-colors" onClick={() => setStatusFilter(statusFilter === 'applied' ? '' : 'applied')}>
+                <div className="card bg-white border border-zinc-200 cursor-pointer hover:border-[#C4BDFF] transition-colors" onClick={() => setStatusFilter(statusFilter === 'applied' ? '' : 'applied')}>
                     <div className="flex items-center gap-2">
                         <div className="p-1.5 bg-amber-50 border border-amber-100 rounded-md">
                             <Clock className="w-3.5 h-3.5 text-amber-600" />
@@ -205,7 +205,7 @@ const RecruitmentPage = () => {
                     </div>
                     <p className="text-2xl font-black text-zinc-900 mt-2 tracking-tight">{pipelineStats.applied}</p>
                 </div>
-                <div className="card bg-white border border-zinc-200 cursor-pointer hover:border-zinc-300 transition-colors" onClick={() => setStatusFilter(statusFilter === 'interviewing' ? '' : 'interviewing')}>
+                <div className="card bg-white border border-zinc-200 cursor-pointer hover:border-[#C4BDFF] transition-colors" onClick={() => setStatusFilter(statusFilter === 'interviewing' ? '' : 'interviewing')}>
                     <div className="flex items-center gap-2">
                         <div className="p-1.5 bg-blue-50 border border-blue-100 rounded-md">
                             <FileText className="w-3.5 h-3.5 text-blue-600" />
@@ -214,7 +214,7 @@ const RecruitmentPage = () => {
                     </div>
                     <p className="text-2xl font-black text-zinc-900 mt-2 tracking-tight">{pipelineStats.interviewing}</p>
                 </div>
-                <div className="card bg-white border border-zinc-200 cursor-pointer hover:border-zinc-300 transition-colors" onClick={() => setStatusFilter(statusFilter === 'hired' ? '' : 'hired')}>
+                <div className="card bg-white border border-zinc-200 cursor-pointer hover:border-[#C4BDFF] transition-colors" onClick={() => setStatusFilter(statusFilter === 'hired' ? '' : 'hired')}>
                     <div className="flex items-center gap-2">
                         <div className="p-1.5 bg-green-50 border border-green-100 rounded-md">
                             <CheckCircle className="w-3.5 h-3.5 text-green-600" />
@@ -223,7 +223,7 @@ const RecruitmentPage = () => {
                     </div>
                     <p className="text-2xl font-black text-zinc-900 mt-2 tracking-tight">{pipelineStats.hired}</p>
                 </div>
-                <div className="card bg-white border border-zinc-200 cursor-pointer hover:border-zinc-300 transition-colors" onClick={() => setStatusFilter(statusFilter === 'rejected' ? '' : 'rejected')}>
+                <div className="card bg-white border border-zinc-200 cursor-pointer hover:border-[#C4BDFF] transition-colors" onClick={() => setStatusFilter(statusFilter === 'rejected' ? '' : 'rejected')}>
                     <div className="flex items-center gap-2">
                         <div className="p-1.5 bg-red-50 border border-red-100 rounded-md">
                             <XCircle className="w-3.5 h-3.5 text-red-600" />
@@ -243,12 +243,12 @@ const RecruitmentPage = () => {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder={t('recruitment.searchApplicants')}
-                        className="w-full pl-9 pr-4 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                        className="w-full pl-9 pr-4 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors"
                     />
                 </div>
                 <button
                     onClick={() => setIsApplicantModalOpen(true)}
-                    className="flex items-center gap-2 bg-zinc-900 text-white px-4 py-2 text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-zinc-800 transition-colors shadow-sm whitespace-nowrap"
+                    className="flex items-center gap-2 bg-[#5B4FE8] text-white px-4 py-2 text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-[#4a3fd4] transition-colors shadow-sm whitespace-nowrap"
                 >
                     <UserPlus className="w-3.5 h-3.5" />
                     {t('recruitment.addApplicant')}
@@ -336,7 +336,7 @@ const RecruitmentPage = () => {
             <div className="flex space-x-1 bg-zinc-100 border border-zinc-200 rounded-md p-1 w-fit">
                 <button
                     className={`px-4 py-2 text-[12px] font-bold uppercase tracking-wider rounded-md transition-colors ${activeTab === 'jobs'
-                        ? 'bg-white text-zinc-900 border border-zinc-200 shadow-sm'
+                        ? 'bg-white text-zinc-900 border border-zinc-200'
                         : 'text-zinc-500 hover:text-zinc-900'
                         }`}
                     onClick={() => setActiveTab('jobs')}
@@ -345,14 +345,14 @@ const RecruitmentPage = () => {
                 </button>
                 <button
                     className={`px-4 py-2 text-[12px] font-bold uppercase tracking-wider rounded-md transition-colors ${activeTab === 'applications'
-                        ? 'bg-white text-zinc-900 border border-zinc-200 shadow-sm'
+                        ? 'bg-white text-zinc-900 border border-zinc-200'
                         : 'text-zinc-500 hover:text-zinc-900'
                         }`}
                     onClick={() => setActiveTab('applications')}
                 >
                     {t('recruitment.applicants')}
                     {applications.length > 0 && (
-                        <span className="ml-1.5 px-1.5 py-0.5 text-[10px] bg-zinc-900 text-white rounded-md">
+                        <span className="ml-1.5 px-1.5 py-0.5 text-[10px] bg-[#5B4FE8] text-white rounded-md">
                             {applications.length}
                         </span>
                     )}
@@ -361,7 +361,7 @@ const RecruitmentPage = () => {
 
             {loading ? (
                 <div className="flex items-center justify-center h-48">
-                    <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin"></div>
+                    <div className="w-6 h-6 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin"></div>
                 </div>
             ) : (
                 activeTab === 'jobs' ? renderJobs() : renderApplications()
@@ -420,7 +420,7 @@ const StatusDropdown = ({ currentStatus, isLoading, onStatusChange }) => {
             >
                 <span>{t('recruitment.update')}</span>
                 {isLoading ? (
-                    <div className="w-3.5 h-3.5 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin"></div>
+                    <div className="w-3.5 h-3.5 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin"></div>
                 ) : (
                     <ChevronDown className="w-3.5 h-3.5 text-zinc-400" />
                 )}
@@ -489,7 +489,7 @@ const AddApplicantModal = ({ jobs, onClose, onSuccess }) => {
 
     return (
         <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
-            <div className="bg-white border border-zinc-200 rounded-lg max-w-lg w-full animate-fadeIn shadow-lg" onClick={e => e.stopPropagation()}>
+            <div className="bg-white rounded-lg max-w-lg w-full animate-fadeIn shadow-lg" onClick={e => e.stopPropagation()}>
                 <div className="border-b border-zinc-100 p-6 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-zinc-100 border border-zinc-200 rounded-md">
@@ -518,7 +518,7 @@ const AddApplicantModal = ({ jobs, onClose, onSuccess }) => {
                         <select
                             value={formData.job_id}
                             onChange={(e) => setFormData({ ...formData, job_id: e.target.value })}
-                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors"
                             required
                         >
                             <option value="">{t('recruitment.selectJobPosting')}</option>
@@ -539,7 +539,7 @@ const AddApplicantModal = ({ jobs, onClose, onSuccess }) => {
                             type="text"
                             value={formData.applicant_name}
                             onChange={(e) => setFormData({ ...formData, applicant_name: e.target.value })}
-                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors"
                             placeholder="John Doe"
                             required
                         />
@@ -551,7 +551,7 @@ const AddApplicantModal = ({ jobs, onClose, onSuccess }) => {
                             type="email"
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors"
                             placeholder="john@example.com"
                             required
                         />
@@ -563,7 +563,7 @@ const AddApplicantModal = ({ jobs, onClose, onSuccess }) => {
                             type="file"
                             accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                             onChange={(e) => setFormData({ ...formData, resume: e.target.files[0] })}
-                            className="w-full text-[12px] text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-[11px] file:font-bold file:uppercase file:tracking-wider file:bg-zinc-900 file:text-white hover:file:bg-zinc-800 transition-colors"
+                            className="w-full text-[12px] text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-[11px] file:font-bold file:uppercase file:tracking-wider file:bg-[#5B4FE8] file:text-white hover:file:bg-[#4a3fd4] transition-colors"
                         />
                     </div>
 
@@ -571,7 +571,7 @@ const AddApplicantModal = ({ jobs, onClose, onSuccess }) => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 bg-zinc-900 text-white px-4 py-2.5 rounded-md hover:bg-zinc-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-[12px] font-bold uppercase tracking-wider"
+                            className="flex-1 bg-[#5B4FE8] text-white px-4 py-2.5 rounded-md hover:bg-[#4a3fd4] transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-[12px] font-bold uppercase tracking-wider"
                         >
                             <UserPlus className="w-4 h-4" />
                             {loading ? t('recruitment.adding') : t('recruitment.addApplicantBtn')}
@@ -624,10 +624,10 @@ const AIScreeningModal = ({ jobId, jobTitle, onClose }) => {
 
     return (
         <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
-            <div className="bg-white border border-zinc-200 rounded-lg max-w-2xl w-full animate-slideUp shadow-xl relative overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="bg-white rounded-lg max-w-2xl w-full animate-slideUp shadow-xl relative overflow-hidden" onClick={e => e.stopPropagation()}>
                 <div className="border-b border-zinc-100 p-6 flex items-center justify-between relative z-10">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-zinc-900 rounded-md">
+                        <div className="p-2 bg-[#5B4FE8] rounded-md">
                             <Sparkles className="w-5 h-5 text-white" />
                         </div>
                         <div>
@@ -654,7 +654,7 @@ const AIScreeningModal = ({ jobId, jobTitle, onClose }) => {
                                 </div>
                             )}
 
-                            <div className="border-2 border-dashed border-zinc-200 bg-zinc-50 rounded-lg p-10 text-center hover:border-zinc-300 transition-colors cursor-pointer relative">
+                            <div className="border-2 border-dashed border-zinc-200 bg-zinc-50 rounded-lg p-10 text-center hover:border-[#C4BDFF] transition-colors cursor-pointer relative">
                                 <input
                                     type="file"
                                     accept=".pdf"
@@ -666,7 +666,7 @@ const AIScreeningModal = ({ jobId, jobTitle, onClose }) => {
                                 <p className="text-zinc-500 text-[13px]">{t('recruitment.mustBePdf')}</p>
 
                                 {resume && (
-                                    <div className="mt-4 inline-flex items-center gap-2 bg-zinc-900 text-white px-4 py-2 rounded-md text-[12px] font-bold uppercase tracking-wider">
+                                    <div className="mt-4 inline-flex items-center gap-2 bg-[#5B4FE8] text-white px-4 py-2 rounded-md text-[12px] font-bold uppercase tracking-wider">
                                         <FileText className="w-4 h-4" />
                                         {resume.name}
                                     </div>
@@ -676,7 +676,7 @@ const AIScreeningModal = ({ jobId, jobTitle, onClose }) => {
                             <button
                                 onClick={handleAnalyze}
                                 disabled={loading || !resume}
-                                className="w-full flex items-center justify-center gap-2 bg-zinc-900 text-white py-3 px-6 rounded-md text-[13px] font-bold uppercase tracking-wider hover:bg-zinc-800 transition-colors disabled:opacity-50"
+                                className="w-full flex items-center justify-center gap-2 bg-[#5B4FE8] text-white py-3 px-6 rounded-md text-[13px] font-bold uppercase tracking-wider hover:bg-[#4a3fd4] transition-colors disabled:opacity-50"
                             >
                                 {loading ? (
                                     <>
@@ -721,7 +721,7 @@ const AIScreeningModal = ({ jobId, jobTitle, onClose }) => {
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="bg-white border border-zinc-200 rounded-lg p-5">
+                                <div className="bg-white rounded-lg p-5">
                                     <h4 className="text-zinc-900 text-[12px] font-black uppercase tracking-wider flex items-center gap-2 mb-4">
                                         <CheckCircle className="w-3.5 h-3.5 text-green-600" /> {t('recruitment.matchedSkills')}
                                     </h4>
@@ -732,7 +732,7 @@ const AIScreeningModal = ({ jobId, jobTitle, onClose }) => {
                                     </div>
                                 </div>
 
-                                <div className="bg-white border border-zinc-200 rounded-lg p-5">
+                                <div className="bg-white rounded-lg p-5">
                                     <h4 className="text-zinc-900 text-[12px] font-black uppercase tracking-wider flex items-center gap-2 mb-4">
                                         <XCircle className="w-3.5 h-3.5 text-red-600" /> {t('recruitment.missingRequirements')}
                                     </h4>

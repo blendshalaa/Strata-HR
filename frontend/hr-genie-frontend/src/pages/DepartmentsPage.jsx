@@ -115,7 +115,7 @@ const MemberPanel = ({ dept, users, onClose, onRefresh }) => {
                                 onChange={e => { setAddSearch(e.target.value); setShowAddList(true); }}
                                 onFocus={() => setShowAddList(true)}
                                 placeholder={`Search ${nonMembers.length} available employee${nonMembers.length !== 1 ? 's' : ''}…`}
-                                className="w-full pl-9 pr-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 text-[13px] font-medium outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+                                className="w-full pl-9 pr-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 text-[13px] font-medium outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
                             />
                         </div>
                         {showAddList && filteredAdd.length > 0 && (
@@ -160,7 +160,7 @@ const MemberPanel = ({ dept, users, onClose, onRefresh }) => {
                                         value={memberSearch}
                                         onChange={e => setMemberSearch(e.target.value)}
                                         placeholder="Filter…"
-                                        className="pl-7 pr-3 py-1.5 bg-zinc-50 border border-zinc-200 rounded-md text-[12px] font-medium text-zinc-700 outline-none focus:border-zinc-900 transition-all w-28"
+                                        className="pl-7 pr-3 py-1.5 bg-zinc-50 border border-zinc-200 rounded-md text-[12px] font-medium text-zinc-700 outline-none focus:border-[#5B4FE8] transition-all w-28"
                                     />
                                 </div>
                             )}
@@ -312,7 +312,7 @@ const DepartmentsPage = () => {
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-400 w-5 h-5" />
                     <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('departments.searchDepartments')}
-                        className="w-full px-4 py-2.5 pl-10 bg-white border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all text-sm" />
+                        className="w-full px-4 py-2.5 pl-10 bg-white border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all text-sm" />
                 </div>
             </div>
 
@@ -324,7 +324,7 @@ const DepartmentsPage = () => {
                         <div
                             key={dept.id}
                             onClick={() => setSelectedDept(dept)}
-                            className={`card group cursor-pointer transition-all hover:border-zinc-400 hover:shadow-md ${isSelected ? 'border-zinc-900 shadow-md ring-1 ring-zinc-900' : ''}`}
+                            className={`card group cursor-pointer transition-all hover:border-[#5B4FE8] hover:shadow-md ${isSelected ? 'border-zinc-900 shadow-md ring-1 ring-zinc-900' : ''}`}
                         >
                             <div className="flex items-start justify-between mb-4">
                                 <div className="flex items-center gap-3">
@@ -431,7 +431,7 @@ const DepartmentsPage = () => {
                                                 await refreshUsers();
                                             } catch { /* silent */ }
                                         }}
-                                        className="text-[12px] font-medium border border-zinc-200 rounded-md px-2 py-1.5 bg-white text-zinc-700 outline-none focus:border-zinc-900 transition-all max-w-[140px]"
+                                        className="text-[12px] font-medium border border-zinc-200 rounded-md px-2 py-1.5 bg-white text-zinc-700 outline-none focus:border-[#5B4FE8] transition-all max-w-[140px]"
                                     >
                                         <option value="">Assign to…</option>
                                         {departments.map(d => (
@@ -447,7 +447,7 @@ const DepartmentsPage = () => {
 
             {showDeleteConfirm && (
                 <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={() => setShowDeleteConfirm(null)}>
-                    <div className="bg-white border border-zinc-200 rounded-lg max-w-md w-full animate-slideUp shadow-lg" onClick={e => e.stopPropagation()}>
+                    <div className="bg-white rounded-lg max-w-md w-full animate-slideUp shadow-lg" onClick={e => e.stopPropagation()}>
                         <div className="p-6 text-center">
                             <div className="w-12 h-12 bg-red-50 border border-red-100 rounded-full flex items-center justify-center mx-auto mb-4"><AlertTriangle className="w-6 h-6 text-red-600" /></div>
                             <h3 className="text-lg font-bold text-zinc-900 mb-2">{t('departments.deleteDepartment')}</h3>

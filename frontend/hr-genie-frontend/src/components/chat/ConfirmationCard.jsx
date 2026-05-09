@@ -46,7 +46,7 @@ const ConfirmationCard = ({ confirmation, onConfirm, onReject }) => {
   }
 
   return (
-    <div className="my-3 mx-10 bg-amber-50 border border-amber-200 rounded-lg overflow-hidden animate-fadeIn shadow-sm">
+    <div className="my-3 mx-10 bg-amber-50 border border-amber-200 rounded-lg overflow-hidden animate-fadeIn">
       {/* Header */}
       <div className="px-4 py-2.5 border-b border-amber-200 bg-amber-100/50 flex items-center gap-2">
         <ShieldCheck className="w-4 h-4 text-amber-700" />
@@ -63,7 +63,7 @@ const ConfirmationCard = ({ confirmation, onConfirm, onReject }) => {
           <button
             onClick={handleConfirm}
             disabled={status === 'confirming'}
-            className="px-4 py-1.5 bg-zinc-900 text-white rounded-md text-[12px] font-medium hover:bg-zinc-800 transition-colors disabled:opacity-50 flex items-center gap-1.5"
+            className="px-4 py-1.5 bg-[#5B4FE8] text-white rounded-md text-[12px] font-medium hover:bg-[#4a3fd4] transition-colors disabled:opacity-50 flex items-center gap-1.5"
           >
             {status === 'confirming' ? (
               <><Loader className="w-3 h-3 animate-spin" /> Confirming...</>

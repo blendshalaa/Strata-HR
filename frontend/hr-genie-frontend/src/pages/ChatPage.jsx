@@ -199,7 +199,7 @@ const ChatPage = () => {
   return (
     <>
     <div className="h-[calc(100vh-8rem)] flex gap-4 animate-fadeIn">
-      <div className="hidden lg:block w-80 rounded-lg overflow-hidden border border-zinc-200 shadow-sm">
+      <div className="hidden lg:block w-80 rounded-lg overflow-hidden border border-zinc-200">
         <ConversationList
           conversations={conversations}
           activeConversation={activeConversation}
@@ -239,7 +239,7 @@ const ChatPage = () => {
           >
             <Menu className="w-4 h-4 text-zinc-500" />
           </button>
-          <div className="w-10 h-10 bg-zinc-900 rounded-md flex items-center justify-center shadow-sm">
+          <div className="w-10 h-10 bg-[#5B4FE8] rounded-md flex items-center justify-center">
             <Bot className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -261,7 +261,7 @@ const ChatPage = () => {
           {messages.length === 0 ? (
             <div className="h-full flex items-center justify-center">
               <div className="text-center max-w-sm px-6">
-                <div className="w-16 h-16 bg-zinc-900 rounded-md flex items-center justify-center mx-auto mb-6 shadow-md">
+                <div className="w-16 h-16 bg-[#5B4FE8] rounded-md flex items-center justify-center mx-auto mb-6 shadow-md">
                   <Bot className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-[18px] font-bold text-zinc-900 mb-2 tracking-tight">
@@ -282,7 +282,7 @@ const ChatPage = () => {
                       <button
                         key={i}
                         onClick={() => handleSendMessage(example)}
-                        className="w-full text-left px-4 py-3 bg-white hover:bg-zinc-50 border border-zinc-200 rounded-md text-[13px] text-zinc-700 hover:text-zinc-900 transition-all shadow-sm"
+                        className="w-full text-left px-4 py-3 bg-white hover:bg-zinc-50 border border-zinc-200 rounded-md text-[13px] text-zinc-700 hover:text-zinc-900 transition-all"
                       >
                         <span className="flex items-center gap-3">
                           <Sparkles className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0" />
@@ -312,10 +312,10 @@ const ChatPage = () => {
 
               {loading && (
                 <div className="flex gap-3">
-                  <div className="w-8 h-8 rounded-md bg-zinc-900 flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 rounded-md bg-[#5B4FE8] flex items-center justify-center flex-shrink-0">
                     <Bot className="w-4 h-4 text-white" />
                   </div>
-                  <div className="bg-white border border-zinc-200 rounded-lg px-4 py-3 shadow-sm">
+                  <div className="bg-white rounded-lg px-4 py-3">
                     <div className="flex gap-1.5">
                       <div className="w-1.5 h-1.5 bg-zinc-300 rounded-full animate-bounce" />
                       <div className="w-1.5 h-1.5 bg-zinc-300 rounded-full animate-bounce" style={{ animationDelay: '0.15s' }} />

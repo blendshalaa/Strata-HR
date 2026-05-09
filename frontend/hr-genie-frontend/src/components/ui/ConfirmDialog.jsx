@@ -8,12 +8,12 @@ const ConfirmDialog = ({ isOpen, onClose, onConfirm, title, message, confirmLabe
 
     const variants = {
         danger: 'bg-red-600 hover:bg-red-700 text-white',
-        primary: 'bg-zinc-900 hover:bg-zinc-800 text-white',
+        primary: 'bg-[#5B4FE8] hover:bg-[#4a3fd4] text-white',
     };
 
     return (
-        <div className="fixed inset-0 bg-zinc-900/40 z-[60] flex items-center justify-center p-4" onClick={onClose}>
-            <div className="bg-white border border-zinc-200 rounded-lg max-w-sm w-full shadow-xl animate-fadeIn" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" style={{backgroundColor:"rgba(15,13,46,0.45)"}} onClick={onClose}>
+            <div className="bg-white rounded-lg max-w-sm w-full shadow-xl animate-fadeIn" onClick={e => e.stopPropagation()}>
                 <div className="p-6">
                     <div className="flex items-start gap-4">
                         <div className="p-2 bg-red-50 border border-red-100 rounded-md shrink-0">

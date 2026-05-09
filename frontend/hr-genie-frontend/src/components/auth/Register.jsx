@@ -4,7 +4,6 @@ import { useAuth } from '../../context/AuthContext';
 import { Bot, Mail, Lock, User, Building, AlertCircle, ArrowRight, Hash, Eye, EyeOff } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-// Password strength scorer
 const getStrength = (password) => {
   if (!password) return { score: 0, label: '', color: '' };
   let score = 0;
@@ -13,26 +12,34 @@ const getStrength = (password) => {
   if (/[A-Z]/.test(password)) score++;
   if (/[0-9]/.test(password)) score++;
   if (/[^A-Za-z0-9]/.test(password)) score++;
-
-  if (score <= 1) return { score, label: 'Weak', color: 'bg-red-500' };
-  if (score <= 2) return { score, label: 'Fair', color: 'bg-yellow-500' };
-  if (score <= 3) return { score, label: 'Good', color: 'bg-blue-500' };
-  return { score, label: 'Strong', color: 'bg-green-500' };
+  if (score <= 1) return { score, label: 'Weak',   color: '#DC2626' };
+  if (score <= 2) return { score, label: 'Fair',   color: '#B45309' };
+  if (score <= 3) return { score, label: 'Good',   color: '#5B4FE8' };
+  return             { score, label: 'Strong', color: '#059669' };
 };
+
+const StyledInput = ({ icon: Icon, ...props }) => (
+  <div className="relative">
+    <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#9CA3AF' }} />
+    <input
+      {...props}
+      className="w-full pl-9 pr-10 py-2.5 rounded-lg text-[14px] outline-none transition-all"
+      style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#0F0D2E' }}
+      onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
+      onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
+    />
+    {props.children}
+  </div>
+);
 
 const Register = () => {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const inviteQuery = searchParams.get('invite');
-
   const [mode, setMode] = useState(inviteQuery ? 'join' : 'create');
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    org_name: '',
-    invite_code: inviteQuery || '',
+    name: '', email: '', password: '', confirmPassword: '',
+    org_name: '', invite_code: inviteQuery || '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -43,44 +50,23 @@ const Register = () => {
 
   const strength = getStrength(formData.password);
   const passwordsMatch = !formData.confirmPassword || formData.password === formData.confirmPassword;
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-    if (formData.password.length < 8) {
-      setError('Password must be at least 8 characters.');
-      return;
-    }
-
+    if (formData.password !== formData.confirmPassword) { setError('Passwords do not match.'); return; }
+    if (formData.password.length < 8) { setError('Password must be at least 8 characters.'); return; }
     setLoading(true);
-
     try {
       const { confirmPassword, ...payload } = formData;
       if (mode === 'create') {
         delete payload.invite_code;
-        if (!payload.org_name.trim()) {
-          setError(t('auth.orgNameRequired'));
-          setLoading(false);
-          return;
-        }
+        if (!payload.org_name.trim()) { setError(t('auth.orgNameRequired')); setLoading(false); return; }
       } else {
         delete payload.org_name;
-        if (!payload.invite_code.trim()) {
-          setError(t('auth.inviteCodeRequired'));
-          setLoading(false);
-          return;
-        }
+        if (!payload.invite_code.trim()) { setError(t('auth.inviteCodeRequired')); setLoading(false); return; }
       }
-
       await register(payload);
       navigate('/dashboard');
     } catch (err) {
@@ -90,172 +76,217 @@ const Register = () => {
     }
   };
 
-  const inputClass = "w-full pl-10 pr-10 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all text-sm";
+  const labelStyle = { color: '#0F0D2E', fontSize: '13px', fontWeight: '600', display: 'block', marginBottom: '6px' };
 
   return (
-    <div className="min-h-screen bg-zinc-50 flex items-center justify-center p-4 relative overflow-hidden font-sans">
-      <div className="max-w-md w-full relative z-10 my-8">
-        <div className="text-center mb-8 animate-fadeIn">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-zinc-900 rounded-lg mb-5 shadow-sm border border-zinc-200">
-            <Bot className="w-6 h-6 text-white" />
+    <div className="min-h-screen flex" style={{ backgroundColor: '#F5F4FF', fontFamily: "'Inter', system-ui, sans-serif" }}>
+
+      {/* Left brand panel */}
+      <div className="hidden lg:flex lg:w-[420px] xl:w-[480px] flex-col justify-between p-12 flex-shrink-0" style={{ backgroundColor: '#1E1B4B' }}>
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#5B4FE8' }}>
+            <Bot className="w-5 h-5 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-zinc-900 mb-1 tracking-tight">{t('common.appName')}</h1>
-          <p className="text-sm text-zinc-500 font-medium">{t('auth.createAccount')}</p>
+          <span className="text-white font-bold text-[17px]">{t('common.appName')}</span>
         </div>
+        <div>
+          <h2 className="text-3xl font-bold text-white leading-tight mb-4">
+            {mode === 'create' ? 'Set up your\norganization' : 'Join your\nteam today'}
+          </h2>
+          <p className="text-[15px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>
+            {mode === 'create'
+              ? 'Create your workspace and invite your team. You\'ll be the admin.'
+              : 'Enter your invite code to join an existing organization.'}
+          </p>
+        </div>
+        <p className="text-[12px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          © {new Date().getFullYear()} HR Genie. All rights reserved.
+        </p>
+      </div>
 
-        <div className="bg-white border border-zinc-200 rounded-lg p-8 sm:p-10 shadow-sm animate-slideUp">
-          <h2 className="text-lg font-semibold text-zinc-900 mb-6">{t('auth.signUp')}</h2>
+      {/* Right form panel */}
+      <div className="flex-1 flex items-start justify-center p-6 overflow-y-auto">
+        <div className="w-full max-w-[420px] py-8">
 
-          {/* Org Mode Toggle */}
-          <div className="flex gap-2 mb-6 bg-zinc-100 p-1 rounded-md">
-            <button
-              type="button"
-              onClick={() => setMode('create')}
-              className={`flex-1 py-2 text-[13px] font-medium rounded-md transition-all ${mode === 'create' ? 'bg-white text-zinc-900 shadow-sm border border-zinc-200/50' : 'text-zinc-500 hover:text-zinc-700'}`}
-            >
-              {t('auth.createOrganization')}
-            </button>
-            <button
-              type="button"
-              onClick={() => setMode('join')}
-              className={`flex-1 py-2 text-[13px] font-medium rounded-md transition-all ${mode === 'join' ? 'bg-white text-zinc-900 shadow-sm border border-zinc-200/50' : 'text-zinc-500 hover:text-zinc-700'}`}
-            >
-              {t('auth.joinWithInvite')}
-            </button>
+          {/* Mobile logo */}
+          <div className="flex items-center gap-2.5 mb-8 lg:hidden">
+            <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ backgroundColor: '#5B4FE8' }}>
+              <Bot className="w-4 h-4 text-white" />
+            </div>
+            <span className="font-bold text-[16px]" style={{ color: '#0F0D2E' }}>{t('common.appName')}</span>
           </div>
 
+          <div className="mb-7">
+            <h1 className="text-[24px] font-bold mb-1" style={{ color: '#0F0D2E' }}>{t('auth.signUp')}</h1>
+            <p className="text-[14px]" style={{ color: '#6B7280' }}>{t('auth.createAccount')}</p>
+          </div>
+
+          {/* Mode toggle */}
+          <div className="flex gap-1 p-1 rounded-lg mb-6" style={{ backgroundColor: '#EEF0FF' }}>
+            {[
+              { key: 'create', label: t('auth.createOrganization') },
+              { key: 'join',   label: t('auth.joinWithInvite') },
+            ].map(({ key, label }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setMode(key)}
+                className="flex-1 py-2 text-[13px] font-semibold rounded-md transition-all"
+                style={{
+                  backgroundColor: mode === key ? '#5B4FE8' : 'transparent',
+                  color: mode === key ? '#fff' : '#5B4FE8',
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {/* Error */}
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-md flex items-start gap-2">
-              <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 shrink-0" />
-              <p className="text-sm text-red-800 font-medium">{error}</p>
+            <div className="mb-5 p-3 rounded-lg flex items-start gap-2.5" style={{ backgroundColor: '#FEF2F2', border: '0.5px solid #FECACA' }}>
+              <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: '#DC2626' }} />
+              <p className="text-[13px] font-medium" style={{ color: '#991B1B' }}>{error}</p>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Org field */}
+            {/* Org/Invite field */}
             {mode === 'create' ? (
               <div>
-                <label className="block text-[13px] font-medium text-zinc-700 mb-1.5">{t('auth.organizationName')}</label>
+                <label style={labelStyle}>{t('auth.organizationName')}</label>
                 <div className="relative">
-                  <Building className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                  <input type="text" name="org_name" value={formData.org_name} onChange={handleChange} className={inputClass} placeholder="Acme Corp" autoComplete="organization" required />
+                  <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#9CA3AF' }} />
+                  <input type="text" name="org_name" value={formData.org_name} onChange={handleChange}
+                    placeholder="Acme Corp" autoComplete="organization" required
+                    className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[14px] outline-none transition-all"
+                    style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#0F0D2E' }}
+                    onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
+                    onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
+                  />
                 </div>
-                <p className="text-[12px] text-zinc-500 mt-1.5">{t('auth.youllBeAdmin')}</p>
+                <p className="text-[12px] mt-1.5" style={{ color: '#6B7280' }}>{t('auth.youllBeAdmin')}</p>
               </div>
             ) : (
               <div>
-                <label className="block text-[13px] font-medium text-zinc-700 mb-1.5">{t('auth.inviteCode')}</label>
+                <label style={labelStyle}>{t('auth.inviteCode')}</label>
                 <div className="relative">
-                  <Hash className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                  <input type="text" name="invite_code" value={formData.invite_code} onChange={handleChange} className={inputClass} placeholder={t('auth.pasteInviteCode')} autoComplete="off" required />
+                  <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#9CA3AF' }} />
+                  <input type="text" name="invite_code" value={formData.invite_code} onChange={handleChange}
+                    placeholder={t('auth.pasteInviteCode')} autoComplete="off" required
+                    className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[14px] outline-none transition-all"
+                    style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#0F0D2E' }}
+                    onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
+                    onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
+                  />
                 </div>
-                <p className="text-[12px] text-zinc-500 mt-1.5">Ask your HR admin for your invite code.</p>
+                <p className="text-[12px] mt-1.5" style={{ color: '#6B7280' }}>Ask your HR admin for your invite code.</p>
               </div>
             )}
 
-            {/* Full Name */}
+            {/* Name */}
             <div>
-              <label className="block text-[13px] font-medium text-zinc-700 mb-1.5">{t('auth.fullName')}</label>
+              <label style={labelStyle}>{t('auth.fullName')}</label>
               <div className="relative">
-                <User className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                <input type="text" name="name" value={formData.name} onChange={handleChange} className={inputClass} placeholder="John Doe" autoComplete="name" required />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#9CA3AF' }} />
+                <input type="text" name="name" value={formData.name} onChange={handleChange}
+                  placeholder="John Doe" autoComplete="name" required
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[14px] outline-none transition-all"
+                  style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#0F0D2E' }}
+                  onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
+                  onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
+                />
               </div>
             </div>
 
             {/* Email */}
             <div>
-              <label className="block text-[13px] font-medium text-zinc-700 mb-1.5">{t('auth.emailAddress')}</label>
+              <label style={labelStyle}>{t('auth.emailAddress')}</label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                <input type="email" name="email" value={formData.email} onChange={handleChange} className={inputClass} placeholder="you@company.com" autoComplete="email" required />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#9CA3AF' }} />
+                <input type="email" name="email" value={formData.email} onChange={handleChange}
+                  placeholder="you@company.com" autoComplete="email" required
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[14px] outline-none transition-all"
+                  style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#0F0D2E' }}
+                  onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
+                  onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
+                />
               </div>
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-[13px] font-medium text-zinc-700 mb-1.5">{t('auth.password')}</label>
+              <label style={labelStyle}>{t('auth.password')}</label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="Min. 8 characters"
-                  autoComplete="new-password"
-                  required
-                  minLength={8}
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#9CA3AF' }} />
+                <input type={showPassword ? 'text' : 'password'} name="password" value={formData.password}
+                  onChange={handleChange} placeholder="Min. 8 characters"
+                  autoComplete="new-password" required minLength={8}
+                  className="w-full pl-9 pr-10 py-2.5 rounded-lg text-[14px] outline-none transition-all"
+                  style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#0F0D2E' }}
+                  onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
+                  onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors"
-                  tabIndex={-1}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                <button type="button" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors" style={{ color: '#9CA3AF' }}
+                  onMouseEnter={e => e.currentTarget.style.color = '#5B4FE8'}
+                  onMouseLeave={e => e.currentTarget.style.color = '#9CA3AF'}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-
-              {/* Strength indicator */}
               {formData.password && (
                 <div className="mt-2">
                   <div className="flex gap-1 mb-1">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div
-                        key={i}
-                        className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                          strength.score >= i ? strength.color : 'bg-zinc-200'
-                        }`}
+                    {[1,2,3,4].map(i => (
+                      <div key={i} className="h-1 flex-1 rounded-full transition-all duration-300"
+                        style={{ backgroundColor: strength.score >= i ? strength.color : '#E5E7EB' }}
                       />
                     ))}
                   </div>
-                  <p className={`text-[11px] font-medium ${
-                    strength.label === 'Weak' ? 'text-red-500' :
-                    strength.label === 'Fair' ? 'text-yellow-600' :
-                    strength.label === 'Good' ? 'text-blue-600' : 'text-green-600'
-                  }`}>
-                    {strength.label} password
-                  </p>
+                  <p className="text-[11px] font-semibold" style={{ color: strength.color }}>{strength.label} password</p>
                 </div>
               )}
             </div>
 
-            {/* Confirm Password */}
+            {/* Confirm password */}
             <div>
-              <label className="block text-[13px] font-medium text-zinc-700 mb-1.5">Confirm Password</label>
+              <label style={labelStyle}>Confirm Password</label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                <input
-                  type={showConfirm ? 'text' : 'password'}
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className={`${inputClass} ${!passwordsMatch ? 'border-red-300 focus:border-red-400 focus:ring-red-400' : ''}`}
-                  placeholder="Re-enter your password"
-                  autoComplete="new-password"
-                  required
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#9CA3AF' }} />
+                <input type={showConfirm ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword}
+                  onChange={handleChange} placeholder="Re-enter your password"
+                  autoComplete="new-password" required
+                  className="w-full pl-9 pr-10 py-2.5 rounded-lg text-[14px] outline-none transition-all"
+                  style={{
+                    backgroundColor: '#fff',
+                    border: `0.5px solid ${!passwordsMatch ? '#DC2626' : 'rgba(0,0,0,0.12)'}`,
+                    color: '#0F0D2E',
+                  }}
+                  onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
+                  onBlur={e => { e.target.style.borderColor = !passwordsMatch ? '#DC2626' : 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirm(!showConfirm)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors"
-                  tabIndex={-1}
-                  aria-label={showConfirm ? 'Hide password' : 'Show password'}
+                <button type="button" onClick={() => setShowConfirm(!showConfirm)} tabIndex={-1}
+                  className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: '#9CA3AF' }}
+                  onMouseEnter={e => e.currentTarget.style.color = '#5B4FE8'}
+                  onMouseLeave={e => e.currentTarget.style.color = '#9CA3AF'}
                 >
                   {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
               {!passwordsMatch && (
-                <p className="text-[11px] text-red-500 mt-1">Passwords do not match.</p>
+                <p className="text-[11px] mt-1 font-medium" style={{ color: '#DC2626' }}>Passwords do not match.</p>
               )}
             </div>
 
+            {/* Submit */}
             <button
               type="submit"
               disabled={loading || !passwordsMatch}
-              className="w-full mt-2 py-2.5 bg-zinc-900 text-white rounded-md text-sm font-medium hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group"
+              className="w-full mt-2 py-2.5 rounded-lg text-[14px] font-semibold text-white flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+              style={{ backgroundColor: '#5B4FE8' }}
+              onMouseEnter={e => { if (!loading) e.currentTarget.style.backgroundColor = '#4a3fd4'; }}
+              onMouseLeave={e => { if (!loading) e.currentTarget.style.backgroundColor = '#5B4FE8'; }}
             >
               {loading ? t('auth.creatingAccount') : (
                 <>
@@ -266,14 +297,10 @@ const Register = () => {
             </button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-zinc-500">
-              {t('auth.alreadyHaveAccount')}{' '}
-              <Link to="/login" className="text-zinc-900 hover:underline font-medium transition-colors">
-                {t('auth.signInLink')}
-              </Link>
-            </p>
-          </div>
+          <p className="mt-6 text-center text-[13px]" style={{ color: '#6B7280' }}>
+            {t('auth.alreadyHaveAccount')}{' '}
+            <Link to="/login" className="font-semibold" style={{ color: '#5B4FE8' }}>{t('auth.signInLink')}</Link>
+          </p>
         </div>
       </div>
     </div>

@@ -53,10 +53,10 @@ const ForgotPasswordPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-zinc-50 flex items-center justify-center p-4 relative overflow-hidden font-sans">
+        <div className="min-h-screen bg-[#F5F4FF] flex items-center justify-center p-4 relative overflow-hidden font-sans">
             <div className="w-full max-w-md relative z-10 animate-fadeIn my-8">
                 <div className="text-center mb-8">
-                    <div className="w-12 h-12 bg-zinc-900 rounded-lg flex items-center justify-center mx-auto mb-5 shadow-sm border border-zinc-200">
+                    <div className="w-12 h-12 bg-[#5B4FE8] rounded-lg flex items-center justify-center mx-auto mb-5 shadow-sm border border-zinc-200">
                         <Bot className="w-6 h-6 text-white" />
                     </div>
                     <h1 className="text-2xl font-bold text-white">
@@ -67,7 +67,7 @@ const ForgotPasswordPage = () => {
                     </p>
                 </div>
 
-                <div className="bg-white border border-zinc-200 rounded-lg p-8 sm:p-10 shadow-sm animate-slideUp">
+                <div className="bg-white rounded-lg p-8 sm:p-10 shadow-sm animate-slideUp">
                     {error && (
                         <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-md flex items-start gap-2">
                             <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 shrink-0" />
