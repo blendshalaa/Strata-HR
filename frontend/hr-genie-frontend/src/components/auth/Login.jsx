@@ -85,8 +85,8 @@ const Login = () => {
       </div>
 
       {/* Right panel — form */}
-      <div className="flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-[400px]">
+      <div className="flex-1 flex flex-col justify-center py-12 px-6 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-[400px]">
 
           {/* Mobile logo */}
           <div className="flex items-center gap-2.5 mb-10 lg:hidden">
@@ -132,7 +132,7 @@ const Login = () => {
                   placeholder="you@company.com"
                   autoComplete="email"
                   required
-                  className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[14px] outline-none transition-all"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[16px] sm:text-[14px] outline-none transition-all"
                   style={{
                     backgroundColor: '#fff',
                     border: '0.5px solid rgba(0,0,0,0.12)',
@@ -167,7 +167,7 @@ const Login = () => {
                   placeholder="••••••••"
                   autoComplete="current-password"
                   required
-                  className="w-full pl-9 pr-10 py-2.5 rounded-lg text-[14px] outline-none transition-all"
+                  className="w-full pl-9 pr-10 py-2.5 rounded-lg text-[16px] sm:text-[14px] outline-none transition-all"
                   style={{
                     backgroundColor: '#fff',
                     border: '0.5px solid rgba(0,0,0,0.12)',

@@ -23,7 +23,7 @@ const StyledInput = ({ icon: Icon, ...props }) => (
     <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#9CA3AF' }} />
     <input
       {...props}
-      className="w-full pl-9 pr-10 py-2.5 rounded-lg text-[14px] outline-none transition-all"
+      className="w-full pl-9 pr-10 py-2.5 rounded-lg text-[16px] sm:text-[14px] outline-none transition-all"
       style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#0F0D2E' }}
       onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
       onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
@@ -105,8 +105,8 @@ const Register = () => {
       </div>
 
       {/* Right form panel */}
-      <div className="flex-1 flex items-start justify-center p-6 overflow-y-auto">
-        <div className="w-full max-w-[420px] py-8">
+      <div className="flex-1 flex flex-col justify-center py-12 px-6 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-[420px]">
 
           {/* Mobile logo */}
           <div className="flex items-center gap-2.5 mb-8 lg:hidden">
@@ -159,7 +159,7 @@ const Register = () => {
                   <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#9CA3AF' }} />
                   <input type="text" name="org_name" value={formData.org_name} onChange={handleChange}
                     placeholder="Acme Corp" autoComplete="organization" required
-                    className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[14px] outline-none transition-all"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[16px] sm:text-[14px] outline-none transition-all"
                     style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#0F0D2E' }}
                     onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
                     onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
@@ -174,7 +174,7 @@ const Register = () => {
                   <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#9CA3AF' }} />
                   <input type="text" name="invite_code" value={formData.invite_code} onChange={handleChange}
                     placeholder={t('auth.pasteInviteCode')} autoComplete="off" required
-                    className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[14px] outline-none transition-all"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[16px] sm:text-[14px] outline-none transition-all"
                     style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#0F0D2E' }}
                     onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
                     onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
@@ -191,7 +191,7 @@ const Register = () => {
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#9CA3AF' }} />
                 <input type="text" name="name" value={formData.name} onChange={handleChange}
                   placeholder="John Doe" autoComplete="name" required
-                  className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[14px] outline-none transition-all"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[16px] sm:text-[14px] outline-none transition-all"
                   style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#0F0D2E' }}
                   onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
                   onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
@@ -206,7 +206,7 @@ const Register = () => {
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#9CA3AF' }} />
                 <input type="email" name="email" value={formData.email} onChange={handleChange}
                   placeholder="you@company.com" autoComplete="email" required
-                  className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[14px] outline-none transition-all"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[16px] sm:text-[14px] outline-none transition-all"
                   style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#0F0D2E' }}
                   onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
                   onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
@@ -222,7 +222,7 @@ const Register = () => {
                 <input type={showPassword ? 'text' : 'password'} name="password" value={formData.password}
                   onChange={handleChange} placeholder="Min. 8 characters"
                   autoComplete="new-password" required minLength={8}
-                  className="w-full pl-9 pr-10 py-2.5 rounded-lg text-[14px] outline-none transition-all"
+                  className="w-full pl-9 pr-10 py-2.5 rounded-lg text-[16px] sm:text-[14px] outline-none transition-all"
                   style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#0F0D2E' }}
                   onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
                   onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
@@ -257,7 +257,7 @@ const Register = () => {
                 <input type={showConfirm ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword}
                   onChange={handleChange} placeholder="Re-enter your password"
                   autoComplete="new-password" required
-                  className="w-full pl-9 pr-10 py-2.5 rounded-lg text-[14px] outline-none transition-all"
+                  className="w-full pl-9 pr-10 py-2.5 rounded-lg text-[16px] sm:text-[14px] outline-none transition-all"
                   style={{
                     backgroundColor: '#fff',
                     border: `0.5px solid ${!passwordsMatch ? '#DC2626' : 'rgba(0,0,0,0.12)'}`,
