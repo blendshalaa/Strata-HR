@@ -66,9 +66,9 @@ const PayrollModal = ({ isOpen, onClose, onPayrollAdded }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center p-4 z-50 animate-fadeIn" style={{backgroundColor:"rgba(15,13,46,0.45)"}}>
-            <div className="bg-white rounded-lg w-full max-w-lg overflow-hidden animate-slideUp">
-                <div className="flex items-center justify-between p-5 border-b border-zinc-100">
+        <div className="modal-overlay animate-fadeIn">
+            <div className="modal-panel animate-slideUp">
+                <div className="flex items-center justify-between p-5 border-b border-zinc-100 flex-shrink-0">
                     <h2 className="text-[16px] font-bold text-zinc-900">{t('payrollModal.runPayroll')}</h2>
                     <button
                         onClick={onClose}
@@ -78,7 +78,8 @@ const PayrollModal = ({ isOpen, onClose, onPayrollAdded }) => {
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                <form onSubmit={handleSubmit} className="modal-body">
+                    <div className="p-6 space-y-4">
                     {error && (
                         <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md border border-red-100">
                             {error}
@@ -93,7 +94,7 @@ const PayrollModal = ({ isOpen, onClose, onPayrollAdded }) => {
                             required
                             value={userId}
                             onChange={(e) => setUserId(e.target.value)}
-                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[16px] sm:text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                         >
                             <option value="">{t('evaluationModal.selectEmployee')}</option>
                             {users.map((user) => (
@@ -104,7 +105,7 @@ const PayrollModal = ({ isOpen, onClose, onPayrollAdded }) => {
                         </select>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-[13px] font-semibold text-zinc-700 mb-1.5">
                                 {t('payrollModal.baseSalary')} <span className="text-zinc-400">*</span>
@@ -114,7 +115,7 @@ const PayrollModal = ({ isOpen, onClose, onPayrollAdded }) => {
                                 required
                                 value={baseSalary}
                                 onChange={(e) => setBaseSalary(e.target.value)}
-                                className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                                className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[16px] sm:text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                                 placeholder="e.g. 5000"
                             />
                         </div>
@@ -126,7 +127,7 @@ const PayrollModal = ({ isOpen, onClose, onPayrollAdded }) => {
                                 type="number"
                                 value={bonus}
                                 onChange={(e) => setBonus(e.target.value)}
-                                className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                                className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[16px] sm:text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                                 placeholder="e.g. 500"
                             />
                         </div>
@@ -140,12 +141,12 @@ const PayrollModal = ({ isOpen, onClose, onPayrollAdded }) => {
                             type="number"
                             value={taxDeduction}
                             onChange={(e) => setTaxDeduction(e.target.value)}
-                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[16px] sm:text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                             placeholder="e.g. 1000"
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-[13px] font-semibold text-zinc-700 mb-1.5">
                                 {t('payrollModal.periodStart')} <span className="text-zinc-400">*</span>
@@ -155,7 +156,7 @@ const PayrollModal = ({ isOpen, onClose, onPayrollAdded }) => {
                                 required
                                 value={periodStart}
                                 onChange={(e) => setPeriodStart(e.target.value)}
-                                className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                                className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[16px] sm:text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                             />
                         </div>
                         <div>
@@ -167,12 +168,13 @@ const PayrollModal = ({ isOpen, onClose, onPayrollAdded }) => {
                                 required
                                 value={periodEnd}
                                 onChange={(e) => setPeriodEnd(e.target.value)}
-                                className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                                className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[16px] sm:text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                             />
                         </div>
                     </div>
+                    </div>
 
-                    <div className="pt-4 flex items-center justify-end gap-3 mt-4">
+                    <div className="p-5 border-t border-zinc-100 flex items-center justify-end gap-3 flex-shrink-0">
                         <button
                             type="button"
                             onClick={onClose}
@@ -191,6 +193,7 @@ const PayrollModal = ({ isOpen, onClose, onPayrollAdded }) => {
                 </form>
             </div>
         </div>
+
     );
 };
 

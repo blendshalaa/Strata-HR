@@ -222,4 +222,50 @@
     .mobile-card { display: block; }
     .desktop-table { display: none; }
   }
+
+  /* ── Modal helpers ───────────────────────────────────────────────────────── */
+  /* Overlay: always covers viewport, scrolls the panel when keyboard is up */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: flex-end;          /* sheet-style on mobile */
+    justify-content: center;
+    padding: 0;
+    background-color: rgba(15, 13, 46, 0.45);
+    overflow-y: auto;
+  }
+  @media (min-width: 640px) {
+    .modal-overlay {
+      align-items: center;
+      padding: 1rem;
+    }
+  }
+
+  /* Panel: full-width sheet on mobile, rounded card on sm+ */
+  .modal-panel {
+    position: relative;
+    width: 100%;
+    max-width: 32rem;           /* 512px ~ max-w-lg */
+    background-color: #ffffff;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+  @media (min-width: 640px) {
+    .modal-panel {
+      border-radius: 0.5rem;
+      max-height: calc(100dvh - 2rem);
+    }
+  }
+
+  /* Scrollable body inside the panel */
+  .modal-body {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    flex: 1;
+  }
 }

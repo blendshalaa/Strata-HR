@@ -23,8 +23,8 @@ const PayslipModal = ({ isOpen, onClose, payroll }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4 animate-fadeIn print:bg-white print:static print:p-0">
-            <div className="bg-white rounded-lg w-full max-w-lg overflow-hidden animate-slideUp print:shadow-none print:border-none print:w-full print:max-w-none">
+        <div className="modal-overlay animate-fadeIn print:bg-white print:static print:p-0">
+            <div className="modal-panel animate-slideUp print:shadow-none print:border-none print:w-full print:max-w-none">
 
                 {/* Header (Hidden when printing) */}
                 <div className="flex items-center justify-between p-5 border-b border-zinc-100 print:hidden">
@@ -127,7 +127,7 @@ const PayslipModal = ({ isOpen, onClose, payroll }) => {
 
                     {/* Net Total Summary */}
                     <div className="flex justify-end">
-                        <div className="bg-[#1E1B4B] rounded-md p-5 w-64 text-white">
+                        <div className="bg-[#1E1B4B] rounded-md p-5 w-full sm:w-64 text-white">
                             <div className="flex justify-between items-center mb-1.5">
                                 <span className="text-zinc-400 text-[13px] font-medium">{t('payslipModal.totalEarnings')}</span>
                                 <span className="text-[13px] font-semibold">{formatCurrency(parseFloat(payroll.base_salary) + parseFloat(payroll.bonus))}</span>

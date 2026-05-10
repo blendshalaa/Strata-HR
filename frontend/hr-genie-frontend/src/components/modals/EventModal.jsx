@@ -58,9 +58,9 @@ const EventModal = ({ isOpen, onClose, onEventAdded, initialDate }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center p-4 z-50 animate-fadeIn" style={{backgroundColor:"rgba(15,13,46,0.45)"}}>
-            <div className="bg-white rounded-lg w-full max-w-lg overflow-hidden animate-slideUp">
-                <div className="flex items-center justify-between p-5 border-b border-zinc-100">
+        <div className="modal-overlay animate-fadeIn">
+            <div className="modal-panel animate-slideUp">
+                <div className="flex items-center justify-between p-5 border-b border-zinc-100 flex-shrink-0">
                     <h2 className="text-[16px] font-bold text-zinc-900">{t('eventModal.addNew')}</h2>
                     <button
                         onClick={onClose}
@@ -70,7 +70,8 @@ const EventModal = ({ isOpen, onClose, onEventAdded, initialDate }) => {
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                <form onSubmit={handleSubmit} className="modal-body">
+                    <div className="p-6 space-y-4">
                     {error && (
                         <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md border border-red-100">
                             {error}
@@ -86,7 +87,7 @@ const EventModal = ({ isOpen, onClose, onEventAdded, initialDate }) => {
                             required
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[16px] sm:text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                             placeholder="e.g. Quarterly Review"
                         />
                     </div>
@@ -100,7 +101,7 @@ const EventModal = ({ isOpen, onClose, onEventAdded, initialDate }) => {
                             required
                             value={eventDate}
                             onChange={(e) => setEventDate(e.target.value)}
-                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[16px] sm:text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                         />
                     </div>
 
@@ -112,7 +113,7 @@ const EventModal = ({ isOpen, onClose, onEventAdded, initialDate }) => {
                             rows={3}
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors resize-none"
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[16px] sm:text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors resize-none"
                             placeholder="Details about the event..."
                         />
                     </div>
@@ -125,12 +126,13 @@ const EventModal = ({ isOpen, onClose, onEventAdded, initialDate }) => {
                             type="text"
                             value={attendees}
                             onChange={(e) => setAttendees(e.target.value)}
-                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[16px] sm:text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                             placeholder="e.g. all, managers, engineering"
                         />
                     </div>
+                    </div>
 
-                    <div className="pt-4 flex items-center justify-end gap-3 mt-6">
+                    <div className="p-5 border-t border-zinc-100 flex items-center justify-end gap-3 flex-shrink-0">
                         <button
                             type="button"
                             onClick={onClose}
@@ -149,6 +151,7 @@ const EventModal = ({ isOpen, onClose, onEventAdded, initialDate }) => {
                 </form>
             </div>
         </div>
+
     );
 };
 

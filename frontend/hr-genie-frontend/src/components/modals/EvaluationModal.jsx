@@ -98,9 +98,9 @@ const EvaluationModal = ({ isOpen, onClose, onEvaluationAdded }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center p-4 z-50 animate-fadeIn" style={{backgroundColor:"rgba(15,13,46,0.45)"}}>
-            <div className="bg-white rounded-lg w-full max-w-lg overflow-hidden animate-slideUp">
-                <div className="flex items-center justify-between p-5 border-b border-zinc-100">
+        <div className="modal-overlay animate-fadeIn">
+            <div className="modal-panel animate-slideUp">
+                <div className="flex items-center justify-between p-5 border-b border-zinc-100 flex-shrink-0">
                     <h2 className="text-[16px] font-bold text-zinc-900">{t('evaluationModal.title')}</h2>
                     <button
                         onClick={onClose}
@@ -110,7 +110,8 @@ const EvaluationModal = ({ isOpen, onClose, onEvaluationAdded }) => {
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                <form onSubmit={handleSubmit} className="modal-body">
+                    <div className="p-6 space-y-4">
                     {error && (
                         <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md border border-red-100">
                             {error}
@@ -125,7 +126,7 @@ const EvaluationModal = ({ isOpen, onClose, onEvaluationAdded }) => {
                             required
                             value={userId}
                             onChange={(e) => setUserId(e.target.value)}
-                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[16px] sm:text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                         >
                             <option value="">{t('evaluationModal.selectEmployee')}</option>
                             {users.map((user) => (
@@ -165,7 +166,7 @@ const EvaluationModal = ({ isOpen, onClose, onEvaluationAdded }) => {
                             required
                             value={reviewDate}
                             onChange={(e) => setReviewDate(e.target.value)}
-                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[16px] sm:text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                         />
                     </div>
 
@@ -177,36 +178,36 @@ const EvaluationModal = ({ isOpen, onClose, onEvaluationAdded }) => {
                             rows={4}
                             value={comments}
                             onChange={(e) => setComments(e.target.value)}
-                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors resize-none"
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[16px] sm:text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors resize-none"
                             placeholder={t('evaluationModal.commentsPlaceholder')}
                         />
                     </div>
+                    </div>
 
-                    <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 mt-4">
+                    <div className="p-5 border-t border-zinc-100 flex flex-col sm:flex-row items-center justify-between gap-3 flex-shrink-0">
                         <button
                             type="button"
                             onClick={handleGenerateDraft}
                             disabled={isGenerating || !userId}
-                            className={`w-full sm:w-auto flex justify-center items-center gap-2 px-3 py-2 bg-zinc-50 border border-zinc-200 text-[13px] font-medium text-zinc-700 rounded-md hover:bg-zinc-100 transition-colors ${(isGenerating || !userId) ? 'opacity-50 cursor-not-allowed' : ''
-                                }`}
+                            className={`w-full sm:w-auto flex justify-center items-center gap-2 px-3 py-2 bg-zinc-50 border border-zinc-200 text-[13px] font-medium text-zinc-700 rounded-md hover:bg-zinc-100 transition-colors ${(isGenerating || !userId) ? 'opacity-50 cursor-not-allowed' : ''}`}
                             title="Generate a draft review using AI based on employee history"
                         >
                             <Sparkles className="w-3.5 h-3.5" />
                             {isGenerating ? t('evaluationModal.generating') : t('evaluationModal.autoGenerate')}
                         </button>
 
-                        <div className="flex flex-col sm:flex-row w-full sm:w-auto items-center gap-3">
+                        <div className="flex w-full sm:w-auto items-center gap-3">
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="w-full sm:w-auto px-4 py-2 text-[13px] font-semibold text-zinc-700 bg-white border border-zinc-300 rounded-md hover:bg-zinc-50 transition-colors"
+                                className="flex-1 sm:flex-none px-4 py-2 text-[13px] font-semibold text-zinc-700 bg-white border border-zinc-300 rounded-md hover:bg-zinc-50 transition-colors"
                             >
                                 {t('common.cancel')}
                             </button>
                             <button
                                 type="submit"
                                 disabled={loading || !userId}
-                                className={`w-full sm:w-auto px-4 py-2 text-[13px] font-bold text-white bg-[#5B4FE8] border border-[#5B4FE8] rounded-md hover:bg-[#4a3fd4] transition-colors ${(loading || !userId) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={`flex-1 sm:flex-none px-4 py-2 text-[13px] font-bold text-white bg-[#5B4FE8] border border-[#5B4FE8] rounded-md hover:bg-[#4a3fd4] transition-colors ${(loading || !userId) ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 {loading ? t('common.submitting') : t('evaluationModal.submitEvaluation')}
                             </button>
@@ -215,6 +216,7 @@ const EvaluationModal = ({ isOpen, onClose, onEvaluationAdded }) => {
                 </form>
             </div>
         </div>
+
     );
 };
 

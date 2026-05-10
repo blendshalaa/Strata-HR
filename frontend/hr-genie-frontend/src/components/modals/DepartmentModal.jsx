@@ -76,9 +76,9 @@ const DepartmentModal = ({ isOpen, onClose, onDepartmentSaved, onDepartmentAdded
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center p-4 animate-fadeIn" style={{backgroundColor:"rgba(15,13,46,0.45)"}} onClick={onClose}>
-            <div className="bg-white rounded-lg w-full max-w-lg overflow-hidden animate-slideUp" onClick={e => e.stopPropagation()}>
-                <div className="flex items-center justify-between p-5 border-b border-zinc-100">
+        <div className="modal-overlay animate-fadeIn" onClick={onClose}>
+            <div className="modal-panel animate-slideUp" onClick={e => e.stopPropagation()}>
+                <div className="flex items-center justify-between p-5 border-b border-zinc-100 flex-shrink-0">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-zinc-100 border border-zinc-200 rounded-md">
                             {isEditMode
@@ -98,7 +98,8 @@ const DepartmentModal = ({ isOpen, onClose, onDepartmentSaved, onDepartmentAdded
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                <form onSubmit={handleSubmit} className="modal-body">
+                    <div className="p-6 space-y-4">
                     {error && (
                         <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg border border-red-100">
                             {error}
@@ -114,7 +115,7 @@ const DepartmentModal = ({ isOpen, onClose, onDepartmentSaved, onDepartmentAdded
                             required
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[16px] sm:text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                             placeholder="e.g. Engineering"
                         />
                     </div>
@@ -126,7 +127,7 @@ const DepartmentModal = ({ isOpen, onClose, onDepartmentSaved, onDepartmentAdded
                         <select
                             value={managerId}
                             onChange={(e) => setManagerId(e.target.value)}
-                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[16px] sm:text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                         >
                             <option value="">{t('departmentModal.selectManager')}</option>
                             {users.map((user) => (
@@ -145,12 +146,13 @@ const DepartmentModal = ({ isOpen, onClose, onDepartmentSaved, onDepartmentAdded
                             rows={3}
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors resize-none"
+                            className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[16px] sm:text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors resize-none"
                             placeholder={t('departmentModal.descriptionPlaceholder')}
                         />
                     </div>
+                    </div>
 
-                    <div className="p-5 border-t border-zinc-100 bg-zinc-50 flex items-center justify-end gap-3">
+                    <div className="p-5 border-t border-zinc-100 bg-zinc-50 flex items-center justify-end gap-3 flex-shrink-0">
                         <button
                             type="button"
                             onClick={onClose}
@@ -172,6 +174,7 @@ const DepartmentModal = ({ isOpen, onClose, onDepartmentSaved, onDepartmentAdded
                 </form>
             </div>
         </div>
+
     );
 };
 
