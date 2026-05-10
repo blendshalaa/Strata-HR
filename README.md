@@ -231,7 +231,13 @@ HR Genie is fully responsive with:
 
 ## 📄 License
 
-This project is for portfolio/demonstration purposes.
+This project is protected under a **Proprietary Portfolio License**.
+
+- ✅ You **may** view and study the source code
+- ❌ You **may not** copy, redistribute, or use it in your own projects
+- ❌ You **may not** claim it as your own work
+
+See the [LICENSE](LICENSE) file for full terms.
 
 ---
 
