@@ -25,6 +25,7 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const MyPayslipsPage = lazy(() => import('./pages/MyPayslipsPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'));
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'));
 const EmployeeDirectoryPage = lazy(() => import('./pages/EmployeeDirectoryPage'));
 const MyTimesheetsPage = lazy(() => import('./pages/MyTimesheetsPage'));
 const OrgSettingsPage = lazy(() => import('./pages/OrgSettingsPage'));
@@ -96,6 +97,7 @@ function App() {
                 {/* Public routes */}
                 <Route path="/careers" element={<CareersPage />} />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
 
                 <Route
                   path="/*"
