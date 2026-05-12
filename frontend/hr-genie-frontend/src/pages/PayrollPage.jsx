@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { DollarSign, FileText, CheckCircle, Clock, Download, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
+import { DollarSign, FileText, CheckCircle, Clock, Download, Zap, ChevronLeft, ChevronRight, Check, X } from 'lucide-react';
 import PayrollModal from '../components/modals/PayrollModal';
 import PayslipModal from '../components/modals/PayslipModal';
-import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { useToast } from '../context/ToastContext';
 import { useTranslation } from 'react-i18next';
 
@@ -109,14 +108,10 @@ const PayrollPage = () => {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">{t('payroll.title')}</h1>
-                    <p className="text-zinc-500 text-sm mt-1">{t('payroll.subtitle')}</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                     <button onClick={handleExport} className="btn-secondary flex items-center gap-2 text-sm">
                         <Download className="w-4 h-4" /> <span className="hidden sm:inline">{t('common.exportCsv')}</span>
-                    </button>
-                    <button onClick={handleGenerate} className="btn-secondary flex items-center gap-2 text-sm" title="Automatically generate payroll entries from approved employee timesheets">
-                        <Zap className="w-4 h-4" /> {t('payroll.fromTimesheets')}
                     </button>
                     <button
                         onClick={() => setIsPayrollModalOpen(true)}
@@ -219,6 +214,23 @@ const PayrollPage = () => {
                                             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-green-50 text-green-700 border border-green-200 uppercase tracking-wider">
                                                 <CheckCircle className="w-3 h-3" /> {t('common.paid')}
                                             </span>
+                                        ) : confirmPayId === pay.id ? (
+                                            <div className="flex items-center gap-1.5 animate-fadeIn">
+                                                <span className="text-[11px] text-zinc-500 font-medium">Confirm?</span>
+                                                <button
+                                                    onClick={() => handleMarkAsPaid(pay.id)}
+                                                    disabled={isUpdating === pay.id}
+                                                    className="flex items-center gap-1 px-2 py-1 text-[11px] font-bold text-white bg-emerald-600 rounded-md hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                                                >
+                                                    <Check className="w-3 h-3" /> Yes, paid
+                                                </button>
+                                                <button
+                                                    onClick={() => setConfirmPayId(null)}
+                                                    className="flex items-center gap-1 px-2 py-1 text-[11px] font-bold text-zinc-600 bg-zinc-100 rounded-md hover:bg-zinc-200 transition-colors"
+                                                >
+                                                    <X className="w-3 h-3" />
+                                                </button>
+                                            </div>
                                         ) : (
                                             <div className="flex items-center gap-2">
                                                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200 uppercase tracking-wider">
@@ -308,14 +320,6 @@ const PayrollPage = () => {
 
             <PayrollModal isOpen={isPayrollModalOpen} onClose={() => setIsPayrollModalOpen(false)} onPayrollAdded={(newPayroll) => setPayrolls([newPayroll, ...payrolls])} />
             <PayslipModal isOpen={!!selectedPayslip} onClose={() => setSelectedPayslip(null)} payroll={selectedPayslip} />
-            <ConfirmDialog
-                isOpen={!!confirmPayId}
-                onClose={() => setConfirmPayId(null)}
-                onConfirm={() => handleMarkAsPaid(confirmPayId)}
-                title="Mark as Paid?"
-                message={`This will mark the payroll entry for ${payrolls.find(p => p.id === confirmPayId)?.employee_name || 'this employee'} as paid. This action cannot be undone.`}
-                confirmLabel="Mark as Paid"
-            />
         </div>
     );
 };

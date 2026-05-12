@@ -14,7 +14,7 @@ const LeaveApprovalsPage = () => {
   const { t } = useTranslation();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('pending');
+  const [filter, setFilter] = useState('');
   const [actionLoading, setActionLoading] = useState(null);
 
   useEffect(() => {
@@ -76,8 +76,7 @@ const LeaveApprovalsPage = () => {
     <div className="space-y-6 animate-fadeIn">
       <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-1">{t('leaveApprovals.title')}</h1>
-          <p className="text-zinc-500 text-sm">{t('leaveApprovals.subtitle')}</p>
+          <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">{t('leaveApprovals.title')}</h1>
         </div>
         <button
           onClick={async () => {

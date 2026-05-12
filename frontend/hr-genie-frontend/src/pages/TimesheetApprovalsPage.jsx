@@ -162,22 +162,9 @@ const TimesheetApprovalsPage = () => {
             {/* Header */}
             <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-1">{t('timesheetApprovals.title')}</h1>
-                    <p className="text-zinc-500 text-sm">{t('timesheetApprovals.subtitle')}</p>
+                    <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">{t('timesheetApprovals.title')}</h1>
                 </div>
                 <div className="flex items-center gap-2">
-                    {pending.length > 0 && (
-                        <button
-                            onClick={handleApproveAll}
-                            disabled={approveAllLoading}
-                            className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2.5 rounded-md hover:bg-emerald-700 font-bold text-sm shadow-sm transition-colors disabled:opacity-50"
-                        >
-                            {approveAllLoading
-                                ? <><div className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" /> Approving...</>
-                                : <><CheckCheck className="w-4 h-4" /> Approve All ({pending.length})</>
-                            }
-                        </button>
-                    )}
                     <button
                         onClick={async () => {
                             try {
@@ -231,6 +218,25 @@ const TimesheetApprovalsPage = () => {
                 </div>
             ) : (
                 <div className="space-y-4">
+                    {/* Approve-All contextual banner */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-md">
+                        <div>
+                            <p className="text-[13px] font-bold text-emerald-900">
+                                {pending.length} timesheet{pending.length !== 1 ? 's' : ''} waiting for approval
+                            </p>
+                            <p className="text-[11px] text-emerald-700 mt-0.5">Review individually below, or approve all at once</p>
+                        </div>
+                        <button
+                            onClick={handleApproveAll}
+                            disabled={approveAllLoading}
+                            className="shrink-0 flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700 font-bold text-sm transition-colors disabled:opacity-50"
+                        >
+                            {approveAllLoading
+                                ? <><div className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" /> Approving...</>
+                                : <><CheckCheck className="w-4 h-4" /> Approve All ({pending.length})</>
+                            }
+                        </button>
+                    </div>
                     <h2 className="text-[12px] font-black text-zinc-400 uppercase tracking-widest">{t('timesheetApprovals.pendingApproval')} ({pending.length})</h2>
                     {pending.map((shift) => (
                         <div key={shift.id} className="bg-white border border-zinc-200 rounded-md p-5">

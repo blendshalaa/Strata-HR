@@ -329,6 +329,21 @@ const ChatPage = () => {
           )}
         </div>
 
+        {/* Persistent suggestion chips */}
+        {!loading && (
+          <div className="px-4 py-2 flex gap-2 flex-wrap bg-white border-t border-zinc-100">
+            {suggestions.slice(0, 3).map((s, i) => (
+              <button
+                key={i}
+                onClick={() => handleSendMessage(s)}
+                className="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 bg-zinc-50 border border-zinc-200 rounded-full text-zinc-500 hover:bg-[#EEF0FF] hover:border-[#C4BDFF] hover:text-[#5B4FE8] transition-colors max-w-[200px]"
+              >
+                <Sparkles className="w-2.5 h-2.5 flex-shrink-0" />
+                <span className="truncate">{s}</span>
+              </button>
+            ))}
+          </div>
+        )}
         <ChatInput onSend={handleSendMessage} loading={loading} />
       </div>
     </div>

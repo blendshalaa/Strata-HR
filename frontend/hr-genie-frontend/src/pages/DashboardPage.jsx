@@ -6,9 +6,7 @@ import TimeClockWidget from '../components/dashboard/TimeClockWidget';
 import {
   MessageSquare,
   Calendar,
-  BookOpen,
   TrendingUp,
-  ArrowRight,
   Briefcase,
   Users,
   Building2,
@@ -63,39 +61,6 @@ const DashboardPage = () => {
     );
   }
 
-  const quickActions = [
-    { label: t('dashboard.askAiAssistant'), desc: t('dashboard.getInstantAnswers'), icon: MessageSquare, route: '/chat', color: 'primary' },
-    { label: t('dashboard.requestLeave'), desc: t('dashboard.submitNewLeave'), icon: Calendar, route: '/leave', color: 'emerald' },
-    { label: t('dashboard.browsePolicies'), desc: t('dashboard.viewPolicies'), icon: BookOpen, route: '/knowledge', color: 'purple' },
-  ];
-
-  const hrActions = [
-    { label: t('dashboard.manageUsers'), desc: t('dashboard.viewManageAccounts'), icon: Users, route: '/users', color: 'blue' },
-    { label: t('dashboard.manageDepartments'), desc: t('dashboard.organizeTeams'), icon: Building2, route: '/departments', color: 'indigo' },
-  ];
-
-  const renderActionButton = (action) => {
-    return (
-      <button
-        key={action.route}
-        onClick={() => navigate(action.route)}
-        className="w-full flex items-center gap-3 p-3 bg-white border rounded-md transition-all text-left group"
-        style={{ borderColor: 'rgba(0,0,0,0.08)' }}
-        onMouseEnter={e => e.currentTarget.style.backgroundColor = '#F5F4FF'}
-        onMouseLeave={e => e.currentTarget.style.backgroundColor = '#fff'}
-      >
-        <div className="p-2 rounded-md flex-shrink-0" style={{ backgroundColor: '#EEF0FF' }}>
-          <action.icon className="w-4 h-4" style={{ color: '#5B4FE8' }} />
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="font-semibold text-[13px]" style={{ color: '#0F0D2E' }}>{action.label}</p>
-          <p className="text-[11px] mt-0.5 truncate" style={{ color: '#6B7280' }}>{action.desc}</p>
-        </div>
-        <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" style={{ color: '#9CA3AF' }} />
-      </button>
-    );
-  };
-
   const tooltipStyle = {
     backgroundColor: '#fff',
     border: '0.5px solid rgba(0,0,0,0.08)',
@@ -148,14 +113,9 @@ const DashboardPage = () => {
         )}
       </div>
 
-      {/* Main Content Grid */}
-      <div className={`grid grid-cols-1 ${isHR ? 'lg:grid-cols-2' : 'lg:grid-cols-3'} gap-6`}>
-        {!isHR && (
-          <div className="lg:col-span-1">
-            <TimeClockWidget />
-          </div>
-        )}
-        {isHR && (
+      {/* Main Content */}
+      {isHR ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="card">
             <div className="flex items-center justify-between mb-6">
               <div>
@@ -183,9 +143,6 @@ const DashboardPage = () => {
               </div>
             )}
           </div>
-        )}
-
-        {isHR && (
           <div className="card">
             <div className="flex items-center justify-between mb-6">
               <div>
@@ -213,17 +170,10 @@ const DashboardPage = () => {
               </div>
             )}
           </div>
-        )}
-
-        {/* Quick Actions */}
-        <div className={`card ${!isHR ? 'lg:col-span-2' : ''}`}>
-          <h3 className="text-[14px] font-semibold text-zinc-900 mb-4">{t('dashboard.quickActions')}</h3>
-          <div className={`space-y-2.5 ${!isHR ? 'grid grid-cols-1 sm:grid-cols-3 gap-4 space-y-0' : ''}`}>
-            {quickActions.map(renderActionButton)}
-            {isHR && hrActions.map(renderActionButton)}
-          </div>
         </div>
-      </div>
+      ) : (
+        <TimeClockWidget />
+      )}
 
       {/* Flight Risk Analytics */}
       {isHR && <FlightRiskWidget />}
