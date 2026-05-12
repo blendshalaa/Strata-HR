@@ -7,6 +7,7 @@ import {
   MessageSquare,
   Calendar,
   TrendingUp,
+  ArrowRight,
   Briefcase,
   Users,
   Building2,
