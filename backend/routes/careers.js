@@ -4,6 +4,22 @@ const pool = require('../config/database');
 const upload = require('../middleware/upload');
 const { sendEmail } = require('../utils/mailer');
 
+// PUBLIC: Get org branding info by slug (no auth required)
+router.get('/org-info', async (req, res, next) => {
+    try {
+        const { org } = req.query;
+        if (!org) return res.json({ name: null });
+        const result = await pool.query(
+            'SELECT name, logo_url FROM organizations WHERE slug = $1',
+            [org]
+        );
+        if (result.rows.length === 0) return res.json({ name: null });
+        res.json({ name: result.rows[0].name, logo_url: result.rows[0].logo_url || null });
+    } catch (error) {
+        next(error);
+    }
+});
+
 // PUBLIC: Get all open job postings for an org (no auth required)
 router.get('/jobs', async (req, res, next) => {
     try {

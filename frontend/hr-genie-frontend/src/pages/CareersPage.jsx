@@ -13,15 +13,33 @@ const CareersPage = () => {
     const [submitting, setSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [error, setError] = useState('');
+    const [orgName, setOrgName] = useState('');
     const { t } = useTranslation();
+
+    // Read ?org=slug from the URL
+    const orgSlug = new URLSearchParams(window.location.search).get('org');
 
     useEffect(() => {
         fetchJobs();
+        fetchOrgInfo();
     }, []);
+
+    const fetchOrgInfo = async () => {
+        if (!orgSlug) return;
+        try {
+            const res = await axios.get(`${API_URL}/careers/org-info?org=${orgSlug}`);
+            if (res.data.name) setOrgName(res.data.name);
+        } catch (err) {
+            console.error('Could not fetch org info', err);
+        }
+    };
 
     const fetchJobs = async () => {
         try {
-            const res = await axios.get(`${API_URL}/careers/jobs`);
+            const url = orgSlug
+                ? `${API_URL}/careers/jobs?org=${orgSlug}`
+                : `${API_URL}/careers/jobs`;
+            const res = await axios.get(url);
             setJobs(res.data.jobs || []);
         } catch (err) {
             console.error('Failed to fetch open positions', err);
@@ -208,7 +226,7 @@ const CareersPage = () => {
                     <div className="w-12 h-12 bg-[#5B4FE8] rounded-md flex items-center justify-center">
                         <Bot className="w-7 h-7 text-white" />
                     </div>
-                    <h1 className="text-3xl font-black text-zinc-900 tracking-tight">HR Genie</h1>
+                    <h1 className="text-3xl font-black text-zinc-900 tracking-tight">{orgName || 'HR Genie'}</h1>
                 </div>
                 <h2 className="text-4xl md:text-5xl font-black text-zinc-900 mb-4 tracking-tight">
                     {t('careers.joinOurTeam')}

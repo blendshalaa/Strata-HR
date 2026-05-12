@@ -78,8 +78,8 @@ const register = async (req, res, next) => {
       insertParams
     );
 
-    // Fetch org name
-    const orgInfo = await pool.query('SELECT name FROM organizations WHERE id = $1', [orgId]);
+    // Fetch org name + slug
+    const orgInfo = await pool.query('SELECT name, slug FROM organizations WHERE id = $1', [orgId]);
 
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role, org_id: orgId },
@@ -100,7 +100,8 @@ const register = async (req, res, next) => {
         sick_leave_balance: user.sick_leave_balance,
         vacation_balance: user.vacation_balance,
         org_id: orgId,
-        org_name: orgInfo.rows[0]?.name
+        org_name: orgInfo.rows[0]?.name,
+        org_slug: orgInfo.rows[0]?.slug
       }
     });
   } catch (error) {
@@ -119,7 +120,7 @@ const login = async (req, res, next) => {
     const result = await pool.query(
       `SELECT u.id, u.email, u.password_hash, u.name, u.department, u.role,
               u.hire_date, u.sick_leave_balance, u.vacation_balance, u.org_id,
-              o.name as org_name
+              o.name as org_name, o.slug as org_slug
        FROM users u
        LEFT JOIN organizations o ON u.org_id = o.id
        WHERE u.email = $1`,
@@ -156,7 +157,8 @@ const login = async (req, res, next) => {
         sick_leave_balance: user.sick_leave_balance,
         vacation_balance: user.vacation_balance,
         org_id: user.org_id,
-        org_name: user.org_name
+        org_name: user.org_name,
+        org_slug: user.org_slug
       }
     });
   } catch (error) {
@@ -169,7 +171,7 @@ const getMe = async (req, res, next) => {
     const result = await pool.query(
       `SELECT u.id, u.email, u.name, u.department, u.role, u.hire_date,
               u.sick_leave_balance, u.vacation_balance, u.org_id, u.created_at,
-              o.name as org_name
+              o.name as org_name, o.slug as org_slug
        FROM users u
        LEFT JOIN organizations o ON u.org_id = o.id
        WHERE u.id = $1`,
