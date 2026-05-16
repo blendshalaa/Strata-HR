@@ -66,25 +66,10 @@ const runStartupPatch = async () => {
             WHERE m.org_id IS NULL;
         `);
 
-        // ── analytics_logs: create if missing, add org_id + metadata ────────
-        await client.query(`
-            CREATE TABLE IF NOT EXISTS analytics_logs (
-                id SERIAL PRIMARY KEY,
-                user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-                action_type VARCHAR(100),
-                metadata JSONB,
-                query TEXT,
-                org_id INTEGER,
-                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-            );
-        `);
+        // ── analytics_logs: add org_id if missing ───────────────────────────
         await client.query(`
             ALTER TABLE analytics_logs
             ADD COLUMN IF NOT EXISTS org_id INTEGER REFERENCES organizations(id) ON DELETE CASCADE;
-        `);
-        await client.query(`
-            ALTER TABLE analytics_logs
-            ADD COLUMN IF NOT EXISTS metadata JSONB;
         `);
         await client.query(`
             UPDATE analytics_logs SET org_id = $1 WHERE org_id IS NULL;
@@ -104,36 +89,6 @@ const runStartupPatch = async () => {
         await client.query(`
             UPDATE users SET org_id = $1 WHERE org_id IS NULL;
         `, [defaultOrgId]);
-
-        // ── leave_requests: add org_id + approved_at if missing ───────────────
-        await client.query(`
-            ALTER TABLE leave_requests
-            ADD COLUMN IF NOT EXISTS org_id INTEGER REFERENCES organizations(id) ON DELETE CASCADE;
-        `);
-        await client.query(`
-            ALTER TABLE leave_requests
-            ADD COLUMN IF NOT EXISTS approved_at TIMESTAMP WITH TIME ZONE;
-        `);
-        await client.query(`
-            UPDATE leave_requests SET org_id = $1 WHERE org_id IS NULL;
-        `, [defaultOrgId]);
-
-        // ── notifications: add org_id if missing ──────────────────────────────
-        await client.query(`
-            CREATE TABLE IF NOT EXISTS notifications (
-                id SERIAL PRIMARY KEY,
-                user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-                title VARCHAR(255) NOT NULL,
-                message TEXT,
-                type VARCHAR(50) DEFAULT 'info',
-                is_read BOOLEAN DEFAULT FALSE,
-                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-            );
-        `);
-        await client.query(`
-            ALTER TABLE notifications
-            ADD COLUMN IF NOT EXISTS org_id INTEGER REFERENCES organizations(id) ON DELETE CASCADE;
-        `);
 
         // ── Indexes ───────────────────────────────────────────────────────────
         const idxTables = ['conversations', 'messages', 'analytics_logs', 'users'];

@@ -92,16 +92,6 @@ export const userAPI = {
   invite: (email) => api.post('/users/invite', { email }),
   update: (id, data) => api.put(`/users/${id}`, data),
   delete: (id) => api.delete(`/users/${id}`),
-  uploadAvatar: (formData, userId) => {
-    const params = userId ? `?userId=${userId}` : '';
-    return api.post(`/users/me/avatar${params}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-  },
-  deleteAvatar: (userId) => {
-    const params = userId ? `?userId=${userId}` : '';
-    return api.delete(`/users/me/avatar${params}`);
-  },
 };
 
 // Department endpoints
