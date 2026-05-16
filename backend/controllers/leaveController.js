@@ -82,25 +82,31 @@ const createLeaveRequest = async (req, res, next) => {
       [userId, type, start_date, end_date, days, reason, req.user.org_id]
     );
 
-    await pool.query(
-      'INSERT INTO analytics_logs (user_id, action_type, metadata, org_id) VALUES ($1, $2, $3, $4)',
-      [userId, 'leave_request', JSON.stringify({ type, days }), req.user.org_id]
-    );
+    // Fire-and-forget side-effects (analytics + notifications + email)
+    // Wrapped so a failure here never causes a 500 after the leave request is already saved.
+    try {
+      await pool.query(
+        'INSERT INTO analytics_logs (user_id, action_type, metadata, org_id) VALUES ($1, $2, $3, $4)',
+        [userId, 'leave_request', JSON.stringify({ type, days }), req.user.org_id]
+      );
+    } catch (e) { console.error('Analytics log failed (non-fatal):', e.message); }
 
-    const userRes = await pool.query('SELECT name FROM users WHERE id = $1', [userId]);
+    const userRes = await pool.query('SELECT name FROM users WHERE id = $1', [userId]).catch(() => ({ rows: [] }));
     const employeeName = userRes.rows[0]?.name || 'An employee';
 
-    const hrEmail = process.env.HR_EMAIL_ADDRESS || 'hr@hrgenie.example.com';
-    const tmpl = leaveSubmitted({
-        employeeName,
-        type,
-        days,
-        startDate: start_date,
-        endDate: end_date,
-        reason,
-        dashboardUrl: `${process.env.APP_URL || 'https://hrgenie.app'}/leave/approvals`,
-    });
-    sendEmail(hrEmail, tmpl.subject, tmpl.html).catch(console.error);
+    try {
+      const hrEmail = process.env.HR_EMAIL_ADDRESS || 'hr@hrgenie.example.com';
+      const tmpl = leaveSubmitted({
+          employeeName,
+          type,
+          days,
+          startDate: start_date,
+          endDate: end_date,
+          reason,
+          dashboardUrl: `${process.env.APP_URL || 'https://hrgenie.app'}/leave/approvals`,
+      });
+      sendEmail(hrEmail, tmpl.subject, tmpl.html).catch(console.error);
+    } catch (e) { console.error('Leave email failed (non-fatal):', e.message); }
 
     // In-app notif to all HR/admin users in the org
     try {
@@ -114,7 +120,8 @@ const createLeaveRequest = async (req, res, next) => {
                 `${employeeName} requested ${days} day${days !== 1 ? 's' : ''} of ${type} leave.`
             )
         ));
-    } catch (e) { console.error('Failed to notify HR users:', e); }
+    } catch (e) { console.error('Failed to notify HR users:', e.message); }
+
 
     res.status(201).json({ message: 'Leave request submitted successfully', leave_request: result.rows[0] });
   } catch (error) {

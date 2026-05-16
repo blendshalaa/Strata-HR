@@ -90,6 +90,39 @@ const runStartupPatch = async () => {
             UPDATE users SET org_id = $1 WHERE org_id IS NULL;
         `, [defaultOrgId]);
 
+        // ── analytics_logs: add metadata column if missing ────────────────
+        await client.query(`
+            ALTER TABLE analytics_logs
+            ADD COLUMN IF NOT EXISTS metadata JSONB;
+        `);
+
+        // ── leave_requests: add org_id + approved_at if missing ──────────
+        await client.query(`
+            ALTER TABLE leave_requests
+            ADD COLUMN IF NOT EXISTS org_id INTEGER REFERENCES organizations(id) ON DELETE CASCADE;
+        `);
+        await client.query(`
+            UPDATE leave_requests SET org_id = $1 WHERE org_id IS NULL;
+        `, [defaultOrgId]);
+        await client.query(`
+            ALTER TABLE leave_requests
+            ADD COLUMN IF NOT EXISTS approved_at TIMESTAMP WITH TIME ZONE;
+        `);
+
+        // ── notifications table ──────────────────────────────────────────
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS notifications (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                type VARCHAR(50) DEFAULT 'info',
+                title VARCHAR(255),
+                message TEXT,
+                is_read BOOLEAN DEFAULT false,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+        `);
+        await client.query(`CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id, is_read);`).catch(() => {});
+
         // ── Indexes ───────────────────────────────────────────────────────────
         const idxTables = ['conversations', 'messages', 'analytics_logs', 'users'];
         for (const t of idxTables) {
