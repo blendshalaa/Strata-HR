@@ -1,19 +1,87 @@
-import React, { useState, useEffect } from 'react';
-import { User, Mail, Building2, Calendar, Shield, Save, Edit3, Briefcase, Clock } from 'lucide-react';
-import { authAPI } from '../services/api';
+import React, { useState, useEffect, useRef } from 'react';
+import { User, Mail, Building2, Calendar, Shield, Save, Edit3, Briefcase, Clock, Camera, Trash2, Upload } from 'lucide-react';
+import { authAPI, userAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 
+/* ── Avatar component with upload overlay ─────────────────────────────────── */
+const AvatarEditor = ({ profile, onUpload, onRemove, uploading }) => {
+    const fileInputRef = useRef(null);
+    const [preview, setPreview] = useState(null);
+
+    const handleFileChange = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        // Show instant local preview
+        const url = URL.createObjectURL(file);
+        setPreview(url);
+        await onUpload(file);
+        URL.revokeObjectURL(url);
+        setPreview(null);
+        // Reset input so same file can be re-selected
+        e.target.value = '';
+    };
+
+    const src = preview || profile.profile_picture;
+    const initials = profile.name?.charAt(0)?.toUpperCase();
+
+    return (
+        <div className="relative group shrink-0">
+            {/* Avatar circle */}
+            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-zinc-200 bg-zinc-100 flex items-center justify-center">
+                {src ? (
+                    <img
+                        src={src}
+                        alt={profile.name}
+                        className="w-full h-full object-cover"
+                    />
+                ) : (
+                    <span className="text-2xl font-bold text-zinc-900">{initials}</span>
+                )}
+                {/* Upload overlay */}
+                {uploading && (
+                    <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center">
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    </div>
+                )}
+            </div>
+
+            {/* Camera button — always visible (not just on hover) */}
+            {!uploading && (
+                <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    title="Change profile picture"
+                    className="absolute -bottom-1 -right-1 w-7 h-7 bg-[#5B4FE8] hover:bg-[#4a3fd4] text-white rounded-full flex items-center justify-center shadow-md transition-colors cursor-pointer"
+                >
+                    <Camera className="w-3.5 h-3.5" />
+                </button>
+            )}
+
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
+                id="avatar-file-input"
+            />
+        </div>
+    );
+};
+
+/* ── Main page ────────────────────────────────────────────────────────────── */
 const ProfilePage = () => {
-    const { user: authUser } = useAuth();
+    const { user: authUser, updateUser } = useAuth();
     const toast = useToast();
     const { t } = useTranslation();
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [avatarUploading, setAvatarUploading] = useState(false);
     const [form, setForm] = useState({ name: '', department: '' });
 
     useEffect(() => {
@@ -43,6 +111,38 @@ const ProfilePage = () => {
             toast.error(err.response?.data?.error || t('profile.failedToUpdate'));
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleAvatarUpload = async (file) => {
+        setAvatarUploading(true);
+        try {
+            const formData = new FormData();
+            formData.append('avatar', file);
+            const res = await userAPI.uploadAvatar(formData);
+            const newPic = res.data.profile_picture;
+            setProfile(prev => ({ ...prev, profile_picture: newPic }));
+            updateUser({ profile_picture: newPic });
+            toast.success('Profile picture updated!');
+        } catch (err) {
+            toast.error(err.response?.data?.error || 'Failed to upload picture');
+        } finally {
+            setAvatarUploading(false);
+        }
+    };
+
+    const handleAvatarRemove = async () => {
+        if (!profile.profile_picture) return;
+        setAvatarUploading(true);
+        try {
+            await userAPI.deleteAvatar();
+            setProfile(prev => ({ ...prev, profile_picture: null }));
+            updateUser({ profile_picture: null });
+            toast.success('Profile picture removed');
+        } catch (err) {
+            toast.error('Failed to remove picture');
+        } finally {
+            setAvatarUploading(false);
         }
     };
 
@@ -77,13 +177,16 @@ const ProfilePage = () => {
                 <p className="text-zinc-500 text-sm">{t('profile.viewManageInfo')}</p>
             </div>
 
+            {/* Header card */}
             <div className="card p-6">
                 <div className="flex flex-col sm:flex-row items-start gap-5">
-                    <div className="w-16 h-16 bg-zinc-100 border border-zinc-200 rounded-full flex items-center justify-center shrink-0">
-                        <span className="text-xl font-bold text-zinc-900">
-                            {profile.name?.charAt(0)?.toUpperCase()}
-                        </span>
-                    </div>
+                    {/* Avatar with upload */}
+                    <AvatarEditor
+                        profile={profile}
+                        onUpload={handleAvatarUpload}
+                        onRemove={handleAvatarRemove}
+                        uploading={avatarUploading}
+                    />
 
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 flex-wrap mb-1">
@@ -95,16 +198,33 @@ const ProfilePage = () => {
                         </div>
                         <p className="text-zinc-500 text-[13px]">{profile.email}</p>
                         <p className="text-zinc-400 text-[12px] mt-1">{t('profile.memberSince')} {memberSince}</p>
+
+                        {/* Avatar hint */}
+                        <p className="text-zinc-400 text-[11px] mt-2 flex items-center gap-1">
+                            <Camera className="w-3 h-3" />
+                            Click the camera icon on your photo to update it · JPG, PNG, WebP · max 5 MB
+                        </p>
                     </div>
 
-                    {!editing && (
-                        <button
-                            onClick={() => setEditing(true)}
-                            className="flex items-center gap-2 px-3 py-1.5 bg-white border border-zinc-300 rounded-md text-[13px] font-medium text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition-colors shrink-0"
-                        >
-                            <Edit3 className="w-3.5 h-3.5" /> {t('common.edit')}
-                        </button>
-                    )}
+                    <div className="flex flex-col items-end gap-2 shrink-0">
+                        {!editing && (
+                            <button
+                                onClick={() => setEditing(true)}
+                                className="flex items-center gap-2 px-3 py-1.5 bg-white border border-zinc-300 rounded-md text-[13px] font-medium text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition-colors"
+                            >
+                                <Edit3 className="w-3.5 h-3.5" /> {t('common.edit')}
+                            </button>
+                        )}
+                        {profile.profile_picture && !avatarUploading && (
+                            <button
+                                onClick={handleAvatarRemove}
+                                title="Remove profile picture"
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-rose-200 rounded-md text-[13px] font-medium text-rose-600 hover:bg-rose-50 transition-colors"
+                            >
+                                <Trash2 className="w-3.5 h-3.5" /> Remove photo
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
 

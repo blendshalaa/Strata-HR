@@ -171,6 +171,7 @@ const getMe = async (req, res, next) => {
     const result = await pool.query(
       `SELECT u.id, u.email, u.name, u.department, u.role, u.hire_date,
               u.sick_leave_balance, u.vacation_balance, u.org_id, u.created_at,
+              u.profile_picture,
               o.name as org_name, o.slug as org_slug
        FROM users u
        LEFT JOIN organizations o ON u.org_id = o.id

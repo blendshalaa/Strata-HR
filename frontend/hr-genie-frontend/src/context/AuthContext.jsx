@@ -69,6 +69,21 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  /** Merge partial updates into the current user state (e.g. after avatar upload) */
+  const updateUser = (partial) => {
+    setUser(prev => prev ? { ...prev, ...partial } : prev);
+  };
+
+  /** Re-fetch the current user from the server */
+  const refreshUser = async () => {
+    try {
+      const response = await authAPI.getMe();
+      setUser(response.data.user);
+    } catch (error) {
+      console.error('Failed to refresh user:', error);
+    }
+  };
+
   const value = {
     user,
     token,
@@ -76,6 +91,8 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
+    updateUser,
+    refreshUser,
     isAuthenticated: !!token,
     isAdmin: user?.role === 'admin',
     isHR: user?.role === 'hr' || user?.role === 'admin',

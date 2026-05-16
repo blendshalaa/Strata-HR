@@ -119,11 +119,15 @@ const Navbar = ({ onMenuClick }) => {
                 onMouseEnter={e => e.currentTarget.style.backgroundColor = '#F5F4FF'}
                 onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
               >
-                <div
-                  className="w-8 h-8 rounded-md flex items-center justify-center text-white font-bold text-[12px]"
+              <div
+                  className="w-8 h-8 rounded-md overflow-hidden flex items-center justify-center text-white font-bold text-[12px]"
                   style={{ backgroundColor: '#5B4FE8' }}
                 >
-                  {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || <User className="w-4 h-4" />}
+                  {user?.profile_picture ? (
+                    <img src={user.profile_picture} alt={user.name} className="w-full h-full object-cover" />
+                  ) : (
+                    user?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || <User className="w-4 h-4" />
+                  )}
                 </div>
                 <ChevronDown
                   className={`w-3.5 h-3.5 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}
@@ -137,9 +141,18 @@ const Navbar = ({ onMenuClick }) => {
                   style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.08)', boxShadow: '0 8px 24px rgba(0,0,0,0.08)' }}
                 >
                   {/* User info */}
-                  <div className="px-4 py-2.5" style={{ borderBottom: '0.5px solid rgba(0,0,0,0.06)' }}>
-                    <p className="text-[14px] font-semibold" style={{ color: '#0F0D2E' }}>{user?.name}</p>
-                    <p className="text-[12px]" style={{ color: '#6B7280' }}>{user?.email}</p>
+                  <div className="px-4 py-2.5 flex items-center gap-3" style={{ borderBottom: '0.5px solid rgba(0,0,0,0.06)' }}>
+                    <div className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center text-white font-bold text-[13px] shrink-0" style={{ backgroundColor: '#5B4FE8' }}>
+                      {user?.profile_picture ? (
+                        <img src={user.profile_picture} alt={user.name} className="w-full h-full object-cover" />
+                      ) : (
+                        user?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[14px] font-semibold truncate" style={{ color: '#0F0D2E' }}>{user?.name}</p>
+                      <p className="text-[12px] truncate" style={{ color: '#6B7280' }}>{user?.email}</p>
+                    </div>
                   </div>
 
                   {/* Leave balances */}

@@ -80,6 +80,12 @@ const runStartupPatch = async () => {
             ALTER TABLE users
             ADD COLUMN IF NOT EXISTS org_id INTEGER REFERENCES organizations(id) ON DELETE CASCADE;
         `);
+
+        // ── users: add profile_picture if missing ─────────────────────────────
+        await client.query(`
+            ALTER TABLE users
+            ADD COLUMN IF NOT EXISTS profile_picture VARCHAR(500);
+        `);
         await client.query(`
             UPDATE users SET org_id = $1 WHERE org_id IS NULL;
         `, [defaultOrgId]);

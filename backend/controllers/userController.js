@@ -1,13 +1,14 @@
 const pool = require('../config/database');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+const cloudinary = require('cloudinary').v2;
 const { sendEmail } = require('../utils/mailer');
 const { newEmployeeRegistered } = require('../utils/emailTemplates');
 
 const getDirectory = async (req, res, next) => {
   try {
     const result = await pool.query(
-      `SELECT id, name, email, department, role, hire_date
+      `SELECT id, name, email, department, role, hire_date, profile_picture
        FROM users WHERE org_id = $1
        ORDER BY name ASC`,
       [req.user.org_id]
@@ -23,8 +24,8 @@ const getAllUsers = async (req, res, next) => {
     const { department, role } = req.query;
 
     let query = `
-      SELECT id, email, name, department, role, hire_date, 
-             sick_leave_balance, vacation_balance, created_at
+      SELECT id, email, name, department, role, hire_date,
+             sick_leave_balance, vacation_balance, created_at, profile_picture
       FROM users
       WHERE org_id = $1
     `;
@@ -61,7 +62,7 @@ const getUserById = async (req, res, next) => {
     const { id } = req.params;
     const result = await pool.query(
       `SELECT id, email, name, department, role, hire_date,
-              sick_leave_balance, vacation_balance, created_at
+              sick_leave_balance, vacation_balance, created_at, profile_picture
        FROM users WHERE id = $1 AND org_id = $2`,
       [id, req.user.org_id]
     );
@@ -282,4 +283,97 @@ const inviteUser = async (req, res, next) => {
   }
 };
 
-module.exports = { getDirectory, getAllUsers, getUserById, updateUser, deleteUser, createUser, inviteUser };
+/**
+ * Upload or replace the authenticated user's profile picture.
+ * Any authenticated user can update their own avatar.
+ * HR/admin can also update other users' avatars via ?userId=<id>.
+ */
+const uploadAvatar = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image file uploaded' });
+    }
+
+    // Determine target user — defaults to self
+    const targetId = req.query.userId && ['admin', 'hr'].includes(req.user.role)
+      ? parseInt(req.query.userId)
+      : req.user.id;
+
+    // Verify target belongs to same org
+    const userCheck = await pool.query(
+      'SELECT id, profile_picture FROM users WHERE id = $1 AND org_id = $2',
+      [targetId, req.user.org_id]
+    );
+    if (userCheck.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Delete old Cloudinary image if present
+    const oldPic = userCheck.rows[0].profile_picture;
+    if (oldPic && oldPic.includes('res.cloudinary.com')) {
+      try {
+        const uploadIndex = oldPic.indexOf('/upload/');
+        if (uploadIndex !== -1) {
+          const afterUpload = oldPic.substring(uploadIndex + 8);
+          const withoutVersion = afterUpload.replace(/^v\d+\//, '');
+          const publicId = withoutVersion.replace(/\.[^/.]+$/, '');
+          cloudinary.uploader.destroy(publicId, { resource_type: 'image' }).catch(() => {});
+        }
+      } catch (e) { /* ignore */ }
+    }
+
+    const avatarUrl = req.file.path; // Cloudinary secure URL
+
+    await pool.query(
+      'UPDATE users SET profile_picture = $1 WHERE id = $2 AND org_id = $3',
+      [avatarUrl, targetId, req.user.org_id]
+    );
+
+    res.json({ message: 'Profile picture updated successfully', profile_picture: avatarUrl });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Remove the authenticated user's profile picture.
+ */
+const deleteAvatar = async (req, res, next) => {
+  try {
+    const targetId = req.query.userId && ['admin', 'hr'].includes(req.user.role)
+      ? parseInt(req.query.userId)
+      : req.user.id;
+
+    const userCheck = await pool.query(
+      'SELECT id, profile_picture FROM users WHERE id = $1 AND org_id = $2',
+      [targetId, req.user.org_id]
+    );
+    if (userCheck.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const oldPic = userCheck.rows[0].profile_picture;
+    if (oldPic && oldPic.includes('res.cloudinary.com')) {
+      try {
+        const uploadIndex = oldPic.indexOf('/upload/');
+        if (uploadIndex !== -1) {
+          const afterUpload = oldPic.substring(uploadIndex + 8);
+          const withoutVersion = afterUpload.replace(/^v\d+\//, '');
+          const publicId = withoutVersion.replace(/\.[^/.]+$/, '');
+          cloudinary.uploader.destroy(publicId, { resource_type: 'image' }).catch(() => {});
+        }
+      } catch (e) { /* ignore */ }
+    }
+
+    await pool.query(
+      'UPDATE users SET profile_picture = NULL WHERE id = $1 AND org_id = $2',
+      [targetId, req.user.org_id]
+    );
+
+    res.json({ message: 'Profile picture removed successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getDirectory, getAllUsers, getUserById, updateUser, deleteUser, createUser, inviteUser, uploadAvatar, deleteAvatar };
