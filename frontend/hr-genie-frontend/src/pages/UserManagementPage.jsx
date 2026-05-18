@@ -360,7 +360,7 @@ const UserManagementPage = () => {
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={() => setShowDeleteConfirm(null)}>
+        <div className="modal-overlay" onClick={() => setShowDeleteConfirm(null)}>
           <div className="bg-white rounded-lg max-w-md w-full animate-fadeIn shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="p-6 text-center">
               <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -433,7 +433,7 @@ const InviteUserModal = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose}>
       <div className="bg-white rounded-lg max-w-lg w-full animate-fadeIn shadow-2xl" onClick={e => e.stopPropagation()}>
         <div className="border-b border-zinc-200 p-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -517,7 +517,7 @@ const CreateUserModal = ({ departments, isAdmin, onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose}>
       <div className="bg-white rounded-lg max-w-lg w-full animate-fadeIn shadow-2xl" onClick={e => e.stopPropagation()}>
         <div className="border-b border-zinc-200 p-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -663,7 +663,7 @@ const EditUserModal = ({ user, departments, isAdmin, isHR, onClose, onSuccess })
   };
 
   return (
-    <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose}>
       <div className="bg-white rounded-lg max-w-lg w-full animate-fadeIn shadow-2xl" onClick={e => e.stopPropagation()}>
         <div className="border-b border-zinc-200 p-6 flex items-center justify-between">
           <div className="flex items-center gap-3">

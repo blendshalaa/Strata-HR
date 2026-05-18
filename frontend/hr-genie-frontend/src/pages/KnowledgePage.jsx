@@ -174,7 +174,7 @@ const KnowledgePage = () => {
 
       {/* Article View Modal */}
       {selectedArticle && (
-        <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={() => setSelectedArticle(null)}>
+        <div className="modal-overlay" onClick={() => setSelectedArticle(null)}>
           <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto animate-fadeIn shadow-xl" onClick={e => e.stopPropagation()}>
             <div className="sticky top-0 bg-white border-b border-zinc-100 p-6 flex items-start justify-between z-10">
               <div>
@@ -289,7 +289,7 @@ const CreateArticleModal = ({ article, onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose}>
       <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-fadeIn shadow-xl" onClick={e => e.stopPropagation()}>
         <div className="sticky top-0 bg-white border-b border-zinc-100 p-6 flex items-center justify-between z-10">
           <h2 className="text-[18px] font-bold text-zinc-900">

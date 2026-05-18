@@ -446,7 +446,7 @@ const DepartmentsPage = () => {
             )}
 
             {showDeleteConfirm && (
-                <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={() => setShowDeleteConfirm(null)}>
+                <div className="modal-overlay" onClick={() => setShowDeleteConfirm(null)}>
                     <div className="bg-white rounded-lg max-w-md w-full animate-slideUp shadow-lg" onClick={e => e.stopPropagation()}>
                         <div className="p-6 text-center">
                             <div className="w-12 h-12 bg-red-50 border border-red-100 rounded-full flex items-center justify-center mx-auto mb-4"><AlertTriangle className="w-6 h-6 text-red-600" /></div>

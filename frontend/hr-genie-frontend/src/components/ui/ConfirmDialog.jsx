@@ -12,8 +12,8 @@ const ConfirmDialog = ({ isOpen, onClose, onConfirm, title, message, confirmLabe
     };
 
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" style={{backgroundColor:"rgba(15,13,46,0.45)"}} onClick={onClose}>
-            <div className="bg-white rounded-lg max-w-sm w-full shadow-xl animate-fadeIn" onClick={e => e.stopPropagation()}>
+        <div className="modal-overlay z-[60]" onClick={onClose}>
+            <div className="modal-card max-w-sm w-full animate-fadeIn" onClick={e => e.stopPropagation()}>
                 <div className="p-6">
                     <div className="flex items-start gap-4">
                         <div className="p-2 bg-red-50 border border-red-100 rounded-md shrink-0">
@@ -28,7 +28,7 @@ const ConfirmDialog = ({ isOpen, onClose, onConfirm, title, message, confirmLabe
                         </button>
                     </div>
                 </div>
-                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-zinc-100 bg-zinc-50/50 rounded-b-lg">
+                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-zinc-100 bg-zinc-50/50 rounded-b-xl">
                     <button
                         onClick={onClose}
                         disabled={loading}

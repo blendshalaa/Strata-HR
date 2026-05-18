@@ -345,7 +345,7 @@ const TimesheetApprovalsPage = () => {
 
             {/* Edit Modal */}
             {editingTs && (
-                <div className="fixed inset-0 bg-zinc-900/40 z-50 flex items-center justify-center p-4" onClick={() => setEditingTs(null)}>
+                <div className="modal-overlay" onClick={() => setEditingTs(null)}>
                     <div className="bg-white border border-zinc-200 rounded-md max-w-md w-full shadow-xl animate-fadeIn" onClick={e => e.stopPropagation()}>
                         <div className="flex items-center justify-between p-5 border-b border-zinc-200">
                             <h3 className="text-[16px] font-bold text-zinc-900">{t('timesheetApprovals.editTimesheet')}</h3>

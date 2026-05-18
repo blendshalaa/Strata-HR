@@ -66,14 +66,14 @@ const LeavePage = () => {
       {/* Request Leave Modal */}
       {isFormOpen && (
         <div
-          className="fixed inset-0 bg-zinc-900/40 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fadeIn"
+          className="modal-overlay"
           onClick={() => setIsFormOpen(false)}
         >
           <div
-            className="bg-white w-full sm:max-w-lg sm:rounded-lg shadow-xl animate-slideUp"
+            className="modal-panel"
             onClick={e => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100 flex-shrink-0">
               <div className="flex items-center gap-3">
                 <div className="p-1.5 bg-zinc-100 border border-zinc-200 rounded-md">
                   <Calendar className="w-4 h-4 text-zinc-600" />
@@ -87,7 +87,7 @@ const LeavePage = () => {
                 <X className="w-4 h-4 text-zinc-400" />
               </button>
             </div>
-            <div className="p-6">
+            <div className="p-6 modal-body">
               <LeaveRequestForm onSubmit={handleSubmitRequest} compact />
             </div>
           </div>
