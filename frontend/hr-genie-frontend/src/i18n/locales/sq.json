@@ -277,7 +277,16 @@
     "saveChanges": "Ruaj ndryshimet",
     "profileUpdated": "Profili u përditësua me sukses",
     "failedToLoad": "Dështoi ngarkimi i profilit",
-    "failedToUpdate": "Dështoi përditësimi i profilit"
+    "failedToUpdate": "Dështoi përditësimi i profilit",
+    "uploadPhoto": "Ngarko foto",
+    "removePhoto": "Hiqe",
+    "avatarHint": "JPG, PNG, WebP ose GIF · Maks 5 MB",
+    "avatarUpdated": "Fotoja e profilit u përditësua",
+    "avatarRemoved": "Fotoja e profilit u hoq",
+    "avatarUploadFailed": "Dështoi ngarkimi i fotos",
+    "avatarRemoveFailed": "Dështoi heqja e fotos",
+    "invalidFileType": "Lejohen vetëm imazhe JPG, PNG, WebP dhe GIF",
+    "fileTooLarge": "Imazhi duhet të jetë nën 5 MB"
   },
   "departments": {
     "title": "Departamentet",

@@ -277,7 +277,16 @@
     "saveChanges": "Änderungen speichern",
     "profileUpdated": "Profil erfolgreich aktualisiert",
     "failedToLoad": "Fehler beim Laden des Profils",
-    "failedToUpdate": "Fehler beim Aktualisieren des Profils"
+    "failedToUpdate": "Fehler beim Aktualisieren des Profils",
+    "uploadPhoto": "Foto hochladen",
+    "removePhoto": "Entfernen",
+    "avatarHint": "JPG, PNG, WebP oder GIF · Max. 5 MB",
+    "avatarUpdated": "Profilbild aktualisiert",
+    "avatarRemoved": "Profilbild entfernt",
+    "avatarUploadFailed": "Fehler beim Hochladen des Bildes",
+    "avatarRemoveFailed": "Fehler beim Entfernen des Bildes",
+    "invalidFileType": "Nur JPG-, PNG-, WebP- und GIF-Bilder sind erlaubt",
+    "fileTooLarge": "Das Bild muss unter 5 MB groß sein"
   },
   "departments": {
     "title": "Abteilungen",

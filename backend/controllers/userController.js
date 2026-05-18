@@ -280,4 +280,63 @@ const inviteUser = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-module.exports = { getDirectory, getAllUsers, getUserById, updateUser, deleteUser, createUser, inviteUser };
+};
+
+const uploadAvatar = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image file provided' });
+    }
+
+    const imageUrl = req.file.path || req.file.secure_url || req.file.url;
+
+    await pool.query(
+      'UPDATE users SET profile_picture = $1 WHERE id = $2 AND org_id = $3',
+      [imageUrl, req.user.id, req.user.org_id]
+    );
+
+    res.json({ message: 'Profile picture updated', profile_picture: imageUrl });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteAvatar = async (req, res, next) => {
+  try {
+    // Fetch current picture URL to delete from Cloudinary
+    const current = await pool.query(
+      'SELECT profile_picture FROM users WHERE id = $1 AND org_id = $2',
+      [req.user.id, req.user.org_id]
+    );
+
+    const currentUrl = current.rows[0]?.profile_picture;
+
+    if (currentUrl) {
+      // Extract Cloudinary public_id from the URL
+      try {
+        const { cloudinary } = require('../middleware/avatarUpload');
+        const parts = currentUrl.split('/');
+        const uploadIdx = parts.indexOf('upload');
+        if (uploadIdx !== -1) {
+          // public_id is everything after /upload/v<version>/ without extension
+          const publicIdParts = parts.slice(uploadIdx + 2);
+          const publicId = publicIdParts.join('/').replace(/\.[^.]+$/, '');
+          await cloudinary.uploader.destroy(publicId);
+        }
+      } catch (e) {
+        console.error('Failed to delete image from Cloudinary:', e.message);
+      }
+    }
+
+    await pool.query(
+      'UPDATE users SET profile_picture = NULL WHERE id = $1 AND org_id = $2',
+      [req.user.id, req.user.org_id]
+    );
+
+    res.json({ message: 'Profile picture removed', profile_picture: null });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getDirectory, getAllUsers, getUserById, updateUser, deleteUser, createUser, inviteUser, uploadAvatar, deleteAvatar };

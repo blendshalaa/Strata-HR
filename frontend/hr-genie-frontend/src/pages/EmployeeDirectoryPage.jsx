@@ -70,9 +70,18 @@ const EmployeeDirectoryPage = () => {
                     {filtered.map(emp => (
                         <div key={emp.id} className="card p-4 transition-all hover:border-[#C4BDFF] group">
                             <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 bg-zinc-100 border border-zinc-200 rounded-full flex items-center justify-center shrink-0">
-                                    <span className="text-[15px] font-semibold text-zinc-700">{emp.name?.charAt(0)?.toUpperCase()}</span>
-                                </div>
+                                {emp.profile_picture ? (
+                                    <img
+                                        src={emp.profile_picture}
+                                        alt={emp.name}
+                                        className="w-10 h-10 rounded-full object-cover shrink-0"
+                                        style={{ border: '1.5px solid #E0DEFF' }}
+                                    />
+                                ) : (
+                                    <div className="w-10 h-10 bg-zinc-100 border border-zinc-200 rounded-full flex items-center justify-center shrink-0">
+                                        <span className="text-[15px] font-semibold text-zinc-700">{emp.name?.charAt(0)?.toUpperCase()}</span>
+                                    </div>
+                                )}
                                 <div className="min-w-0 flex-1">
                                     <h3 className="text-[14px] font-semibold text-zinc-900 truncate">{emp.name}</h3>
                                     <div className="flex items-center gap-1.5 mt-0.5 text-[12px] text-zinc-500">

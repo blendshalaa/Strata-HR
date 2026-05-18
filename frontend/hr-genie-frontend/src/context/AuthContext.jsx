@@ -69,6 +69,17 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  /** Re-fetch the current user from /auth/me — call after avatar or profile changes */
+  const refreshUser = async () => {
+    try {
+      const response = await authAPI.getMe();
+      setUser(response.data.user);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+    } catch (error) {
+      console.error('Failed to refresh user:', error);
+    }
+  };
+
   const value = {
     user,
     token,
@@ -76,6 +87,7 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
+    refreshUser,
     isAuthenticated: !!token,
     isAdmin: user?.role === 'admin',
     isHR: user?.role === 'hr' || user?.role === 'admin',

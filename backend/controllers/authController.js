@@ -120,6 +120,7 @@ const login = async (req, res, next) => {
     const result = await pool.query(
       `SELECT u.id, u.email, u.password_hash, u.name, u.department, u.role,
               u.hire_date, u.sick_leave_balance, u.vacation_balance, u.org_id,
+              u.profile_picture,
               o.name as org_name, o.slug as org_slug
        FROM users u
        LEFT JOIN organizations o ON u.org_id = o.id
@@ -158,7 +159,8 @@ const login = async (req, res, next) => {
         vacation_balance: user.vacation_balance,
         org_id: user.org_id,
         org_name: user.org_name,
-        org_slug: user.org_slug
+        org_slug: user.org_slug,
+        profile_picture: user.profile_picture
       }
     });
   } catch (error) {

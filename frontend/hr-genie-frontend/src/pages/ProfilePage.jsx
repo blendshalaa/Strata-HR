@@ -1,13 +1,185 @@
-import React, { useState, useEffect } from 'react';
-import { User, Mail, Building2, Calendar, Shield, Save, Edit3, Briefcase, Clock } from 'lucide-react';
-import { authAPI } from '../services/api';
+import React, { useState, useEffect, useRef } from 'react';
+import { User, Mail, Building2, Calendar, Shield, Save, Edit3, Briefcase, Clock, Camera, Trash2, Loader2 } from 'lucide-react';
+import { authAPI, userAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 
+/* ─── Avatar Editor ────────────────────────────────────────────────── */
+const AvatarEditor = ({ profile, onAvatarChange }) => {
+    const toast = useToast();
+    const { t } = useTranslation();
+    const fileInputRef = useRef(null);
+    const [uploading, setUploading] = useState(false);
+    const [preview, setPreview] = useState(null);
+    const [hover, setHover] = useState(false);
+
+    const initials = profile.name
+        ?.split(' ')
+        .map(n => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2) || '?';
+
+    const handleFileSelect = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Client-side validation
+        const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+        if (!allowed.includes(file.type)) {
+            toast.error(t('profile.invalidFileType', 'Only JPG, PNG, WebP, and GIF images are allowed'));
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+            toast.error(t('profile.fileTooLarge', 'Image must be under 5 MB'));
+            return;
+        }
+
+        // Show local preview immediately
+        const reader = new FileReader();
+        reader.onload = (ev) => setPreview(ev.target.result);
+        reader.readAsDataURL(file);
+
+        // Upload
+        setUploading(true);
+        try {
+            const res = await userAPI.uploadAvatar(file);
+            onAvatarChange(res.data.profile_picture);
+            toast.success(t('profile.avatarUpdated', 'Profile picture updated'));
+            setPreview(null);
+        } catch (err) {
+            toast.error(err.response?.data?.error || t('profile.avatarUploadFailed', 'Failed to upload picture'));
+            setPreview(null);
+        } finally {
+            setUploading(false);
+            // Reset input so re-selecting the same file works
+            if (fileInputRef.current) fileInputRef.current.value = '';
+        }
+    };
+
+    const handleRemove = async () => {
+        setUploading(true);
+        try {
+            await userAPI.deleteAvatar();
+            onAvatarChange(null);
+            toast.success(t('profile.avatarRemoved', 'Profile picture removed'));
+            setPreview(null);
+        } catch (err) {
+            toast.error(t('profile.avatarRemoveFailed', 'Failed to remove picture'));
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const displayUrl = preview || profile.profile_picture;
+
+    return (
+        <div className="flex flex-col items-center gap-3">
+            {/* Avatar circle */}
+            <div
+                className="relative group cursor-pointer"
+                onMouseEnter={() => setHover(true)}
+                onMouseLeave={() => setHover(false)}
+                onClick={() => !uploading && fileInputRef.current?.click()}
+                style={{ width: 96, height: 96 }}
+            >
+                {displayUrl ? (
+                    <img
+                        src={displayUrl}
+                        alt={profile.name}
+                        className="w-full h-full rounded-full object-cover border-2"
+                        style={{ borderColor: '#E0DEFF' }}
+                    />
+                ) : (
+                    <div
+                        className="w-full h-full rounded-full flex items-center justify-center border-2"
+                        style={{
+                            background: 'linear-gradient(135deg, #5B4FE8 0%, #7C6FFF 100%)',
+                            borderColor: '#E0DEFF',
+                        }}
+                    >
+                        <span className="text-2xl font-bold text-white">{initials}</span>
+                    </div>
+                )}
+
+                {/* Hover overlay */}
+                <div
+                    className="absolute inset-0 rounded-full flex items-center justify-center transition-all duration-200"
+                    style={{
+                        backgroundColor: hover && !uploading ? 'rgba(0,0,0,0.45)' : 'transparent',
+                        opacity: hover && !uploading ? 1 : 0,
+                    }}
+                >
+                    <Camera className="w-6 h-6 text-white" />
+                </div>
+
+                {/* Loading spinner overlay */}
+                {uploading && (
+                    <div className="absolute inset-0 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                        <Loader2 className="w-6 h-6 text-white animate-spin" />
+                    </div>
+                )}
+
+                {/* Hidden file input */}
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                    id="avatar-upload-input"
+                />
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex items-center gap-2">
+                <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-medium transition-colors"
+                    style={{
+                        backgroundColor: '#F5F4FF',
+                        color: '#5B4FE8',
+                        border: '1px solid #E0DEFF',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#EBE9FF'; }}
+                    onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#F5F4FF'; }}
+                >
+                    <Camera className="w-3 h-3" />
+                    {t('profile.uploadPhoto', 'Upload Photo')}
+                </button>
+
+                {profile.profile_picture && (
+                    <button
+                        onClick={handleRemove}
+                        disabled={uploading}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-medium transition-colors"
+                        style={{
+                            backgroundColor: '#FEF2F2',
+                            color: '#DC2626',
+                            border: '1px solid #FECACA',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#FEE2E2'; }}
+                        onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#FEF2F2'; }}
+                    >
+                        <Trash2 className="w-3 h-3" />
+                        {t('profile.removePhoto', 'Remove')}
+                    </button>
+                )}
+            </div>
+
+            <p className="text-[11px] text-zinc-400 text-center">
+                {t('profile.avatarHint', 'JPG, PNG, WebP or GIF · Max 5 MB')}
+            </p>
+        </div>
+    );
+};
+
+/* ─── Profile Page ─────────────────────────────────────────────────── */
 const ProfilePage = () => {
-    const { user: authUser } = useAuth();
+    const { user: authUser, refreshUser } = useAuth();
     const toast = useToast();
     const { t } = useTranslation();
     const [profile, setProfile] = useState(null);
@@ -39,11 +211,17 @@ const ProfilePage = () => {
             setProfile(prev => ({ ...prev, ...form }));
             setEditing(false);
             toast.success(t('profile.profileUpdated'));
+            refreshUser();
         } catch (err) {
             toast.error(err.response?.data?.error || t('profile.failedToUpdate'));
         } finally {
             setSaving(false);
         }
+    };
+
+    const handleAvatarChange = (newUrl) => {
+        setProfile(prev => ({ ...prev, profile_picture: newUrl }));
+        refreshUser();
     };
 
     if (loading) {
@@ -79,11 +257,8 @@ const ProfilePage = () => {
 
             <div className="card p-6">
                 <div className="flex flex-col sm:flex-row items-start gap-5">
-                    <div className="w-16 h-16 bg-zinc-100 border border-zinc-200 rounded-full flex items-center justify-center shrink-0">
-                        <span className="text-xl font-bold text-zinc-900">
-                            {profile.name?.charAt(0)?.toUpperCase()}
-                        </span>
-                    </div>
+                    {/* Avatar Editor replaces the old static initial */}
+                    <AvatarEditor profile={profile} onAvatarChange={handleAvatarChange} />
 
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 flex-wrap mb-1">

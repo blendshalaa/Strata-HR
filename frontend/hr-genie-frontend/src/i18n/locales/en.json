@@ -277,7 +277,16 @@
     "saveChanges": "Save Changes",
     "profileUpdated": "Profile updated successfully",
     "failedToLoad": "Failed to load profile",
-    "failedToUpdate": "Failed to update profile"
+    "failedToUpdate": "Failed to update profile",
+    "uploadPhoto": "Upload Photo",
+    "removePhoto": "Remove",
+    "avatarHint": "JPG, PNG, WebP or GIF · Max 5 MB",
+    "avatarUpdated": "Profile picture updated",
+    "avatarRemoved": "Profile picture removed",
+    "avatarUploadFailed": "Failed to upload picture",
+    "avatarRemoveFailed": "Failed to remove picture",
+    "invalidFileType": "Only JPG, PNG, WebP, and GIF images are allowed",
+    "fileTooLarge": "Image must be under 5 MB"
   },
   "departments": {
     "title": "Departments",

@@ -92,6 +92,14 @@ export const userAPI = {
   invite: (email) => api.post('/users/invite', { email }),
   update: (id, data) => api.put(`/users/${id}`, data),
   delete: (id) => api.delete(`/users/${id}`),
+  uploadAvatar: (file) => {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    return api.post('/users/me/avatar', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+  deleteAvatar: () => api.delete('/users/me/avatar'),
 };
 
 // Department endpoints

@@ -1,10 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { getDirectory, getAllUsers, getUserById, updateUser, deleteUser, createUser, inviteUser } = require('../controllers/userController');
+const { getDirectory, getAllUsers, getUserById, updateUser, deleteUser, createUser, inviteUser, uploadAvatar, deleteAvatar } = require('../controllers/userController');
 const { authenticateToken, authorizeRoles } = require('../middleware/auth');
 const { validate, updateUserRules } = require('../middleware/validators');
+const { avatarUpload } = require('../middleware/avatarUpload');
 
 router.get('/directory', authenticateToken, getDirectory);
+
+// Avatar routes — must be before /:id to avoid 'me' being parsed as an id
+router.post('/me/avatar', authenticateToken, avatarUpload.single('avatar'), uploadAvatar);
+router.delete('/me/avatar', authenticateToken, deleteAvatar);
 
 router.get('/', authenticateToken, authorizeRoles('admin', 'hr'), getAllUsers);
 router.get('/:id', authenticateToken, getUserById);

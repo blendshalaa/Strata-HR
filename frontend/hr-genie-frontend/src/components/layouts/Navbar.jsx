@@ -119,12 +119,21 @@ const Navbar = ({ onMenuClick }) => {
                 onMouseEnter={e => e.currentTarget.style.backgroundColor = '#F5F4FF'}
                 onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
               >
-                <div
-                  className="w-8 h-8 rounded-md flex items-center justify-center text-white font-bold text-[12px]"
-                  style={{ backgroundColor: '#5B4FE8' }}
-                >
-                  {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || <User className="w-4 h-4" />}
-                </div>
+                {user?.profile_picture ? (
+                  <img
+                    src={user.profile_picture}
+                    alt={user.name}
+                    className="w-8 h-8 rounded-md object-cover"
+                    style={{ border: '1.5px solid #E0DEFF' }}
+                  />
+                ) : (
+                  <div
+                    className="w-8 h-8 rounded-md flex items-center justify-center text-white font-bold text-[12px]"
+                    style={{ backgroundColor: '#5B4FE8' }}
+                  >
+                    {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || <User className="w-4 h-4" />}
+                  </div>
+                )}
                 <ChevronDown
                   className={`w-3.5 h-3.5 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}
                   style={{ color: '#9CA3AF' }}
