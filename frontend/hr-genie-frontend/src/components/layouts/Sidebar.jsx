@@ -7,6 +7,7 @@ import {
   User, FileText, Contact, ChevronDown, Target, BarChart3,
   Settings, Layers
 } from 'lucide-react';
+import Logo from '../Logo';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 
@@ -104,12 +105,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
         >
           <div className="flex items-center gap-2.5">
-            <div
-              className="w-8 h-8 rounded-[6px] flex items-center justify-center"
-              style={{ backgroundColor: '#5B4FE8' }}
-            >
-              <Bot className="w-4 h-4 text-white" />
-            </div>
+            <Logo className="w-8 h-8" />
             <h1 className="text-[15px] font-bold text-white tracking-tight">
               {t('common.appName')}
             </h1>

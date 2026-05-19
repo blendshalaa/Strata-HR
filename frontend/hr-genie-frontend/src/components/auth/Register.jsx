@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Bot, Mail, Lock, User, Building, AlertCircle, ArrowRight, Hash, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, User, Building, AlertCircle, ArrowRight, Hash, Eye, EyeOff } from 'lucide-react';
+import Logo from '../Logo';
 import { useTranslation } from 'react-i18next';
 
 const getStrength = (password) => {
@@ -84,9 +85,7 @@ const Register = () => {
       {/* Left brand panel */}
       <div className="hidden lg:flex lg:w-[420px] xl:w-[480px] flex-col justify-between p-12 flex-shrink-0" style={{ backgroundColor: '#1E1B4B' }}>
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#5B4FE8' }}>
-            <Bot className="w-5 h-5 text-white" />
-          </div>
+          <Logo className="w-10 h-10" />
           <span className="text-white font-bold text-[17px]">{t('common.appName')}</span>
         </div>
         <div>
@@ -110,9 +109,7 @@ const Register = () => {
 
           {/* Mobile logo */}
           <div className="flex items-center gap-2.5 mb-8 lg:hidden">
-            <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ backgroundColor: '#5B4FE8' }}>
-              <Bot className="w-4 h-4 text-white" />
-            </div>
+            <Logo className="w-8 h-8" />
             <span className="font-bold text-[16px]" style={{ color: '#0F0D2E' }}>{t('common.appName')}</span>
           </div>
 
