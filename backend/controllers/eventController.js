@@ -21,7 +21,7 @@ const createEvent = async (req, res, next) => {
         }
         const result = await pool.query(
             `INSERT INTO calendar_events (title, description, event_date, attendees, created_by, org_id)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, title, description, event_date, attendees, created_by, org_id, created_at`,
             [title, description || '', event_date, JSON.stringify(attendees || []), created_by, req.user.org_id]
         );
         res.status(201).json({ event: result.rows[0] });
@@ -34,7 +34,7 @@ const deleteEvent = async (req, res, next) => {
     try {
         const { id } = req.params;
         const result = await pool.query(
-            `DELETE FROM calendar_events WHERE id = $1 AND org_id = $2 RETURNING *`,
+            `DELETE FROM calendar_events WHERE id = $1 AND org_id = $2 RETURNING id`,
             [id, req.user.org_id]
         );
         if (result.rows.length === 0) {

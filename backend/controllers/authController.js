@@ -3,6 +3,18 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const pool = require('../config/database');
 
+const JWT_OPTIONS = { expiresIn: '24h', issuer: 'hr-genie-api', audience: 'hr-genie-frontend' };
+
+const setTokenCookie = (res, token) => {
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    maxAge: 24 * 60 * 60 * 1000, // 24h
+    path: '/',
+  });
+};
+
 const register = async (req, res, next) => {
   try {
     const { email, password, name, department, hire_date, org_name, invite_code } = req.body;
@@ -84,8 +96,10 @@ const register = async (req, res, next) => {
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role, org_id: orgId },
       process.env.JWT_SECRET,
-      { expiresIn: '24h' }
+      JWT_OPTIONS
     );
+
+    setTokenCookie(res, token);
 
     res.status(201).json({
       message: 'User registered successfully',
@@ -142,8 +156,10 @@ const login = async (req, res, next) => {
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role, org_id: user.org_id },
       process.env.JWT_SECRET,
-      { expiresIn: '24h' }
+      JWT_OPTIONS
     );
+
+    setTokenCookie(res, token);
 
     res.json({
       message: 'Login successful',
@@ -191,4 +207,14 @@ const getMe = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login, getMe };
+const logout = (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    path: '/',
+  });
+  res.json({ message: 'Logged out successfully' });
+};
+
+module.exports = { register, login, getMe, logout };

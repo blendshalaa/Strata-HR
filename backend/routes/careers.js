@@ -3,6 +3,7 @@ const router = express.Router();
 const pool = require('../config/database');
 const upload = require('../middleware/upload');
 const { sendEmail } = require('../utils/mailer');
+const { generalLimiter } = require('../middleware/rateLimiter');
 
 // PUBLIC: Get org branding info by slug (no auth required)
 router.get('/org-info', async (req, res, next) => {
@@ -45,7 +46,7 @@ router.get('/jobs', async (req, res, next) => {
 });
 
 // PUBLIC: Submit an application (no auth required)
-router.post('/jobs/:jobId/apply', upload.single('resume'), async (req, res, next) => {
+router.post('/jobs/:jobId/apply', generalLimiter, upload.single('resume'), async (req, res, next) => {
     try {
         const { jobId } = req.params;
         const { applicant_name, email } = req.body;
@@ -82,7 +83,7 @@ router.post('/jobs/:jobId/apply', upload.single('resume'), async (req, res, next
 
         const result = await pool.query(
             `INSERT INTO applications (job_id, applicant_name, email, resume_url, status, org_id)
-             VALUES ($1, $2, $3, $4, 'applied', $5) RETURNING *`,
+             VALUES ($1, $2, $3, $4, 'applied', $5) RETURNING id, job_id, applicant_name, email, resume_url, status, org_id, applied_at`,
             [jobId, applicant_name, email, resume_url || null, jobOrgId]
         );
 

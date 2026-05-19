@@ -28,7 +28,7 @@ const toggleTask = async (req, res, next) => {
         const completedAt = updatedStatus ? new Date() : null;
 
         const updateResult = await pool.query(
-            'UPDATE onboarding_tasks SET is_completed = $1, completed_at = $2 WHERE id = $3 RETURNING *',
+            'UPDATE onboarding_tasks SET is_completed = $1, completed_at = $2 WHERE id = $3 RETURNING id, user_id, is_completed, task_name, completed_at',
             [updatedStatus, completedAt, taskId]
         );
 

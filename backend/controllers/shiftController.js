@@ -70,7 +70,7 @@ const createShift = async (req, res, next) => {
 
         const result = await pool.query(
             `INSERT INTO shifts (user_id, shift_date, start_time, end_time, shift_type, notes, created_by, org_id)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, user_id, shift_date, start_time, end_time, shift_type, notes, created_by, org_id, created_at`,
             [user_id, shift_date, start_time, end_time, shift_type || 'regular', notes || null, req.user.id, req.user.org_id]
         );
 
@@ -123,7 +123,7 @@ const bulkCreateShifts = async (req, res, next) => {
 
                 const result = await pool.query(
                     `INSERT INTO shifts (user_id, shift_date, start_time, end_time, shift_type, notes, created_by, org_id)
-                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, user_id, shift_date, start_time, end_time, shift_type, notes, created_by, org_id, created_at`,
                     [uid, shift_date, start_time, end_time, shift_type || 'regular', notes || null, req.user.id, req.user.org_id]
                 );
                 created.push(result.rows[0]);
@@ -161,7 +161,7 @@ const updateShift = async (req, res, next) => {
                 end_time = COALESCE($3, end_time),
                 shift_type = COALESCE($4, shift_type),
                 notes = COALESCE($5, notes)
-             WHERE id = $6 RETURNING *`,
+             Where id = $6 RETURNING id, user_id, shift_date, start_time, end_time, shift_type, notes, created_by, org_id, created_at`,
             [shift_date, start_time, end_time, shift_type, notes, id]
         );
 

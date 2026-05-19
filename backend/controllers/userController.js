@@ -109,7 +109,7 @@ const updateUser = async (req, res, next) => {
 
     params.push(id);
     params.push(req.user.org_id);
-    const query = `UPDATE users SET ${updates.join(', ')} WHERE id = $${paramCount} AND org_id = $${paramCount + 1} RETURNING *`;
+    const query = `UPDATE users SET ${updates.join(', ')} WHERE id = $${paramCount} AND org_id = $${paramCount + 1} RETURNING id, name, email, department, role, hire_date, sick_leave_balance, vacation_balance, profile_picture`;
     const result = await pool.query(query, params);
 
     if (result.rows.length === 0) {
@@ -185,10 +185,11 @@ const createUser = async (req, res, next) => {
 
     // Generate a 24h set-password token so we NEVER send a plaintext password by email
     const setPasswordToken = crypto.randomBytes(32).toString('hex');
+    const hashedSetToken = crypto.createHash('sha256').update(setPasswordToken).digest('hex');
     const tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
     await pool.query(
       'UPDATE users SET reset_token = $1, reset_token_expires = $2 WHERE id = $3',
-      [setPasswordToken, tokenExpiry, result.rows[0].id]
+      [hashedSetToken, tokenExpiry, result.rows[0].id]
     );
 
     const setPasswordUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${setPasswordToken}`;

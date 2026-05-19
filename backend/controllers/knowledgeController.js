@@ -50,7 +50,7 @@ const createKnowledge = async (req, res, next) => {
     }
     const result = await pool.query(
       `INSERT INTO knowledge_base (title, content, category, tags, created_by, org_id)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, title, content, category, created_by, org_id, created_at, updated_at`,
       [title, content, category, tags || [], createdBy, req.user.org_id]
     );
     res.status(201).json({ message: 'Knowledge article created successfully', knowledge: result.rows[0] });
@@ -67,7 +67,7 @@ const updateKnowledge = async (req, res, next) => {
       `UPDATE knowledge_base 
        SET title = COALESCE($1, title), content = COALESCE($2, content),
            category = COALESCE($3, category), tags = COALESCE($4, tags)
-       WHERE id = $5 AND org_id = $6 RETURNING *`,
+       WHERE id = $5 AND org_id = $6 RETURNING id, title, content, category, created_by, org_id, created_at, updated_at`,
       [title, content, category, tags, id, req.user.org_id]
     );
     if (result.rows.length === 0) {

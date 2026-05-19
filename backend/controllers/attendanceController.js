@@ -13,7 +13,7 @@ const clockIn = async (req, res, next) => {
         }
 
         const result = await pool.query(
-            `INSERT INTO timesheets (user_id, clock_in, org_id) VALUES ($1, CURRENT_TIMESTAMP, $2) RETURNING *`,
+            `INSERT INTO timesheets (user_id, clock_in, org_id) VALUES ($1, CURRENT_TIMESTAMP, $2) RETURNING id, user_id, clock_in, clock_out, regular_hours, overtime_hours, notes, status, org_id, created_at`,
             [req.user.id, req.user.org_id]
         );
         res.status(201).json({ message: 'Clocked in successfully', timesheet: result.rows[0] });
@@ -43,7 +43,7 @@ const clockOut = async (req, res, next) => {
 
         const result = await pool.query(
             `UPDATE timesheets SET clock_out = CURRENT_TIMESTAMP, regular_hours = $1, overtime_hours = $2 
-             WHERE id = $3 RETURNING *`,
+             WHERE id = $3 RETURNING id, user_id, clock_in, clock_out, regular_hours, overtime_hours, notes, status, org_id, created_at`,
             [regularHours.toFixed(2), overtimeHours.toFixed(2), timesheet.id]
         );
 
@@ -81,7 +81,7 @@ const manualEntry = async (req, res, next) => {
 
         const result = await pool.query(
             `INSERT INTO timesheets (user_id, clock_in, clock_out, regular_hours, overtime_hours, notes, org_id, status)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, 'pending') RETURNING *`,
+             VALUES ($1, $2, $3, $4, $5, $6, $7, 'pending') RETURNING id, user_id, clock_in, clock_out, regular_hours, overtime_hours, notes, status, org_id, created_at`,
             [req.user.id, clockInTime, clockOutTime, regularHours.toFixed(2), overtimeHours.toFixed(2), notes || null, req.user.org_id]
         );
 
@@ -122,7 +122,7 @@ const editTimesheet = async (req, res, next) => {
 
         const result = await pool.query(
             `UPDATE timesheets SET clock_in = $1, clock_out = $2, regular_hours = $3, overtime_hours = $4, notes = COALESCE($5, notes)
-             WHERE id = $6 RETURNING *`,
+             WHERE id = $6 RETURNING id, user_id, clock_in, clock_out, regular_hours, overtime_hours, notes, status, org_id, created_at`,
             [newClockIn, newClockOut, regularHours, overtimeHours, notes || null, id]
         );
 
@@ -205,7 +205,7 @@ const updateStatus = async (req, res, next) => {
         }
 
         const result = await pool.query(
-            'UPDATE timesheets SET status = $1 WHERE id = $2 AND org_id = $3 RETURNING *',
+            'UPDATE timesheets SET status = $1 WHERE id = $2 AND org_id = $3 RETURNING id, user_id, clock_in, clock_out, regular_hours, overtime_hours, notes, status, org_id, created_at',
             [status, id, req.user.org_id]
         );
 

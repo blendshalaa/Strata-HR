@@ -302,12 +302,12 @@ const executeToolCall = async (toolName, args, userId, orgId, userRole) => {
     }
 
     case 'query_overtime': {
-      const days = args.days || 30;
+      const days = parseInt(args.days) || 30;
       let q = `SELECT u.name, u.department, SUM(t.overtime_hours) as total_overtime
                FROM timesheets t JOIN users u ON t.user_id = u.id
-               WHERE t.org_id = $1 AND t.clock_in >= NOW() - INTERVAL '${days} days'`;
-      const params = [orgId];
-      let i = 2;
+               WHERE t.org_id = $1 AND t.clock_in >= NOW() - make_interval(days => $2)`;
+      const params = [orgId, days];
+      let i = 3;
       if (args.department) { q += ` AND u.department ILIKE $${i}`; params.push(`%${args.department}%`); }
       q += ' GROUP BY u.name, u.department HAVING SUM(t.overtime_hours) > 0 ORDER BY total_overtime DESC LIMIT 20';
       const r = await pool.query(q, params);
@@ -517,7 +517,7 @@ const sendMessage = async (req, res, next) => {
 
     // Save and return response
     const saved = await pool.query(
-      'INSERT INTO messages (conversation_id, role, content) VALUES ($1, $2, $3) RETURNING *',
+      'INSERT INTO messages (conversation_id, role, content) VALUES ($1, $2, $3) RETURNING id, conversation_id, role, content, created_at',
       [conversationId, 'assistant', assistantMsg.content]
     );
     await pool.query('UPDATE conversations SET last_message_at = CURRENT_TIMESTAMP WHERE id = $1', [conversationId]);

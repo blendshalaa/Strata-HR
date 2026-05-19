@@ -92,7 +92,7 @@ const updatePayrollStatus = async (req, res, next) => {
             return res.status(400).json({ error: 'Invalid status' });
         }
         const result = await pool.query(
-            `UPDATE payroll SET status = $1 WHERE id = $2 AND org_id = $3 RETURNING *`,
+            `UPDATE payroll SET status = $1 WHERE id = $2 AND org_id = $3 RETURNING id, user_id, rating, comments, reviewed_by, org_id, created_at`,
             [status, id, req.user.org_id]
         );
         if (result.rows.length === 0) {

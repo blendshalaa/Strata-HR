@@ -86,7 +86,7 @@ const updateDepartment = async (req, res, next) => {
 
         params.push(id, req.user.org_id);
         const updatedDepartment = await pool.query(
-            `UPDATE departments SET ${updates.join(', ')} WHERE id = $${paramCount} AND org_id = $${paramCount + 1} RETURNING *`,
+            `UPDATE departments SET ${updates.join(', ')} WHERE id = $${paramCount} AND org_id = $${paramCount + 1} RETURNING id, name, manager_id, description, org_id, created_at`,
             params
         );
 
@@ -110,7 +110,7 @@ const deleteDepartment = async (req, res, next) => {
         );
 
         const deletedDepartment = await pool.query(
-            'DELETE FROM departments WHERE id = $1 AND org_id = $2 RETURNING *',
+            'DELETE FROM departments WHERE id = $1 AND org_id = $2 RETURNING id',
             [id, req.user.org_id]
         );
 

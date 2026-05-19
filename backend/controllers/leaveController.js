@@ -78,7 +78,7 @@ const createLeaveRequest = async (req, res, next) => {
 
     const result = await pool.query(
       `INSERT INTO leave_requests (user_id, type, start_date, end_date, days, reason, status, org_id)
-       VALUES ($1, $2, $3, $4, $5, $6, 'pending', $7) RETURNING *`,
+       VALUES ($1, $2, $3, $4, $5, $6, 'pending', $7) RETURNING id, user_id, type, start_date, end_date, days, reason, status, org_id, created_at`,
       [userId, type, start_date, end_date, days, reason, req.user.org_id]
     );
 

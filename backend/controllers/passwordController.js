@@ -20,11 +20,12 @@ const requestReset = async (req, res, next) => {
         }
 
         const token = crypto.randomBytes(32).toString('hex');
+        const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
         const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
         await pool.query(
             `UPDATE users SET reset_token = $1, reset_token_expires = $2 WHERE id = $3`,
-            [token, expires, user.rows[0].id]
+            [hashedToken, expires, user.rows[0].id]
         );
 
         // In production: send email with reset link containing token
@@ -59,9 +60,10 @@ const resetPassword = async (req, res, next) => {
         if (!token || !password) return res.status(400).json({ error: 'Token and new password are required' });
         if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
 
+        const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
         const user = await pool.query(
             `SELECT id FROM users WHERE reset_token = $1 AND reset_token_expires > CURRENT_TIMESTAMP`,
-            [token]
+            [hashedToken]
         );
 
         if (user.rows.length === 0) {

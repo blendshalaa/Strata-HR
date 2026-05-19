@@ -35,7 +35,7 @@ const uploadDocument = async (req, res, next) => {
 
         const result = await pool.query(
             `INSERT INTO employee_documents (user_id, org_id, name, category, file_url, file_size, mime_type, uploaded_by)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, user_id, org_id, name, category, file_url, file_size, mime_type, uploaded_by, created_at`,
             [targetUserId, req.user.org_id, name, docCategory, fileUrl, req.file.size, req.file.mimetype, req.user.id]
         );
 

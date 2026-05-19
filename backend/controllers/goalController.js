@@ -98,7 +98,7 @@ const createGoal = async (req, res, next) => {
 
         const result = await pool.query(
             `INSERT INTO goals (user_id, org_id, title, description, category, target_date, created_by)
-             VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+             VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, user_id, org_id, title, description, category, target_date, status, progress, created_by, created_at, updated_at`,
             [targetUserId, req.user.org_id, title, description || '', category || 'individual', target_date || null, req.user.id]
         );
 
@@ -149,7 +149,7 @@ const updateGoal = async (req, res, next) => {
                 status = COALESCE($5, status),
                 progress = COALESCE($6, progress),
                 updated_at = CURRENT_TIMESTAMP
-             WHERE id = $7 AND org_id = $8 RETURNING *`,
+             WHERE id = $7 AND org_id = $8 RETURNING id, user_id, org_id, title, description, category, target_date, status, progress, created_by, created_at, updated_at`,
             [title, description, category, target_date, status, progress, id, req.user.org_id]
         );
 
@@ -210,7 +210,7 @@ const updateKeyResult = async (req, res, next) => {
                 target_value = COALESCE($3, target_value),
                 unit = COALESCE($4, unit),
                 updated_at = CURRENT_TIMESTAMP
-             WHERE id = $5 RETURNING *`,
+             WHERE id = $5 RETURNING id, goal_id, title, current_value, target_value, unit, created_at, updated_at`,
             [title, current_value, target_value, unit, id]
         );
 
@@ -250,7 +250,7 @@ const addKeyResult = async (req, res, next) => {
         }
 
         const result = await pool.query(
-            'INSERT INTO key_results (goal_id, title, target_value, unit) VALUES ($1, $2, $3, $4) RETURNING *',
+            'INSERT INTO key_results (goal_id, title, target_value, unit) VALUES ($1, $2, $3, $4) RETURNING id, goal_id, title, current_value, target_value, unit, created_at, updated_at',
             [goalId, title, target_value || 100, unit || '%']
         );
 

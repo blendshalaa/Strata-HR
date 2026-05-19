@@ -96,7 +96,7 @@ const updateJob = async (req, res, next) => {
         }
         params.push(id, req.user.org_id);
         const result = await pool.query(
-            `UPDATE job_postings SET ${updates.join(', ')} WHERE id = $${paramCount} AND org_id = $${paramCount + 1} RETURNING *`,
+            `UPDATE job_postings SET ${updates.join(', ')} WHERE id = $${paramCount} AND org_id = $${paramCount + 1} RETURNING id, title, department_id, description, requirements, status, org_id, created_at, closed_at`,
             params
         );
         if (result.rows.length === 0) {
@@ -164,7 +164,7 @@ const submitApplication = async (req, res, next) => {
 
         const result = await pool.query(
             `INSERT INTO applications (job_id, applicant_name, email, resume_url, status, org_id)
-       VALUES ($1, $2, $3, $4, 'applied', $5) RETURNING *`,
+       VALUES ($1, $2, $3, $4, 'applied', $5) RETURNING id, job_id, applicant_name, email, resume_url, status, org_id, applied_at`,
             [jobId, applicant_name, email, resume_url || null, jobOrgId]
         );
 
@@ -212,7 +212,7 @@ const updateApplicationStatus = async (req, res, next) => {
             return res.status(400).json({ error: 'Invalid status' });
         }
         const result = await pool.query(
-            `UPDATE applications SET status = $1 WHERE id = $2 AND org_id = $3 RETURNING *`,
+            `UPDATE applications SET status = $1 WHERE id = $2 AND org_id = $3 RETURNING id, job_id, applicant_name, email, resume_url, status, org_id, applied_at`,
             [status, id, req.user.org_id]
         );
         if (result.rows.length === 0) {

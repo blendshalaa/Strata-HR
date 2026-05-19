@@ -93,7 +93,7 @@ const updateReview = async (req, res, next) => {
         }
         params.push(id, req.user.org_id);
         const updateResult = await pool.query(
-            `UPDATE performance_reviews SET ${updates.join(', ')} WHERE id = $${paramCount} AND org_id = $${paramCount + 1} RETURNING *`,
+            `UPDATE performance_reviews SET ${updates.join(', ')} WHERE id = $${paramCount} AND org_id = $${paramCount + 1} RETURNING id, user_id, reviewer_id, evaluation_criteria, rating, comments, review_date, org_id, created_at`,
             params
         );
         res.json({ message: 'Review updated', review: updateResult.rows[0] });

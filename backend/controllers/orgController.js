@@ -32,7 +32,7 @@ const updateOrg = async (req, res, next) => {
 
         params.push(req.user.org_id);
         const result = await pool.query(
-            `UPDATE organizations SET ${updates.join(', ')} WHERE id = $${i} RETURNING *`,
+            `UPDATE organizations SET ${updates.join(', ')} WHERE id = $${i} RETURNING id, name, slug, logo_url, plan, invite_code, created_at`,
             params
         );
 
