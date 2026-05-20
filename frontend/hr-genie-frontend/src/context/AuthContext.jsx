@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
 import { authAPI } from '../services/api';
 
 const AuthContext = createContext(null);
@@ -15,16 +15,26 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(localStorage.getItem('token'));
+  // Skip fetchUser when login/register already provided user data
+  const skipFetchRef = useRef(false);
 
   useEffect(() => {
     if (token) {
-      fetchUser();
+      if (skipFetchRef.current) {
+        // login() or register() already set the user — no need to re-fetch
+        skipFetchRef.current = false;
+        setLoading(false);
+      } else {
+        // Page refresh with token in localStorage — validate & fetch user
+        fetchUser();
+      }
     } else {
       setLoading(false);
     }
   }, [token]);
 
   const fetchUser = async () => {
+    setLoading(true);
     try {
       const response = await authAPI.getMe();
       setUser(response.data.user);
@@ -43,6 +53,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
     
+    skipFetchRef.current = true;
     setToken(token);
     setUser(user);
     
@@ -56,6 +67,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
     
+    skipFetchRef.current = true;
     setToken(token);
     setUser(user);
     
