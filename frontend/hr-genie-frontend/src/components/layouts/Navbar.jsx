@@ -30,7 +30,7 @@ const Navbar = ({ onMenuClick }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleLogout = () => { logout(); window.location.href = '/login'; };
+  const handleLogout = async () => { await logout(); window.location.href = '/login'; };
   const changeLanguage = (code) => { i18n.changeLanguage(code); setLangOpen(false); };
 
   return (

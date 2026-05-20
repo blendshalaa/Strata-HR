@@ -63,11 +63,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    try { await authAPI.logout(); } catch (e) { /* ignore */ }
+    // Clear client state immediately so the UI responds instantly
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setToken(null);
     setUser(null);
+    // Then clear the httpOnly cookie on the server
+    try { await authAPI.logout(); } catch (e) { /* ignore — local state already cleared */ }
   };
 
   /** Re-fetch the current user from /auth/me — call after avatar or profile changes */
