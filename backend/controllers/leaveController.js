@@ -2,6 +2,7 @@ const pool = require('../config/database');
 const { createNotification } = require('./notificationController');
 const { sendEmail } = require('../utils/mailer');
 const { leaveSubmitted, leaveDecision } = require('../utils/emailTemplates');
+const { logAudit, getClientIP } = require('../middleware/auditLogger');
 
 const getMyLeaveRequests = async (req, res, next) => {
   try {
@@ -82,7 +83,7 @@ const createLeaveRequest = async (req, res, next) => {
       [userId, type, start_date, end_date, days, reason, req.user.org_id]
     );
 
-    // Fire-and-forget side-effects (analytics + notifications + email)
+    // Fire-and-forget side-effects (analytics + notifications + email + audit)
     // Wrapped so a failure here never causes a 500 after the leave request is already saved.
     try {
       await pool.query(
@@ -90,6 +91,13 @@ const createLeaveRequest = async (req, res, next) => {
         [userId, 'leave_request', JSON.stringify({ type, days }), req.user.org_id]
       );
     } catch (e) { console.error('Analytics log failed (non-fatal):', e.message); }
+
+    // Audit trail
+    logAudit({
+      actorId: userId, action: 'create', entityType: 'leave_request',
+      entityId: result.rows[0].id, newValue: result.rows[0],
+      ipAddress: getClientIP(req), orgId: req.user.org_id,
+    });
 
     const userRes = await pool.query('SELECT name FROM users WHERE id = $1', [userId]).catch(() => ({ rows: [] }));
     const employeeName = userRes.rows[0]?.name || 'An employee';
@@ -171,6 +179,15 @@ const updateLeaveRequestStatus = async (req, res, next) => {
       await client.query('COMMIT');
 
       const updated = await pool.query('SELECT * FROM leave_requests WHERE id = $1', [id]);
+
+      // Audit trail — record approval/rejection
+      logAudit({
+        actorId: approverId, action: status === 'approved' ? 'approve' : 'reject',
+        entityType: 'leave_request', entityId: parseInt(id),
+        oldValue: { status: 'pending' }, newValue: { status, approved_by: approverId },
+        ipAddress: getClientIP(req), orgId: req.user.org_id,
+      });
+
 
       await createNotification(
         request.user_id,

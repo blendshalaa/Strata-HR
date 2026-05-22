@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const path = require('path');
+const http = require('http');
 require('dotenv').config();
 
 // Fail fast if required env vars are missing
@@ -28,11 +29,15 @@ const exportRoutes = require('./routes/exports');
 const orgRoutes = require('./routes/organizations');
 const documentRoutes = require('./routes/documents');
 const shiftRoutes = require('./routes/shifts');
+const goalRoutes = require('./routes/goals');
+const auditRoutes = require('./routes/audit');
+const trainingRoutes = require('./routes/trainings');
 const errorHandler = require('./middleware/errorHandler');
 const runStartupPatch = require('./db-patch-startup');
 const { generalLimiter } = require('./middleware/rateLimiter');
 const logger = require('./utils/logger');
 const pool = require('./config/database');
+const socketManager = require('./utils/socketManager');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -94,9 +99,9 @@ app.use('/api/export', exportRoutes);
 app.use('/api/org', orgRoutes);
 app.use('/api/shifts', shiftRoutes);
 app.use('/api/documents', documentRoutes);
-
-const goalRoutes = require('./routes/goals');
 app.use('/api/goals', goalRoutes);
+app.use('/api/audit', auditRoutes);
+app.use('/api/trainings', trainingRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Endpoint not found' });
@@ -107,10 +112,16 @@ app.use(errorHandler);
 // Start server — run DB patch first so missing columns are always present
 (async () => {
   await runStartupPatch();
-  app.listen(PORT, () => {
+
+  // Create HTTP server and attach Socket.IO
+  const httpServer = http.createServer(app);
+  socketManager.init(httpServer, allowedOrigins);
+
+  httpServer.listen(PORT, () => {
     logger.info(`HR Assistant API running on port ${PORT}`);
     logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
     logger.info(`Health check: http://localhost:${PORT}/health`);
+    logger.info(`WebSocket: ws://localhost:${PORT}/socket.io`);
   });
 })();
 

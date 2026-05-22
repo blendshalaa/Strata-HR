@@ -92,6 +92,33 @@ const getDashboardStats = async (req, res, next) => {
       attendanceToday = parseInt(attendanceResult.rows[0].count);
     }
 
+    let upcomingShifts = [];
+    let pendingDocuments = 0;
+    let activeGoals = 0;
+
+    if (!isAdmin) {
+      // 1. Upcoming shifts
+      const shiftsResult = await pool.query(
+        "SELECT * FROM shifts WHERE user_id = $1 AND start_time >= CURRENT_TIMESTAMP ORDER BY start_time ASC LIMIT 3",
+        [userId]
+      );
+      upcomingShifts = shiftsResult.rows;
+
+      // 2. Pending documents to sign
+      const docsResult = await pool.query(
+        "SELECT COUNT(*) as count FROM employee_documents WHERE user_id = $1 AND requires_signature = true AND is_signed = false",
+        [userId]
+      );
+      pendingDocuments = parseInt(docsResult.rows[0].count);
+
+      // 3. Active goals
+      const goalsResult = await pool.query(
+        "SELECT COUNT(*) as count FROM goals WHERE user_id = $1 AND status != 'completed'",
+        [userId]
+      );
+      activeGoals = parseInt(goalsResult.rows[0].count);
+    }
+
     res.json({
       stats: {
         total_users: totalUsers,
@@ -100,8 +127,11 @@ const getDashboardStats = async (req, res, next) => {
         attendance_today: attendanceToday,
         total_conversations: totalConversations,
         total_knowledge_articles: totalKnowledge,
-        open_positions: openPositions
+        open_positions: openPositions,
+        pending_documents: pendingDocuments,
+        active_goals: activeGoals
       },
+      upcoming_shifts: upcomingShifts,
       chat_activity: chatActivity.rows,
       top_queries: topQueries,
       leave_distribution: leaveDistribution,

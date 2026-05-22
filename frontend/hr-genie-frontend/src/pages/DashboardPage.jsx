@@ -173,7 +173,124 @@ const DashboardPage = () => {
           </div>
         </div>
       ) : (
-        <TimeClockWidget />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Employee Left Column: TimeClock + Pending Actions */}
+          <div className="lg:col-span-8 space-y-6">
+            <TimeClockWidget />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Needs Your Attention */}
+              <div className="card">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4 text-amber-500" />
+                    <h3 className="text-[14px] font-bold text-zinc-900">Needs Your Attention</h3>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <button
+                    onClick={() => navigate('/documents')}
+                    className={`w-full flex items-center justify-between p-3 rounded-md border transition-colors group ${
+                      stats?.stats?.pending_documents > 0
+                        ? 'bg-rose-50 border-rose-200 hover:border-rose-300'
+                        : 'bg-zinc-50 border-zinc-200 hover:border-[#5B4FE8]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <ShieldAlert className={`w-4 h-4 ${stats?.stats?.pending_documents > 0 ? 'text-rose-600' : 'text-zinc-400'}`} />
+                      <span className="text-[13px] font-medium text-zinc-900">Sign Documents</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-[13px] font-black ${stats?.stats?.pending_documents > 0 ? 'text-rose-600' : 'text-zinc-400'}`}>
+                        {stats?.stats?.pending_documents ?? 0}
+                      </span>
+                      <ArrowRight className="w-3.5 h-3.5 text-zinc-400 group-hover:translate-x-0.5 transition-transform" />
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => navigate('/goals')}
+                    className={`w-full flex items-center justify-between p-3 rounded-md border transition-colors group bg-zinc-50 border-zinc-200 hover:border-[#5B4FE8]`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Trophy className="w-4 h-4 text-zinc-400" />
+                      <span className="text-[13px] font-medium text-zinc-900">Active Goals</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[13px] font-black text-zinc-400">
+                        {stats?.stats?.active_goals ?? 0}
+                      </span>
+                      <ArrowRight className="w-3.5 h-3.5 text-zinc-400 group-hover:translate-x-0.5 transition-transform" />
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              {/* Training Overview */}
+              <div className="card">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-[#5B4FE8]" />
+                    <h3 className="text-[14px] font-bold text-zinc-900">Training & Docs</h3>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center h-[120px] bg-zinc-50 rounded-md border border-zinc-200/50">
+                   <p className="text-[12px] font-semibold text-zinc-400 uppercase tracking-wider">No assigned training</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Employee Right Column: Upcoming Shifts */}
+          <div className="lg:col-span-4">
+            <div className="card h-full">
+              <div className="flex items-center justify-between mb-5">
+                <div>
+                  <h3 className="text-[14px] font-bold text-zinc-900">Upcoming Shifts</h3>
+                  <p className="text-[12px] text-zinc-500 mt-0.5">Your schedule for the next days</p>
+                </div>
+                <Calendar className="w-4 h-4 text-zinc-400" />
+              </div>
+              
+              <div className="space-y-3">
+                {stats?.upcoming_shifts?.length > 0 ? (
+                  stats.upcoming_shifts.map((shift, idx) => {
+                    const start = new Date(shift.start_time);
+                    const end = new Date(shift.end_time);
+                    const isToday = start.toDateString() === new Date().toDateString();
+                    
+                    return (
+                      <div key={shift.id || idx} className="p-3 border border-zinc-200 rounded-lg bg-zinc-50 flex flex-col gap-2 relative overflow-hidden group hover:border-[#5B4FE8] transition-colors">
+                        {isToday && (
+                          <div className="absolute top-0 left-0 w-1 h-full bg-[#5B4FE8]"></div>
+                        )}
+                        <div className="flex items-center justify-between">
+                          <p className="text-[13px] font-bold text-zinc-900">
+                            {isToday ? 'Today' : start.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+                          </p>
+                          <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider ${isToday ? 'bg-[#EEF0FF] text-[#5B4FE8]' : 'bg-zinc-200/50 text-zinc-500'}`}>
+                            {shift.role}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[12px] text-zinc-500 font-medium">
+                          <Clock className="w-3.5 h-3.5" />
+                          {start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                        {shift.notes && (
+                           <p className="text-[11px] text-zinc-400 italic mt-1 border-t border-zinc-200/50 pt-1.5 line-clamp-1">{shift.notes}</p>
+                        )}
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="py-10 text-center flex flex-col items-center">
+                    <Calendar className="w-8 h-8 text-zinc-300 mb-2" />
+                    <p className="text-[13px] font-semibold text-zinc-500">No upcoming shifts scheduled.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Flight Risk Analytics */}

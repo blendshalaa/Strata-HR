@@ -157,6 +157,7 @@
     "userManagement": "Benutzerverwaltung",
     "departments": "Abteilungen",
     "organization": "Organisation",
+    "auditLog": "Prüfprotokoll",
     "helpAndSupport": "Hilfe und Support",
     "askAiAboutPolicies": "Fragen Sie unseren KI-Assistenten zu Unternehmensrichtlinien."
   },
@@ -934,5 +935,31 @@
     "articleCreated": "Artikel erfolgreich erstellt",
     "failedToDelete": "Artikel konnte nicht gelöscht werden",
     "failedToSave": "Artikel konnte nicht gespeichert werden"
+  },
+  "auditLog": {
+    "title": "Audit-Protokoll",
+    "subtitle": "Unveränderliches Protokoll aller sensiblen Aktionen in Ihrer Organisation.",
+    "refresh": "Aktualisieren",
+    "eventsToday": "Ereignisse Heute",
+    "last30Days": "letzte 30 Tage",
+    "searchActor": "Akteur Suchen",
+    "action": "Aktion",
+    "resource": "Ressource",
+    "allActions": "Alle Aktionen",
+    "allResources": "Alle Ressourcen",
+    "from": "Von",
+    "to": "Bis",
+    "reset": "Zurücksetzen",
+    "actor": "Akteur",
+    "timestamp": "Zeitstempel",
+    "ipAddress": "IP-Adresse",
+    "noEvents": "Keine Audit-Ereignisse gefunden",
+    "adjustFilters": "Versuchen Sie, Ihre Filter anzupassen",
+    "before": "Vorher",
+    "after": "Nachher",
+    "showingPage": "Seite anzeigen",
+    "of": "von",
+    "total": "Ereignisse gesamt",
+    "adminOnly": "Nur Admin"
   }
 }

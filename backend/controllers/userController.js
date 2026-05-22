@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const { sendEmail } = require('../utils/mailer');
 const { newEmployeeRegistered } = require('../utils/emailTemplates');
+const { logAudit, getClientIP } = require('../middleware/auditLogger');
 
 const getDirectory = async (req, res, next) => {
   try {
@@ -116,6 +117,13 @@ const updateUser = async (req, res, next) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    // Audit trail — user update
+    logAudit({
+      actorId: req.user.id, action: 'update', entityType: 'user',
+      entityId: parseInt(id), newValue: { name, department, role, hire_date, sick_leave_balance, vacation_balance },
+      ipAddress: getClientIP(req), orgId: req.user.org_id,
+    });
+
     res.json({ message: 'User updated successfully', user: result.rows[0] });
   } catch (error) {
     next(error);
@@ -145,6 +153,13 @@ const deleteUser = async (req, res, next) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
+
+    // Audit trail — user deletion
+    logAudit({
+      actorId: req.user.id, action: 'delete', entityType: 'user',
+      entityId: parseInt(id), oldValue: result.rows[0],
+      ipAddress: getClientIP(req), orgId: req.user.org_id,
+    });
 
     res.json({ message: 'User deleted successfully', user: result.rows[0] });
   } catch (error) {
@@ -223,6 +238,13 @@ const createUser = async (req, res, next) => {
       const hrTmpl = newEmployeeRegistered({ newEmployeeName: name, newEmployeeEmail: email, orgName });
       hrUsers.rows.forEach(u => sendEmail(u.email, hrTmpl.subject, hrTmpl.html).catch(console.error));
     } catch (e) { console.error('HR notification failed:', e); }
+
+    // Audit trail — user creation
+    logAudit({
+      actorId: req.user.id, action: 'create', entityType: 'user',
+      entityId: result.rows[0].id, newValue: { name, email, role, department },
+      ipAddress: getClientIP(req), orgId: currentOrgId,
+    });
 
     res.status(201).json({ message: 'User created successfully', user: result.rows[0] });
   } catch (error) {

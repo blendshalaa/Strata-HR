@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
+import { SocketProvider } from './context/SocketContext';
 import Layout from './components/layouts/Layout';
 import ErrorBoundary from './components/common/ErrorBoundary';
 
@@ -32,6 +33,8 @@ const OrgSettingsPage = lazy(() => import('./pages/OrgSettingsPage'));
 const DocumentsPage = lazy(() => import('./pages/DocumentsPage'));
 const ReportsPage = lazy(() => import('./pages/ReportsPage'));
 const ShiftSchedulePage = lazy(() => import('./pages/ShiftSchedulePage'));
+const AuditLogPage = lazy(() => import('./pages/AuditLogPage'));
+const TrainingPage = lazy(() => import('./pages/TrainingPage'));
 
 
 const PrivateRoute = ({ children }) => {
@@ -73,6 +76,7 @@ function App() {
   return (
     <ToastProvider>
       <AuthProvider>
+        <SocketProvider>
         <Router>
           <ErrorBoundary>
             <Suspense fallback={<PageLoader />}>
@@ -131,6 +135,8 @@ function App() {
                               <Route path="/documents" element={<DocumentsPage />} />
                               <Route path="/reports" element={<ReportsPage />} />
                               <Route path="/shifts" element={<ShiftSchedulePage />} />
+                              <Route path="/audit-log" element={<AuditLogPage />} />
+                              <Route path="/training" element={<TrainingPage />} />
 
                               <Route path="*" element={<NotFoundPage />} />
                             </Routes>
@@ -144,6 +150,7 @@ function App() {
             </Suspense>
           </ErrorBoundary>
         </Router>
+        </SocketProvider>
       </AuthProvider>
     </ToastProvider>
   );

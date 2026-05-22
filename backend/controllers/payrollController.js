@@ -2,6 +2,7 @@ const pool = require('../config/database');
 const { sendEmail } = require('../utils/mailer');
 const { payrollPaid } = require('../utils/emailTemplates');
 const { createNotification } = require('./notificationController');
+const { logAudit, getClientIP } = require('../middleware/auditLogger');
 
 const getAllPayrolls = async (req, res, next) => {
     try {
@@ -79,6 +80,13 @@ const createPayroll = async (req, res, next) => {
             [payrollId]
         );
         res.status(201).json({ payroll: result.rows[0] });
+
+        // Audit trail — payroll creation
+        logAudit({
+            actorId: req.user.id, action: 'create', entityType: 'payroll',
+            entityId: payrollId, newValue: result.rows[0],
+            ipAddress: getClientIP(req), orgId: req.user.org_id,
+        });
     } catch (error) {
         next(error);
     }
@@ -127,6 +135,14 @@ const updatePayrollStatus = async (req, res, next) => {
                 sendEmail(employee.email, tmpl.subject, tmpl.html).catch(console.error);
             }
         }
+
+        // Audit trail — payroll status change
+        logAudit({
+            actorId: req.user.id, action: status === 'paid' ? 'approve' : 'update',
+            entityType: 'payroll', entityId: parseInt(id),
+            oldValue: { status: 'pending' }, newValue: { status },
+            ipAddress: getClientIP(req), orgId: req.user.org_id,
+        });
 
         res.json({ message: 'Payroll status updated', payroll: result.rows[0] });
     } catch (error) {

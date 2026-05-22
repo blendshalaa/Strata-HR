@@ -5,7 +5,7 @@ import {
   BookOpen, Bot, X, Users, CheckSquare, Building2, Briefcase,
   CircleDollarSign, TrendingUp, CalendarDays, Sparkles, Clock,
   User, FileText, Contact, ChevronDown, Target, BarChart3,
-  Settings, Layers
+  Settings, Layers, ShieldCheck, GraduationCap
 } from 'lucide-react';
 import Logo from '../Logo';
 import { useAuth } from '../../context/AuthContext';
@@ -47,6 +47,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         { to: '/calendar', icon: CalendarDays, label: t('sidebar.calendar'), roles: ['employee', 'hr', 'admin'] },
         { to: '/directory', icon: Contact, label: t('sidebar.directory'), roles: ['employee', 'hr', 'admin'] },
         { to: '/knowledge', icon: BookOpen, label: t('sidebar.knowledgeBase'), roles: ['employee', 'hr', 'admin'] },
+        { to: '/training', icon: GraduationCap, label: 'Training', roles: ['employee', 'hr', 'admin'] },
         { to: '/documents', icon: FileText, label: t('sidebar.documents'), roles: ['employee', 'hr', 'admin'] },
       ]
     },
@@ -68,6 +69,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         { to: '/users', icon: Users, label: t('sidebar.userManagement'), roles: ['admin', 'hr'] },
         { to: '/departments', icon: Building2, label: t('sidebar.departments'), roles: ['admin', 'hr'] },
         { to: '/org-settings', icon: Settings, label: t('sidebar.organization'), roles: ['admin'] },
+        { to: '/audit-log', icon: ShieldCheck, label: t('sidebar.auditLog'), roles: ['admin', 'hr'] },
       ]
     },
   ];

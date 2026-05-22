@@ -123,6 +123,33 @@ const runStartupPatch = async () => {
         `);
         await client.query(`CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id, is_read);`).catch(() => {});
 
+        // ── notifications: add org_id + link_url if missing ──────────────────
+        await client.query(`ALTER TABLE notifications ADD COLUMN IF NOT EXISTS org_id INTEGER REFERENCES organizations(id) ON DELETE CASCADE;`);
+        await client.query(`ALTER TABLE notifications ADD COLUMN IF NOT EXISTS link_url VARCHAR(255);`);
+        await client.query(`
+            UPDATE notifications n SET org_id = u.org_id
+            FROM users u WHERE n.user_id = u.id AND n.org_id IS NULL;
+        `);
+
+        // ── Audit Logs table ─────────────────────────────────────────────────
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS audit_logs (
+                id BIGSERIAL PRIMARY KEY,
+                actor_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+                action VARCHAR(50) NOT NULL,
+                entity_type VARCHAR(50) NOT NULL,
+                entity_id INTEGER,
+                old_value JSONB,
+                new_value JSONB,
+                ip_address INET,
+                org_id INTEGER NOT NULL,
+                created_at TIMESTAMPTZ DEFAULT NOW()
+            );
+        `);
+        await client.query(`CREATE INDEX IF NOT EXISTS idx_audit_logs_org_date ON audit_logs(org_id, created_at DESC);`).catch(() => {});
+        await client.query(`CREATE INDEX IF NOT EXISTS idx_audit_logs_entity ON audit_logs(entity_type, entity_id);`).catch(() => {});
+        await client.query(`CREATE INDEX IF NOT EXISTS idx_audit_logs_actor ON audit_logs(actor_id, created_at DESC);`).catch(() => {});
+
         // ── Indexes ───────────────────────────────────────────────────────────
         const idxTables = ['conversations', 'messages', 'analytics_logs', 'users'];
         for (const t of idxTables) {

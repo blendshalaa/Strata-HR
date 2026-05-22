@@ -157,6 +157,7 @@
     "userManagement": "User Management",
     "departments": "Departments",
     "organization": "Organization",
+    "auditLog": "Audit Trail",
     "helpAndSupport": "Help & Support",
     "askAiAboutPolicies": "Ask our AI assistant about company policies."
   },
@@ -907,5 +908,31 @@
     "endDate": "End Date",
     "days": "Days",
     "reason": "Reason"
+  },
+  "auditLog": {
+    "title": "Audit Trail",
+    "subtitle": "Immutable record of all sensitive actions across your organization.",
+    "refresh": "Refresh",
+    "eventsToday": "Events Today",
+    "last30Days": "last 30 days",
+    "searchActor": "Search Actor",
+    "action": "Action",
+    "resource": "Resource",
+    "allActions": "All actions",
+    "allResources": "All resources",
+    "from": "From",
+    "to": "To",
+    "reset": "Reset",
+    "actor": "Actor",
+    "timestamp": "Timestamp",
+    "ipAddress": "IP Address",
+    "noEvents": "No audit events found",
+    "adjustFilters": "Try adjusting your filters",
+    "before": "Before",
+    "after": "After",
+    "showingPage": "Showing page",
+    "of": "of",
+    "total": "total events",
+    "adminOnly": "Admin Only"
   }
 }

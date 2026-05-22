@@ -5,6 +5,7 @@ import { useToast } from '../context/ToastContext';
 import { FileText, FileSpreadsheet, Image, Upload, Trash2, Download, Search, FolderOpen, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
+import SignDocumentModal from '../components/documents/SignDocumentModal';
 
 // File-type icon by MIME
 const FileIcon = ({ mime }) => {
@@ -55,11 +56,15 @@ const DocumentsPage = () => {
     const [uploadName, setUploadName] = useState('');
     const [uploadCategory, setUploadCategory] = useState('other');
     const [uploadUserId, setUploadUserId] = useState('');
+    const [uploadRequiresSignature, setUploadRequiresSignature] = useState(false);
     const [uploadFile, setUploadFile] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [dragOver, setDragOver] = useState(false);
     const fileInputRef = useRef(null);
+
+    // E-signature state
+    const [signDocument, setSignDocument] = useState(null);
 
     // Users list for HR/admin upload targeting
     const [users, setUsers] = useState([]);
@@ -99,6 +104,7 @@ const DocumentsPage = () => {
         formData.append('file', uploadFile);
         formData.append('name', uploadName);
         formData.append('category', uploadCategory);
+        formData.append('requires_signature', uploadRequiresSignature);
         if (uploadUserId) formData.append('user_id', uploadUserId);
 
         try {
@@ -113,6 +119,7 @@ const DocumentsPage = () => {
             setUploadName('');
             setUploadCategory('other');
             setUploadUserId('');
+            setUploadRequiresSignature(false);
             setUploadFile(null);
             setUploadProgress(0);
             fetchDocuments();
@@ -226,6 +233,21 @@ const DocumentsPage = () => {
                                     <option value="">{t('common.myself')}</option>
                                     {users.map(u => <option key={u.id} value={u.id}>{u.name} ({u.email})</option>)}
                                 </select>
+                            </div>
+                        )}
+                        
+                        {isHR && uploadUserId && (
+                            <div className="md:col-span-2 flex items-center gap-3 p-3 bg-rose-50 border border-rose-200 rounded-md">
+                                <input 
+                                    type="checkbox" 
+                                    id="req_sig"
+                                    checked={uploadRequiresSignature}
+                                    onChange={e => setUploadRequiresSignature(e.target.checked)}
+                                    className="w-4 h-4 text-rose-600 rounded border-rose-300 focus:ring-rose-500"
+                                />
+                                <label htmlFor="req_sig" className="text-[13px] font-bold text-rose-900 cursor-pointer">
+                                    Require employee electronic signature
+                                </label>
                             </div>
                         )}
 
@@ -384,6 +406,7 @@ const DocumentsPage = () => {
                                     <th className="px-6 py-4 font-black text-zinc-900 text-[10px] uppercase tracking-widest">{t('documents.document')}</th>
                                     {isHR && <th className="px-6 py-4 font-black text-zinc-900 text-[10px] uppercase tracking-widest">{t('common.employee')}</th>}
                                     <th className="px-6 py-4 font-black text-zinc-900 text-[10px] uppercase tracking-widest">{t('documents.category')}</th>
+                                    <th className="px-6 py-4 font-black text-zinc-900 text-[10px] uppercase tracking-widest">Status</th>
                                     <th className="px-6 py-4 font-black text-zinc-900 text-[10px] uppercase tracking-widest">{t('documents.size')}</th>
                                     <th className="px-6 py-4 font-black text-zinc-900 text-[10px] uppercase tracking-widest">{t('documents.uploaded')}</th>
                                     <th className="px-6 py-4 font-black text-zinc-900 text-[10px] uppercase tracking-widest text-right">{t('common.actions')}</th>
@@ -420,12 +443,33 @@ const DocumentsPage = () => {
                                                     {cat.label}
                                                 </span>
                                             </td>
+                                            <td className="px-6 py-4">
+                                                {doc.requires_signature ? (
+                                                    doc.is_signed ? (
+                                                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                                            Signed
+                                                        </span>
+                                                    ) : (
+                                                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
+                                                            Needs Signature
+                                                        </span>
+                                                    )
+                                                ) : (
+                                                    <span className="text-[11px] font-medium text-zinc-400">—</span>
+                                                )}
+                                            </td>
                                             <td className="px-6 py-4 text-zinc-600 font-medium text-[13px]">{formatFileSize(doc.file_size)}</td>
                                             <td className="px-6 py-4 text-zinc-600 font-medium text-[13px]">
                                                 {doc.created_at ? new Date(doc.created_at).toLocaleDateString() : '—'}
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 <div className="flex items-center justify-end gap-2">
+                                                    {doc.requires_signature && !doc.is_signed && doc.user_id === user?.id && (
+                                                        <button onClick={() => setSignDocument(doc)}
+                                                            className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 rounded-md text-[11px] font-bold uppercase tracking-wider transition-colors mr-2">
+                                                            Sign Now
+                                                        </button>
+                                                    )}
                                                     <button onClick={() => handleDownload(doc.file_url, doc.name)}
                                                         className="p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 rounded-md transition-colors"
                                                         title="Download">
@@ -469,6 +513,17 @@ const DocumentsPage = () => {
                                         <span className={`inline-block px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider border shrink-0 ${cat.color}`}>
                                             {cat.label}
                                         </span>
+                                        {doc.requires_signature && (
+                                            doc.is_signed ? (
+                                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200 uppercase tracking-wider ml-2">
+                                                    Signed
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-1 rounded-md border border-rose-200 uppercase tracking-wider ml-2">
+                                                    Needs Signature
+                                                </span>
+                                            )
+                                        )}
                                     </div>
 
                                     <div className="flex flex-col gap-2 text-[12px] font-medium text-zinc-500 mb-4 bg-zinc-50 p-3 rounded-md border border-zinc-100">
@@ -489,6 +544,12 @@ const DocumentsPage = () => {
                                     </div>
                                     
                                     <div className="flex items-center justify-end gap-2 border-t border-zinc-100 pt-4">
+                                        {doc.requires_signature && !doc.is_signed && doc.user_id === user?.id && (
+                                            <button onClick={() => setSignDocument(doc)}
+                                                className="px-4 py-2 bg-[#5B4FE8] hover:bg-[#4a3fd4] text-white rounded-md font-bold text-[12px] flex items-center gap-2 transition-colors mr-auto">
+                                                Sign Now
+                                            </button>
+                                        )}
                                         <button onClick={() => handleDownload(doc.file_url, doc.name)}
                                             className="px-4 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-md font-bold text-[12px] flex items-center gap-2 transition-colors">
                                             <Download className="w-3.5 h-3.5" /> {t('documents.download')}
@@ -514,6 +575,17 @@ const DocumentsPage = () => {
                 title={t('documents.deleteDocumentTitle')}
                 message={t('documents.deleteDocumentMessage')}
                 confirmLabel={t('common.delete')}
+            />
+
+            <SignDocumentModal 
+                isOpen={!!signDocument}
+                onClose={() => setSignDocument(null)}
+                document={signDocument}
+                onSigned={(updatedDoc) => {
+                    setSignDocument(null);
+                    // Update locally or refetch
+                    setDocuments(docs => docs.map(d => d.id === updatedDoc.id ? { ...d, is_signed: true, signed_at: updatedDoc.signed_at, signature_hash: updatedDoc.signature_hash } : d));
+                }}
             />
         </div>
     );

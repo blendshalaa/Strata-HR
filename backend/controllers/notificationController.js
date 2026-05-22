@@ -1,4 +1,5 @@
 const pool = require('../config/database');
+const { emitToUser } = require('../utils/socketManager');
 
 /**
  * Get notifications for the current user.
@@ -62,16 +63,31 @@ const markAllAsRead = async (req, res, next) => {
 };
 
 /**
- * Create a notification (internal helper, also exposed as endpoint for admin).
+ * Create a notification and push it in real-time via WebSocket.
+ * @param {number} userId - Target user ID
+ * @param {string} type - Notification type (leave, timesheet, payroll, shift, success, warning, info)
+ * @param {string} title - Notification title
+ * @param {string} message - Notification body
+ * @param {string|null} linkUrl - Optional URL to navigate to when clicked
  */
-const createNotification = async (userId, type, title, message) => {
+const createNotification = async (userId, type, title, message, linkUrl = null) => {
     try {
-        await pool.query(
-            `INSERT INTO notifications (user_id, type, title, message) VALUES ($1, $2, $3, $4)`,
-            [userId, type, title, message]
+        const result = await pool.query(
+            `INSERT INTO notifications (user_id, type, title, message, link_url)
+             VALUES ($1, $2, $3, $4, $5)
+             RETURNING id, user_id, type, title, message, link_url, is_read, created_at`,
+            [userId, type, title, message, linkUrl]
         );
+
+        const notification = result.rows[0];
+
+        // Push via WebSocket in real-time
+        emitToUser(userId, 'notification:new', notification);
+
+        return notification;
     } catch (error) {
         console.error('Failed to create notification:', error);
+        return null;
     }
 };
 

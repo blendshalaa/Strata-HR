@@ -113,4 +113,10 @@ export const departmentAPI = {
   delete: (id) => api.delete(`/departments/${id}`),
 };
 
+// Audit log endpoints
+export const auditAPI = {
+  getLogs: (params) => api.get('/audit', { params }),
+  getStats: () => api.get('/audit/stats'),
+};
+
 export default api;

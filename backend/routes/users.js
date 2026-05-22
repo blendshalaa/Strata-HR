@@ -4,6 +4,7 @@ const { getDirectory, getAllUsers, getUserById, updateUser, deleteUser, createUs
 const { authenticateToken, authorizeRoles } = require('../middleware/auth');
 const { validate, updateUserRules } = require('../middleware/validators');
 const { avatarUpload } = require('../middleware/avatarUpload');
+const { auditMiddleware } = require('../middleware/auditLogger');
 
 router.get('/directory', authenticateToken, getDirectory);
 
@@ -13,9 +14,9 @@ router.delete('/me/avatar', authenticateToken, deleteAvatar);
 
 router.get('/', authenticateToken, authorizeRoles('admin', 'hr'), getAllUsers);
 router.get('/:id', authenticateToken, getUserById);
-router.post('/', authenticateToken, authorizeRoles('admin', 'hr'), createUser);
-router.post('/invite', authenticateToken, authorizeRoles('admin', 'hr'), inviteUser);
-router.put('/:id', authenticateToken, authorizeRoles('admin', 'hr'), updateUserRules, validate, updateUser);
-router.delete('/:id', authenticateToken, authorizeRoles('admin', 'hr'), deleteUser);
+router.post('/', authenticateToken, authorizeRoles('admin', 'hr'), auditMiddleware('create', 'user'), createUser);
+router.post('/invite', authenticateToken, authorizeRoles('admin', 'hr'), auditMiddleware('create', 'user'), inviteUser);
+router.put('/:id', authenticateToken, authorizeRoles('admin', 'hr'), updateUserRules, validate, auditMiddleware('update', 'user'), updateUser);
+router.delete('/:id', authenticateToken, authorizeRoles('admin', 'hr'), auditMiddleware('delete', 'user'), deleteUser);
 
 module.exports = router;

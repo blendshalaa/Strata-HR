@@ -157,6 +157,7 @@
     "userManagement": "Menaxhimi i përdoruesve",
     "departments": "Departamentet",
     "organization": "Organizata",
+    "auditLog": "Gjurma e auditimit",
     "helpAndSupport": "Ndihmë dhe mbështetje",
     "askAiAboutPolicies": "Pyet asistentin AI për politikat e kompanisë."
   },
@@ -934,5 +935,31 @@
     "articleCreated": "Artikulli u krijua me sukses",
     "failedToDelete": "Fshirja e artikullit dështoi",
     "failedToSave": "Ruajtja e artikullit dështoi"
+  },
+  "auditLog": {
+    "title": "Gjurmë Auditimi",
+    "subtitle": "Regjistër i pandryshuar i të gjitha veprimeve të ndjeshme në organizatën tuaj.",
+    "refresh": "Rifresko",
+    "eventsToday": "Ngjarje Sot",
+    "last30Days": "30 ditët e fundit",
+    "searchActor": "Kërko Aktorin",
+    "action": "Veprimi",
+    "resource": "Burimi",
+    "allActions": "Të gjitha veprimet",
+    "allResources": "Të gjitha burimet",
+    "from": "Nga",
+    "to": "Deri",
+    "reset": "Rivendos",
+    "actor": "Aktori",
+    "timestamp": "Koha",
+    "ipAddress": "Adresa IP",
+    "noEvents": "Asnjë ngjarje auditimi nuk u gjet",
+    "adjustFilters": "Provoni të rregulloni filtrat tuaj",
+    "before": "Para",
+    "after": "Pas",
+    "showingPage": "Duke shfaqur faqen",
+    "of": "e",
+    "total": "ngjarje gjithsej",
+    "adminOnly": "Vetëm Admin"
   }
 }

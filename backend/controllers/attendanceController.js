@@ -1,6 +1,7 @@
 const pool = require('../config/database');
 const { createNotification } = require('./notificationController');
 const { sendEmail } = require('../utils/mailer');
+const { logAudit, getClientIP } = require('../middleware/auditLogger');
 
 const clockIn = async (req, res, next) => {
     try {
@@ -134,6 +135,14 @@ const editTimesheet = async (req, res, next) => {
             `Your timesheet for ${newClockIn.toLocaleDateString()} was corrected by HR.`
         );
 
+        // Audit trail — HR timesheet edit
+        logAudit({
+            actorId: req.user.id, action: 'update', entityType: 'timesheet',
+            entityId: parseInt(id), oldValue: { clock_in: existing.rows[0].clock_in, clock_out: existing.rows[0].clock_out },
+            newValue: { clock_in: newClockIn, clock_out: newClockOut, regular_hours: regularHours, overtime_hours: overtimeHours },
+            ipAddress: getClientIP(req), orgId: req.user.org_id,
+        });
+
         res.json({ message: 'Timesheet updated', timesheet: result.rows[0] });
     } catch (error) {
         next(error);
@@ -219,6 +228,14 @@ const updateStatus = async (req, res, next) => {
             `Timesheet ${status}`,
             `Your timesheet for ${new Date(result.rows[0].clock_in).toLocaleDateString()} has been ${status}.`
         );
+
+        // Audit trail — timesheet status change
+        logAudit({
+            actorId: req.user.id, action: status === 'approved' ? 'approve' : 'reject',
+            entityType: 'timesheet', entityId: parseInt(id),
+            oldValue: { status: 'pending' }, newValue: { status },
+            ipAddress: getClientIP(req), orgId: req.user.org_id,
+        });
 
         // Email the employee about the timesheet status
         const empRes = await pool.query('SELECT name, email FROM users WHERE id = $1', [result.rows[0].user_id]);

@@ -9,8 +9,9 @@ const CATEGORIES = ['contract', 'id_document', 'tax_form', 'certificate', 'polic
  */
 const uploadDocument = async (req, res, next) => {
     try {
-        const { user_id, name, category } = req.body;
+        const { user_id, name, category, requires_signature } = req.body;
         const targetUserId = user_id || req.user.id;
+        const requiresSig = requires_signature === 'true' || requires_signature === true;
 
         if (!req.file) {
             return res.status(400).json({ error: 'No file uploaded' });
@@ -34,9 +35,9 @@ const uploadDocument = async (req, res, next) => {
         const docCategory = CATEGORIES.includes(category) ? category : 'other';
 
         const result = await pool.query(
-            `INSERT INTO employee_documents (user_id, org_id, name, category, file_url, file_size, mime_type, uploaded_by)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, user_id, org_id, name, category, file_url, file_size, mime_type, uploaded_by, created_at`,
-            [targetUserId, req.user.org_id, name, docCategory, fileUrl, req.file.size, req.file.mimetype, req.user.id]
+            `INSERT INTO employee_documents (user_id, org_id, name, category, file_url, file_size, mime_type, uploaded_by, requires_signature)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+            [targetUserId, req.user.org_id, name, docCategory, fileUrl, req.file.size, req.file.mimetype, req.user.id, requiresSig]
         );
 
         res.status(201).json({ message: 'Document uploaded successfully', document: result.rows[0] });
@@ -173,4 +174,52 @@ const deleteDocument = async (req, res, next) => {
     }
 };
 
-module.exports = { uploadDocument, getDocuments, getMyDocuments, getAllDocuments, deleteDocument };
+/**
+ * Sign a document.
+ */
+const signDocument = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { signature_text } = req.body;
+
+        if (!signature_text) {
+            return res.status(400).json({ error: 'Signature text is required' });
+        }
+
+        const doc = await pool.query(
+            'SELECT * FROM employee_documents WHERE id = $1 AND user_id = $2 AND org_id = $3',
+            [id, req.user.id, req.user.org_id]
+        );
+
+        if (doc.rows.length === 0) {
+            return res.status(404).json({ error: 'Document not found or access denied' });
+        }
+
+        if (!doc.rows[0].requires_signature) {
+            return res.status(400).json({ error: 'This document does not require a signature' });
+        }
+
+        if (doc.rows[0].is_signed) {
+            return res.status(400).json({ error: 'This document is already signed' });
+        }
+
+        // Generate a simple hash of the signature details
+        const crypto = require('crypto');
+        const ip = req.ip || req.connection.remoteAddress;
+        const dataToHash = `${req.user.id}-${id}-${signature_text}-${ip}-${new Date().toISOString()}`;
+        const hash = crypto.createHash('sha256').update(dataToHash).digest('hex');
+
+        const result = await pool.query(
+            `UPDATE employee_documents 
+             SET is_signed = true, signed_at = CURRENT_TIMESTAMP, signature_hash = $1
+             WHERE id = $2 RETURNING *`,
+            [hash, id]
+        );
+
+        res.json({ message: 'Document signed successfully', document: result.rows[0] });
+    } catch (error) {
+        next(error);
+    }
+};
+
+module.exports = { uploadDocument, getDocuments, getMyDocuments, getAllDocuments, deleteDocument, signDocument };
