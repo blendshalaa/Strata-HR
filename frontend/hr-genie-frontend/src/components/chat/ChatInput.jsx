@@ -13,20 +13,20 @@ const ChatInput = ({ onSend, loading }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="border-t border-zinc-200 p-5 bg-white">
-      <div className="flex gap-3">
+    <form onSubmit={handleSubmit} className="p-4 bg-white/80 backdrop-blur-lg border-t border-zinc-100 shrink-0">
+      <div className="flex items-center gap-2 bg-white border border-zinc-200 rounded-full p-1.5 pl-5 focus-within:border-[#5B4FE8] focus-within:ring-4 focus-within:ring-[#EEF0FF] transition-all shadow-sm">
         <input
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Ask anything or give a command — I can take actions for you..."
-          className="w-full px-4 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors"
+          placeholder="Ask anything or give a command..."
+          className="w-full bg-transparent text-[14px] font-medium text-zinc-900 focus:outline-none placeholder:text-zinc-400"
           disabled={loading}
         />
         <button
           type="submit"
           disabled={loading || !message.trim()}
-          className="bg-[#5B4FE8] text-white px-6 py-2 rounded-md hover:bg-[#4a3fd4] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          className="bg-[#5B4FE8] text-white p-2.5 rounded-full hover:bg-[#4a3fd4] transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 flex items-center justify-center shadow-md"
         >
           {loading ? (
             <Loader className="w-4 h-4 animate-spin" />
@@ -35,10 +35,12 @@ const ChatInput = ({ onSend, loading }) => {
           )}
         </button>
       </div>
-      <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mt-3 flex items-center gap-1.5">
-        <Zap className="w-3 h-3" />
-        Copilot — "Who's on leave today?" · "Approve leave #4" · "Show overtime this month"
-      </p>
+      <div className="flex items-center justify-center mt-3">
+        <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest flex items-center gap-1.5 bg-zinc-50 px-3 py-1 rounded-full border border-zinc-100">
+          <Zap className="w-3 h-3 text-[#5B4FE8]" />
+          Copilot is active and can take actions
+        </p>
+      </div>
     </form>
   );
 };

@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
+import useIsMobile from '../../hooks/useIsMobile';
+import MobileLayout from './MobileLayout';
 
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isMobile = useIsMobile(1024); // Use lg breakpoint
+
+  if (isMobile) {
+    return <MobileLayout>{children}</MobileLayout>;
+  }
 
   return (
     <div className="min-h-screen flex relative overflow-hidden" style={{ backgroundColor: '#F5F4FF', color: '#0F0D2E' }}>

@@ -12,7 +12,7 @@ const LANGUAGES = [
   { code: 'de', label: 'DE' },
 ];
 
-const Navbar = ({ onMenuClick }) => {
+const Navbar = ({ onMenuClick, isMobileLayout = false }) => {
   const { user, logout } = useAuth();
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -46,25 +46,36 @@ const Navbar = ({ onMenuClick }) => {
 
           {/* Left */}
           <div className="flex items-center gap-4">
-            <button
-              onClick={onMenuClick}
-              className="lg:hidden p-2 rounded-md transition-colors"
-              style={{ color: '#6B7280' }}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = '#F5F4FF'}
-              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
-            >
-              <Menu className="w-5 h-5" />
-            </button>
+            {!isMobileLayout && (
+              <button
+                onClick={onMenuClick}
+                className="lg:hidden p-2 rounded-md transition-colors"
+                style={{ color: '#6B7280' }}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = '#F5F4FF'}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+            )}
 
-            <div className="hidden lg:block">
-              <h2 className="text-[15px] font-semibold" style={{ color: '#0F0D2E' }}>
+            <div className={`items-center gap-3 ${isMobileLayout ? "flex" : "hidden lg:flex"}`}>
+              <h2 className="text-[15px] font-black tracking-tight text-zinc-900 leading-none pt-0.5">
                 {user?.name?.split(' ')[0]}
               </h2>
-              <p className="text-[13px]" style={{ color: '#6B7280' }}>
-                {user?.org_name && <span style={{ color: '#0F0D2E', fontWeight: 500 }}>{user.org_name}</span>}
-                {user?.org_name && user?.department && <span> · </span>}
-                {user?.department}
-              </p>
+              {(user?.org_name || user?.department) && (
+                <div className="flex items-center gap-1.5 border-l border-zinc-200 pl-3">
+                  {user?.org_name && (
+                    <span className="px-2 py-0.5 bg-zinc-100 border border-zinc-200 rounded-md text-[9px] font-black text-zinc-500 uppercase tracking-widest shadow-sm">
+                      {user.org_name}
+                    </span>
+                  )}
+                  {user?.department && (
+                    <span className="px-2 py-0.5 bg-[#EEF0FF] border border-[#C4BDFF] rounded-md text-[9px] font-black text-[#5B4FE8] uppercase tracking-widest shadow-sm">
+                      {user.department}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 

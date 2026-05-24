@@ -8,6 +8,7 @@ import { Bot, Menu, Sparkles, Zap } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { useAuth } from '../context/AuthContext';
+import useIsMobile from '../hooks/useIsMobile';
 
 // Translates axios errors into a friendly, actionable message
 const resolveChatError = (error) => {
@@ -196,9 +197,11 @@ const ChatPage = () => {
     t('chat.remoteWorkPolicy')
   ];
 
+  const isMobile = useIsMobile();
+
   return (
     <>
-    <div className="h-[calc(100vh-8rem)] flex gap-4 animate-fadeIn">
+    <div className={`${isMobile ? 'h-[calc(100vh-10rem)]' : 'h-[calc(100vh-8rem)]'} flex gap-4 animate-fadeIn`}>
       <div className="hidden lg:block w-80 rounded-lg overflow-hidden border border-zinc-200">
         <ConversationList
           conversations={conversations}
@@ -261,10 +264,13 @@ const ChatPage = () => {
           {messages.length === 0 ? (
             <div className="h-full flex items-center justify-center">
               <div className="text-center max-w-sm px-6">
-                <div className="w-16 h-16 bg-[#5B4FE8] rounded-md flex items-center justify-center mx-auto mb-6 shadow-md">
-                  <Bot className="w-8 h-8 text-white" />
+                <div className="relative w-20 h-20 mx-auto mb-6">
+                  <div className="absolute inset-0 bg-[#5B4FE8] rounded-2xl rotate-6 opacity-20"></div>
+                  <div className="absolute inset-0 bg-[#5B4FE8] rounded-2xl flex items-center justify-center shadow-lg transform transition-transform hover:-translate-y-1">
+                    <Bot className="w-10 h-10 text-white" />
+                  </div>
                 </div>
-                <h3 className="text-[18px] font-bold text-zinc-900 mb-2 tracking-tight">
+                <h3 className="text-[20px] font-black text-zinc-900 mb-2 tracking-tight">
                   {t('chat.welcomeToHrGenie')}
                 </h3>
                 <p className="text-zinc-500 mb-2 text-[13px] leading-relaxed">
@@ -273,19 +279,19 @@ const ChatPage = () => {
                 <p className="text-zinc-400 mb-8 text-[12px] leading-relaxed">
                   I can query employees, check attendance, manage leave requests, and more. {isHR ? 'As HR, I can also approve leave and create shifts for you.' : ''}
                 </p>
-                <div className="space-y-3 text-left">
-                  <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-4">
+                <div className="space-y-4 text-left">
+                  <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-4 border-b border-zinc-200 pb-2">
                     {isHR ? '⚡ Try these copilot commands' : t('chat.commonQuestions')}
                   </p>
-                  <div className="space-y-2">
+                  <div className="grid grid-cols-1 gap-2.5">
                     {suggestions.map((example, i) => (
                       <button
                         key={i}
                         onClick={() => handleSendMessage(example)}
-                        className="w-full text-left px-4 py-3 bg-white hover:bg-zinc-50 border border-zinc-200 rounded-md text-[13px] text-zinc-700 hover:text-zinc-900 transition-all"
+                        className="w-full text-left px-4 py-3.5 bg-white hover:bg-[#EEF0FF] hover:border-[#C4BDFF] border border-zinc-200 rounded-xl text-[13px] font-medium text-zinc-700 hover:text-[#5B4FE8] transition-all shadow-sm group"
                       >
                         <span className="flex items-center gap-3">
-                          <Sparkles className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0" />
+                          <Sparkles className="w-4 h-4 text-zinc-400 group-hover:text-[#5B4FE8] transition-colors flex-shrink-0" />
                           {example}
                         </span>
                       </button>
@@ -330,7 +336,7 @@ const ChatPage = () => {
         </div>
 
         {/* Persistent suggestion chips */}
-        {!loading && (
+        {!loading && messages.length > 0 && (
           <div className="px-4 py-2 flex gap-2 flex-wrap bg-white border-t border-zinc-100">
             {suggestions.slice(0, 3).map((s, i) => (
               <button

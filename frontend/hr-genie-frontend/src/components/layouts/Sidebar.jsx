@@ -136,8 +136,8 @@ const Sidebar = ({ isOpen, onClose }) => {
                   className="w-full flex items-center justify-between px-2 py-1.5 mb-1"
                 >
                   <span
-                    className="text-[10px] font-black uppercase tracking-[0.1em]"
-                    style={{ color: 'rgba(255,255,255,0.35)' }}
+                    className="text-[10px] font-black uppercase tracking-widest"
+                    style={{ color: 'rgba(255,255,255,0.45)' }}
                   >
                     {section.label}
                   </span>
@@ -154,42 +154,21 @@ const Sidebar = ({ isOpen, onClose }) => {
                         key={item.to}
                         to={item.to}
                         onClick={() => window.innerWidth < 1024 && onClose()}
-                        className="block"
-                        style={({ isActive }) => ({
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                          padding: '8px 10px',
-                          borderRadius: '6px',
-                          fontSize: '13px',
-                          fontWeight: isActive ? '600' : '400',
-                          color: isActive ? '#FFFFFF' : 'rgba(255,255,255,0.65)',
-                          backgroundColor: isActive ? '#5B4FE8' : 'transparent',
-                          transition: 'all 0.15s ease',
-                          textDecoration: 'none',
-                        })}
-                        onMouseEnter={e => {
-                          if (!e.currentTarget.style.backgroundColor.includes('5B4FE8')) {
-                            e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.07)';
-                            e.currentTarget.style.color = '#FFFFFF';
+                        className={({ isActive }) => `
+                          group relative flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] transition-all duration-200
+                          ${isActive 
+                            ? 'bg-gradient-to-r from-[#5B4FE8] to-[#4a3fd4] text-white font-bold shadow-md shadow-[#5B4FE8]/20 border border-[#5B4FE8]/50' 
+                            : 'text-white/65 hover:text-white hover:bg-white/10 font-medium'
                           }
-                        }}
-                        onMouseLeave={e => {
-                          if (!e.currentTarget.getAttribute('aria-current')) {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                            e.currentTarget.style.color = 'rgba(255,255,255,0.65)';
-                          }
-                        }}
+                        `}
                       >
                         {({ isActive }) => (
                           <>
+                            {isActive && (
+                              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-white rounded-r-full shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+                            )}
                             <item.icon
-                              className="flex-shrink-0"
-                              style={{
-                                width: '15px',
-                                height: '15px',
-                                color: isActive ? '#FFFFFF' : 'rgba(255,255,255,0.5)',
-                              }}
+                              className={`flex-shrink-0 w-4 h-4 transition-colors ${isActive ? 'text-white' : 'text-white/50 group-hover:text-white/80'}`}
                             />
                             <span>{item.label}</span>
                           </>

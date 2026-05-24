@@ -1,9 +1,11 @@
 import React from 'react';
 import { Calendar, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import useIsMobile from '../../hooks/useIsMobile';
 
 const LeaveRequestList = ({ requests }) => {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   const getStatusBadge = (status) => {
     const statusConfig = {
       pending: {
@@ -47,7 +49,31 @@ const LeaveRequestList = ({ requests }) => {
   }
 
   return (
-    <div className="card p-0 overflow-hidden bg-white border border-zinc-200">
+    <div className={`card p-0 overflow-hidden bg-white border border-zinc-200 ${isMobile ? 'border-none shadow-none bg-transparent' : ''}`}>
+      {isMobile ? (
+        <div className="space-y-3">
+          {requests.map((request) => (
+            <div key={request.id} className="bg-white border border-zinc-200 rounded-lg p-4 shadow-sm">
+              <div className="flex items-center justify-between mb-3">
+                <span className="capitalize text-[14px] font-black text-zinc-900">{request.type}</span>
+                {getStatusBadge(request.status)}
+              </div>
+              <div className="flex items-center justify-between text-[13px] text-zinc-600 mb-2 font-medium">
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-zinc-400" />
+                  {new Date(request.start_date).toLocaleDateString()} - {new Date(request.end_date).toLocaleDateString()}
+                </div>
+                <span className="font-bold text-zinc-900 bg-zinc-100 px-2 py-0.5 rounded-md">{request.days} {t('leaveList.days', 'days')}</span>
+              </div>
+              {request.reason && (
+                <div className="text-[12px] text-zinc-500 bg-zinc-50 p-2 rounded-md border border-zinc-100 italic">
+                  "{request.reason}"
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : (
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-zinc-50 border-b border-zinc-200">
@@ -88,6 +114,7 @@ const LeaveRequestList = ({ requests }) => {
           </tbody>
         </table>
       </div>
+      )}
     </div>
   );
 };

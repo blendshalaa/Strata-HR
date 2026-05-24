@@ -3,6 +3,8 @@ import { useAuth } from '../context/AuthContext';
 import { analyticsAPI, leaveAPI } from '../services/api';
 import StatsCard from '../components/dashboard/StatsCard';
 import TimeClockWidget from '../components/dashboard/TimeClockWidget';
+import MobileDashboard from '../components/dashboard/MobileDashboard';
+import useIsMobile from '../hooks/useIsMobile';
 import {
   MessageSquare,
   Calendar,
@@ -34,6 +36,7 @@ const DashboardPage = () => {
   const [stats, setStats] = useState(null);
   const [balance, setBalance] = useState(null);
   const [loading, setLoading] = useState(true);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     fetchDashboardData();
@@ -60,6 +63,10 @@ const DashboardPage = () => {
         <div className="w-6 h-6 border-2 border-[#EEF0FF] border-t-[#5B4FE8] rounded-full animate-spin" />
       </div>
     );
+  }
+
+  if (isMobile) {
+    return <MobileDashboard stats={stats} balance={balance} user={user} isHR={isHR} />;
   }
 
   const tooltipStyle = {

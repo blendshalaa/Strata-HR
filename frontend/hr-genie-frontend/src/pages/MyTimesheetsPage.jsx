@@ -5,6 +5,7 @@ import { useToast } from '../context/ToastContext';
 import api from '../services/api';
 import { useTranslation } from 'react-i18next';
 import TimeClockWidget from '../components/dashboard/TimeClockWidget';
+import useIsMobile from '../hooks/useIsMobile';
 
 const TABS = [
     { key: 'list', labelKey: 'timesheets.allEntries' },
@@ -20,7 +21,9 @@ const MyTimesheetsPage = () => {
     const [activeTab, setActiveTab] = useState('list');
     const [showManualEntry, setShowManualEntry] = useState(false);
     const [manualForm, setManualForm] = useState({ clock_in: '', clock_out: '', notes: '' });
+    const [manualForm, setManualForm] = useState({ clock_in: '', clock_out: '', notes: '' });
     const [manualLoading, setManualLoading] = useState(false);
+    const isMobile = useIsMobile();
 
     // Date filter
     const [filterRange, setFilterRange] = useState('this-week');
@@ -282,6 +285,46 @@ const MyTimesheetsPage = () => {
                         </div>
                     ) : (
                         <div className="bg-white border border-zinc-200 rounded-md overflow-hidden">
+                            {isMobile ? (
+                                <div className="divide-y divide-zinc-100">
+                                    {timesheets.map(ts => {
+                                        const cfg = getStatusConfig(ts.status);
+                                        const StatusIcon = cfg.icon;
+                                        return (
+                                            <div key={ts.id} className="p-4 bg-white hover:bg-zinc-50/50 transition-colors">
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <span className="text-zinc-900 font-bold text-[13px]">{new Date(ts.clock_in).toLocaleDateString()}</span>
+                                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border ${cfg.classes}`}>
+                                                        <StatusIcon className="w-3 h-3" />{cfg.label}
+                                                    </span>
+                                                </div>
+                                                <div className="flex justify-between items-center text-[13px] mb-2">
+                                                    <span className="text-zinc-500 font-medium">
+                                                        {new Date(ts.clock_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        {' — '}
+                                                        {ts.clock_out
+                                                            ? new Date(ts.clock_out).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                                            : <span className="text-amber-600 font-bold text-[11px] uppercase tracking-wider">{t('timesheets.inProgress')}</span>
+                                                        }
+                                                    </span>
+                                                    <span className="text-zinc-900 font-black">{parseFloat(ts.regular_hours || 0).toFixed(1)}h</span>
+                                                </div>
+                                                {parseFloat(ts.overtime_hours) > 0 && (
+                                                    <div className="flex justify-between text-[12px] font-bold text-red-600 mb-1">
+                                                        <span>Overtime:</span>
+                                                        <span>+{parseFloat(ts.overtime_hours).toFixed(1)}h</span>
+                                                    </div>
+                                                )}
+                                                {ts.notes && (
+                                                    <div className="text-[12px] text-zinc-500 bg-zinc-50 p-2 rounded border border-zinc-100 mt-2">
+                                                        <FileText className="w-3 h-3 inline mr-1 text-zinc-400" />{ts.notes}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            ) : (
                             <table className="w-full text-left text-sm border-collapse">
                                 <thead className="bg-zinc-50 border-b border-zinc-200">
                                     <tr>
@@ -335,6 +378,7 @@ const MyTimesheetsPage = () => {
                                     })}
                                 </tbody>
                             </table>
+                            )}
                         </div>
                     )}
                 </>
@@ -365,21 +409,42 @@ const MyTimesheetsPage = () => {
                     </div>
 
                     {/* Day Cards */}
-                    <div className="grid grid-cols-7 gap-2">
+                    <div className={`grid gap-2 ${isMobile ? 'grid-cols-1' : 'grid-cols-7'}`}>
                         {weeklyData.days.map(day => (
-                            <div key={day.dateStr} className={`bg-white border rounded-md p-4 text-center transition-colors ${day.isToday ? 'border-zinc-900 bg-zinc-50' : 'border-zinc-200'}`}>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-1">{day.dayName}</p>
-                                <p className={`text-[14px] font-black mb-3 ${day.isToday ? 'text-zinc-900' : 'text-zinc-600'}`}>{day.dayNum}</p>
-                                {day.total > 0 ? (
+                            <div key={day.dateStr} className={`bg-white border rounded-md p-4 transition-colors ${isMobile ? 'flex items-center justify-between text-left' : 'text-center'} ${day.isToday ? 'border-zinc-900 bg-zinc-50' : 'border-zinc-200'}`}>
+                                {isMobile ? (
                                     <>
-                                        <p className="text-[20px] font-black text-zinc-900 leading-none">{day.total.toFixed(1)}</p>
-                                        <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mt-1">{t('timesheets.hours')}</p>
-                                        {day.overtime > 0 && (
-                                            <p className="text-[10px] font-bold text-red-600 mt-1">+{day.overtime.toFixed(1)}h OT</p>
-                                        )}
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 text-center">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-0.5">{day.dayName}</p>
+                                                <p className={`text-[15px] font-black leading-none ${day.isToday ? 'text-zinc-900' : 'text-zinc-600'}`}>{day.dayNum}</p>
+                                            </div>
+                                            {day.total > 0 ? (
+                                                <div>
+                                                    <p className="text-[13px] font-bold text-zinc-900">{day.total.toFixed(1)} {t('timesheets.hours')}</p>
+                                                    {day.overtime > 0 && <p className="text-[11px] font-bold text-red-600">+{day.overtime.toFixed(1)}h OT</p>}
+                                                </div>
+                                            ) : (
+                                                <p className="text-[12px] text-zinc-400 font-bold">—</p>
+                                            )}
+                                        </div>
                                     </>
                                 ) : (
-                                    <p className="text-[11px] text-zinc-400 font-bold mt-2">—</p>
+                                    <>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-1">{day.dayName}</p>
+                                <p className={`text-[14px] font-black mb-3 ${day.isToday ? 'text-zinc-900' : 'text-zinc-600'}`}>{day.dayNum}</p>
+                                        {day.total > 0 ? (
+                                            <>
+                                                <p className="text-[20px] font-black text-zinc-900 leading-none">{day.total.toFixed(1)}</p>
+                                                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mt-1">{t('timesheets.hours')}</p>
+                                                {day.overtime > 0 && (
+                                                    <p className="text-[10px] font-bold text-red-600 mt-1">+{day.overtime.toFixed(1)}h OT</p>
+                                                )}
+                                            </>
+                                        ) : (
+                                            <p className="text-[11px] text-zinc-400 font-bold mt-2">—</p>
+                                        )}
+                                    </>
                                 )}
                             </div>
                         ))}
