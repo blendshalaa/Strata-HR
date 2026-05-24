@@ -214,7 +214,15 @@
     "trackTimeSecurely": "Track your time securely",
     "pauseTracking": "Pause Tracking",
     "startTracking": "Start Tracking",
-    "failedToLoadAnalytics": "Failed to load predictive analytics"
+    "failedToLoadAnalytics": "Failed to load predictive analytics",
+    "needsYourAttention": "Needs Your Attention",
+    "signDocuments": "Sign Documents",
+    "activeGoals": "Active Goals",
+    "trainingAndDocs": "Training & Docs",
+    "assignedTraining": "Assigned Training",
+    "upcomingShifts": "Upcoming Shifts",
+    "yourSchedule": "Your schedule for the next days",
+    "noUpcomingShifts": "No upcoming shifts scheduled."
   },
   "chat": {
     "hrAssistant": "HR Assistant",

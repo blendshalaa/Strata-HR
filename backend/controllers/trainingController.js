@@ -6,7 +6,7 @@ const { createNotification } = require('./notificationController');
  */
 const getTrainings = async (req, res, next) => {
     try {
-        const result = await pool.query('SELECT * FROM trainings ORDER BY created_at DESC');
+        const result = await pool.query('SELECT * FROM trainings WHERE org_id = $1 ORDER BY created_at DESC', [req.user.org_id]);
         res.json({ trainings: result.rows });
     } catch (error) {
         next(error);
@@ -24,9 +24,9 @@ const createTraining = async (req, res, next) => {
         }
 
         const result = await pool.query(
-            `INSERT INTO trainings (title, description, link_url, duration_minutes) 
-             VALUES ($1, $2, $3, $4) RETURNING *`,
-            [title, description, link_url, duration_minutes || null]
+            `INSERT INTO trainings (title, description, link_url, duration_minutes, org_id) 
+             VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+            [title, description, link_url, duration_minutes || null, req.user.org_id]
         );
 
         res.status(201).json({ message: 'Training created', training: result.rows[0] });
@@ -41,7 +41,7 @@ const createTraining = async (req, res, next) => {
 const deleteTraining = async (req, res, next) => {
     try {
         const { id } = req.params;
-        await pool.query('DELETE FROM trainings WHERE id = $1', [id]);
+        await pool.query('DELETE FROM trainings WHERE id = $1 AND org_id = $2', [id, req.user.org_id]);
         res.json({ message: 'Training deleted' });
     } catch (error) {
         next(error);
@@ -57,9 +57,9 @@ const getMyAssignedTrainings = async (req, res, next) => {
             `SELECT ut.*, t.title, t.description, t.link_url, t.duration_minutes 
              FROM user_trainings ut
              JOIN trainings t ON ut.training_id = t.id
-             WHERE ut.user_id = $1
+             WHERE ut.user_id = $1 AND ut.org_id = $2
              ORDER BY ut.status ASC, ut.created_at DESC`,
-            [req.user.id]
+            [req.user.id, req.user.org_id]
         );
         res.json({ assigned_trainings: result.rows });
     } catch (error) {
@@ -79,11 +79,11 @@ const assignTraining = async (req, res, next) => {
         }
 
         const result = await pool.query(
-            `INSERT INTO user_trainings (user_id, training_id, assigned_by) 
-             VALUES ($1, $2, $3) 
+            `INSERT INTO user_trainings (user_id, training_id, assigned_by, org_id) 
+             VALUES ($1, $2, $3, $4) 
              ON CONFLICT (user_id, training_id) DO NOTHING 
              RETURNING *`,
-            [user_id, training_id, req.user.id]
+            [user_id, training_id, req.user.id, req.user.org_id]
         );
 
         if (result.rows.length === 0) {
@@ -113,7 +113,7 @@ const completeTraining = async (req, res, next) => {
     try {
         const { assignment_id } = req.params;
 
-        const checkQuery = await pool.query('SELECT * FROM user_trainings WHERE id = $1', [assignment_id]);
+        const checkQuery = await pool.query('SELECT * FROM user_trainings WHERE id = $1 AND org_id = $2', [assignment_id, req.user.org_id]);
         if (checkQuery.rows.length === 0) {
             return res.status(404).json({ error: 'Assignment not found' });
         }

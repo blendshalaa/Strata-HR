@@ -27,6 +27,7 @@ const migrations = [
     'db-migrate-indexes.js',
     'db-migrate-audit.js',
     'db-migrate-employee-portal.js',
+    'db-migrate-training-org.js',
 ];
 
 async function runAll() {

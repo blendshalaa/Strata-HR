@@ -95,6 +95,7 @@ const getDashboardStats = async (req, res, next) => {
     let upcomingShifts = [];
     let pendingDocuments = 0;
     let activeGoals = 0;
+    let pendingTrainings = 0;
 
     if (!isAdmin) {
       // 1. Upcoming shifts
@@ -117,6 +118,13 @@ const getDashboardStats = async (req, res, next) => {
         [userId]
       );
       activeGoals = parseInt(goalsResult.rows[0].count);
+
+      // 4. Pending trainings
+      const trainingsResult = await pool.query(
+        "SELECT COUNT(*) as count FROM user_trainings WHERE user_id = $1 AND status != 'completed'",
+        [userId]
+      );
+      pendingTrainings = parseInt(trainingsResult.rows[0].count);
     }
 
     res.json({
@@ -129,7 +137,8 @@ const getDashboardStats = async (req, res, next) => {
         total_knowledge_articles: totalKnowledge,
         open_positions: openPositions,
         pending_documents: pendingDocuments,
-        active_goals: activeGoals
+        active_goals: activeGoals,
+        pending_trainings: pendingTrainings
       },
       upcoming_shifts: upcomingShifts,
       chat_activity: chatActivity.rows,

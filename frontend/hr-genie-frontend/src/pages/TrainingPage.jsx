@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { useToast } from '../context/ToastContext';
-import { BookOpen, CheckCircle2, Clock, Plus, Trash2, GraduationCap, Video, Users, Check } from 'lucide-react';
+import { BookOpen, CheckCircle2, Clock, Plus, Trash2, GraduationCap, Video, Users, Check, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 
@@ -135,10 +135,10 @@ const TrainingPage = () => {
                         <div className="p-2 rounded-lg" style={{ backgroundColor: '#EEF0FF' }}>
                             <GraduationCap className="w-5 h-5" style={{ color: '#5B4FE8' }} />
                         </div>
-                        <h1 className="text-xl font-bold text-zinc-900">Training & Learning</h1>
+                        <h1 className="text-xl font-bold text-zinc-900">{t('training.title', 'Training & Learning')}</h1>
                     </div>
                     <p className="text-[13px] text-zinc-500 ml-[52px]">
-                        Develop your skills and track your required company courses.
+                        {t('training.subtitle', 'Develop your skills and track your required company courses.')}
                     </p>
                 </div>
                 {isHR && (
@@ -146,7 +146,7 @@ const TrainingPage = () => {
                         onClick={() => setShowCreate(!showCreate)} 
                         className="bg-[#5B4FE8] hover:bg-[#4a3fd4] text-white px-5 py-2.5 rounded-md font-bold text-sm transition-colors flex items-center gap-2"
                     >
-                        <Plus className="w-4 h-4" /> Create Course
+                        <Plus className="w-4 h-4" /> {t('training.createCourse', 'Create Course')}
                     </button>
                 )}
             </div>
@@ -166,9 +166,9 @@ const TrainingPage = () => {
                                 <span className="absolute text-[13px] font-black text-zinc-900">{progressPercent}%</span>
                             </div>
                             <div>
-                                <h3 className="text-[15px] font-bold text-zinc-900 mb-1">Your Learning Progress</h3>
+                                <h3 className="text-[15px] font-bold text-zinc-900 mb-1">{t('training.yourProgress', 'Your Learning Progress')}</h3>
                                 <p className="text-[13px] text-zinc-500">
-                                    You have completed <span className="font-bold text-zinc-900">{completedCount}</span> out of <span className="font-bold text-zinc-900">{assignments.length}</span> assigned courses.
+                                    {t('training.completedInfo', 'You have completed {{completedCount}} out of {{totalCount}} assigned courses.', { completedCount, totalCount: assignments.length })}
                                 </p>
                             </div>
                         </div>
@@ -210,12 +210,12 @@ const TrainingPage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Left Column: My Assignments */}
                 <div className="space-y-4">
-                    <h2 className="text-[14px] font-black text-zinc-900 uppercase tracking-widest border-b border-zinc-200 pb-2">My Assignments</h2>
+                    <h2 className="text-[14px] font-black text-zinc-900 uppercase tracking-widest border-b border-zinc-200 pb-2">{t('training.myAssignments', 'My Assignments')}</h2>
                     
                     {assignments.length === 0 ? (
                         <div className="card text-center py-10">
                             <BookOpen className="w-8 h-8 text-zinc-300 mx-auto mb-3" />
-                            <p className="text-[13px] font-semibold text-zinc-500">You don't have any assigned training.</p>
+                            <p className="text-[13px] font-semibold text-zinc-500">{t('training.noAssignments', 'You don\'t have any assigned training.')}</p>
                         </div>
                     ) : (
                         assignments.map(a => (
@@ -266,12 +266,12 @@ const TrainingPage = () => {
 
                 {/* Right Column: Course Library (Full for Admin, List for employees to browse) */}
                 <div className="space-y-4">
-                    <h2 className="text-[14px] font-black text-zinc-900 uppercase tracking-widest border-b border-zinc-200 pb-2">Course Library</h2>
+                    <h2 className="text-[14px] font-black text-zinc-900 uppercase tracking-widest border-b border-zinc-200 pb-2">{t('training.courseLibrary', 'Course Library')}</h2>
                     
                     {trainings.length === 0 ? (
                         <div className="card text-center py-10">
                             <BookOpen className="w-8 h-8 text-zinc-300 mx-auto mb-3" />
-                            <p className="text-[13px] font-semibold text-zinc-500">No courses available in the library yet.</p>
+                            <p className="text-[13px] font-semibold text-zinc-500">{t('training.emptyLibrary', 'No courses available in the library yet.')}</p>
                         </div>
                     ) : (
                         trainings.map(t => (

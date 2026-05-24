@@ -184,7 +184,7 @@ const DashboardPage = () => {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4 text-amber-500" />
-                    <h3 className="text-[14px] font-bold text-zinc-900">Needs Your Attention</h3>
+                    <h3 className="text-[14px] font-bold text-zinc-900">{t('dashboard.needsYourAttention')}</h3>
                   </div>
                 </div>
                 <div className="space-y-3">
@@ -198,7 +198,7 @@ const DashboardPage = () => {
                   >
                     <div className="flex items-center gap-3">
                       <ShieldAlert className={`w-4 h-4 ${stats?.stats?.pending_documents > 0 ? 'text-rose-600' : 'text-zinc-400'}`} />
-                      <span className="text-[13px] font-medium text-zinc-900">Sign Documents</span>
+                      <span className="text-[13px] font-medium text-zinc-900">{t('dashboard.signDocuments')}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className={`text-[13px] font-black ${stats?.stats?.pending_documents > 0 ? 'text-rose-600' : 'text-zinc-400'}`}>
@@ -213,7 +213,7 @@ const DashboardPage = () => {
                   >
                     <div className="flex items-center gap-3">
                       <Trophy className="w-4 h-4 text-zinc-400" />
-                      <span className="text-[13px] font-medium text-zinc-900">Active Goals</span>
+                      <span className="text-[13px] font-medium text-zinc-900">{t('dashboard.activeGoals')}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-[13px] font-black text-zinc-400">
@@ -230,12 +230,24 @@ const DashboardPage = () => {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-[#5B4FE8]" />
-                    <h3 className="text-[14px] font-bold text-zinc-900">Training & Docs</h3>
+                    <h3 className="text-[14px] font-bold text-zinc-900">{t('dashboard.trainingAndDocs')}</h3>
                   </div>
                 </div>
-                <div className="flex items-center justify-center h-[120px] bg-zinc-50 rounded-md border border-zinc-200/50">
-                   <p className="text-[12px] font-semibold text-zinc-400 uppercase tracking-wider">No assigned training</p>
-                </div>
+                <button
+                  onClick={() => navigate('/training')}
+                  className={`w-full h-[120px] rounded-md border flex flex-col items-center justify-center transition-colors group ${
+                    stats?.stats?.pending_trainings > 0
+                      ? 'bg-[#EEF0FF] border-[#5B4FE8] hover:bg-[#E5E8FF]'
+                      : 'bg-zinc-50 border-zinc-200 hover:border-[#5B4FE8]'
+                  }`}
+                >
+                  <span className={`text-3xl font-black mb-2 ${stats?.stats?.pending_trainings > 0 ? 'text-[#5B4FE8]' : 'text-zinc-400'}`}>
+                    {stats?.stats?.pending_trainings ?? 0}
+                  </span>
+                  <span className={`text-[12px] font-semibold uppercase tracking-wider ${stats?.stats?.pending_trainings > 0 ? 'text-[#5B4FE8]' : 'text-zinc-400'}`}>
+                    {t('dashboard.assignedTraining')}
+                  </span>
+                </button>
               </div>
             </div>
           </div>
@@ -245,8 +257,8 @@ const DashboardPage = () => {
             <div className="card h-full">
               <div className="flex items-center justify-between mb-5">
                 <div>
-                  <h3 className="text-[14px] font-bold text-zinc-900">Upcoming Shifts</h3>
-                  <p className="text-[12px] text-zinc-500 mt-0.5">Your schedule for the next days</p>
+                  <h3 className="text-[14px] font-bold text-zinc-900">{t('dashboard.upcomingShifts')}</h3>
+                  <p className="text-[12px] text-zinc-500 mt-0.5">{t('dashboard.yourSchedule')}</p>
                 </div>
                 <Calendar className="w-4 h-4 text-zinc-400" />
               </div>
@@ -284,7 +296,7 @@ const DashboardPage = () => {
                 ) : (
                   <div className="py-10 text-center flex flex-col items-center">
                     <Calendar className="w-8 h-8 text-zinc-300 mb-2" />
-                    <p className="text-[13px] font-semibold text-zinc-500">No upcoming shifts scheduled.</p>
+                    <p className="text-[13px] font-semibold text-zinc-500">{t('dashboard.noUpcomingShifts')}</p>
                   </div>
                 )}
               </div>
