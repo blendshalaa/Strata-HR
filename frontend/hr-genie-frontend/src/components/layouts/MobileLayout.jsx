@@ -64,7 +64,7 @@ const MobileLayout = ({ children }) => {
       {/* Top Navbar */}
       <Navbar onMenuClick={() => setSidebarOpen(true)} isMobileLayout={true} />
 
-      <main className="flex-1 p-4">
+      <main className="flex-1 px-3 sm:px-4 py-4">
         {children}
       </main>
 

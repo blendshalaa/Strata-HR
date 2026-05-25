@@ -235,7 +235,7 @@ const ChatPage = () => {
 
       <div className="flex-1 bg-white rounded-lg border border-zinc-200 shadow-sm p-0 flex flex-col overflow-hidden">
         {/* Chat Header */}
-        <div className="flex items-center gap-4 px-6 py-4 border-b border-zinc-100 bg-white">
+        <div className="flex items-center gap-4 px-4 sm:px-6 py-4 border-b border-zinc-100 bg-white shrink-0">
           <button
             onClick={() => setSidebarOpen(true)}
             className="lg:hidden p-2 hover:bg-zinc-50 rounded-md transition-colors"
@@ -260,10 +260,10 @@ const ChatPage = () => {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-zinc-50/30">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6 bg-zinc-50/30">
           {messages.length === 0 ? (
             <div className="h-full flex items-center justify-center">
-              <div className="text-center max-w-sm px-6">
+              <div className="text-center max-w-sm px-2 sm:px-6">
                 <div className="relative w-20 h-20 mx-auto mb-6">
                   <div className="absolute inset-0 bg-[#5B4FE8] rounded-2xl rotate-6 opacity-20"></div>
                   <div className="absolute inset-0 bg-[#5B4FE8] rounded-2xl flex items-center justify-center shadow-lg transform transition-transform hover:-translate-y-1">

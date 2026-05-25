@@ -249,7 +249,7 @@ const ProfilePage = () => {
         : t('common.notSet');
 
     return (
-        <div className="space-y-8 animate-fadeIn max-w-4xl mx-auto pb-8">
+        <div className="space-y-5 sm:space-y-8 animate-fadeIn max-w-4xl mx-auto pb-8">
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-black text-zinc-900 tracking-tight mb-2">{t('profile.myProfile')}</h1>
@@ -267,8 +267,8 @@ const ProfilePage = () => {
 
             {/* Profile Header Card */}
             <div className="relative overflow-hidden bg-white border border-zinc-200 rounded-2xl shadow-sm">
-                <div className="absolute top-0 left-0 right-0 h-24" style={{ background: 'linear-gradient(to right, #EEF0FF, #E0DEFF)' }}></div>
-                <div className="relative p-6 sm:p-8 pt-12 sm:pt-16 flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8">
+                <div className="absolute top-0 left-0 right-0 h-20 sm:h-24" style={{ background: 'linear-gradient(to right, #EEF0FF, #E0DEFF)' }}></div>
+                <div className="relative p-5 sm:p-8 pt-10 sm:pt-16 flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-8">
                     <div className="relative z-10 p-1 bg-white rounded-full shadow-sm">
                         <AvatarEditor profile={profile} onAvatarChange={handleAvatarChange} />
                     </div>
@@ -297,7 +297,7 @@ const ProfilePage = () => {
                 </div>
             )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-8">
                 {/* Personal Information */}
                 <div className="space-y-4">
                     <h3 className="text-[14px] font-black text-zinc-900 uppercase tracking-widest border-b border-zinc-200 pb-2">{t('profile.personalInfo', 'Personal Information')}</h3>
@@ -332,27 +332,27 @@ const ProfilePage = () => {
                 </div>
             </div>
 
-            <div className="card p-8 border-none shadow-sm mt-4">
-                <h3 className="text-[14px] font-black text-zinc-900 uppercase tracking-widest mb-6">{t('profile.leaveBalances', 'Leave Balances')}</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="p-6 bg-sky-50/50 border border-sky-100 rounded-xl flex items-center justify-between">
+            <div className="bg-white rounded-2xl p-5 sm:p-8 border border-zinc-200 shadow-sm mt-2">
+                <h3 className="text-[14px] font-black text-zinc-900 uppercase tracking-widest mb-4 sm:mb-6">{t('profile.leaveBalances', 'Leave Balances')}</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                    <div className="p-4 sm:p-6 bg-sky-50/50 border border-sky-100 rounded-xl flex items-center justify-between">
                         <div>
-                            <p className="text-[12px] font-black text-sky-700 uppercase tracking-widest mb-1">{t('leave.vacation', 'Vacation')}</p>
-                            <p className="text-[13px] font-medium text-sky-600/80">Available paid time off</p>
+                            <p className="text-[11px] sm:text-[12px] font-black text-sky-700 uppercase tracking-widest mb-1">{t('leave.vacation', 'Vacation')}</p>
+                            <p className="text-[12px] sm:text-[13px] font-medium text-sky-600/80">Available paid time off</p>
                         </div>
                         <div className="text-right">
-                            <p className="text-4xl font-black text-sky-900">{profile.vacation_balance ?? 0}</p>
-                            <p className="text-[12px] text-sky-600 font-bold uppercase tracking-wider">{t('common.days', 'Days')}</p>
+                            <p className="text-3xl sm:text-4xl font-black text-sky-900">{profile.vacation_balance ?? 0}</p>
+                            <p className="text-[11px] sm:text-[12px] text-sky-600 font-bold uppercase tracking-wider">{t('common.days', 'Days')}</p>
                         </div>
                     </div>
-                    <div className="p-6 bg-amber-50/50 border border-amber-100 rounded-xl flex items-center justify-between">
+                    <div className="p-4 sm:p-6 bg-amber-50/50 border border-amber-100 rounded-xl flex items-center justify-between">
                         <div>
-                            <p className="text-[12px] font-black text-amber-700 uppercase tracking-widest mb-1">{t('leave.sickLeave', 'Sick Leave')}</p>
-                            <p className="text-[13px] font-medium text-amber-600/80">Available sick time off</p>
+                            <p className="text-[11px] sm:text-[12px] font-black text-amber-700 uppercase tracking-widest mb-1">{t('leave.sickLeave', 'Sick Leave')}</p>
+                            <p className="text-[12px] sm:text-[13px] font-medium text-amber-600/80">Available sick time off</p>
                         </div>
                         <div className="text-right">
-                            <p className="text-4xl font-black text-amber-900">{profile.sick_leave_balance ?? 0}</p>
-                            <p className="text-[12px] text-amber-600 font-bold uppercase tracking-wider">{t('common.days', 'Days')}</p>
+                            <p className="text-3xl sm:text-4xl font-black text-amber-900">{profile.sick_leave_balance ?? 0}</p>
+                            <p className="text-[11px] sm:text-[12px] text-amber-600 font-bold uppercase tracking-wider">{t('common.days', 'Days')}</p>
                         </div>
                     </div>
                 </div>
