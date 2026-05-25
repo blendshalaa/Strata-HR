@@ -21,7 +21,6 @@ const MyTimesheetsPage = () => {
     const [activeTab, setActiveTab] = useState('list');
     const [showManualEntry, setShowManualEntry] = useState(false);
     const [manualForm, setManualForm] = useState({ clock_in: '', clock_out: '', notes: '' });
-    const [manualForm, setManualForm] = useState({ clock_in: '', clock_out: '', notes: '' });
     const [manualLoading, setManualLoading] = useState(false);
     const isMobile = useIsMobile();
 
