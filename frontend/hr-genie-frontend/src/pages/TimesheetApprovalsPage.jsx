@@ -158,7 +158,7 @@ const TimesheetApprovalsPage = () => {
     const history = timesheets.filter(t => t.status !== 'pending');
 
     return (
-        <div className="space-y-6 animate-fadeIn">
+        <div className="space-y-4 sm:space-y-6 animate-fadeIn">
             {/* Header */}
             <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
                 <div>

@@ -277,7 +277,7 @@ const DepartmentsPage = () => {
     }
 
     return (
-        <div className="space-y-6 animate-fadeIn">
+        <div className="space-y-4 sm:space-y-6 animate-fadeIn">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">{t('departments.title')}</h1>

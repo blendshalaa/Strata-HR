@@ -327,7 +327,7 @@ const RecruitmentPage = () => {
     );
 
     return (
-        <div className="space-y-6 animate-fadeIn">
+        <div className="space-y-4 sm:space-y-6 animate-fadeIn">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">{t('recruitment.title')}</h1>
@@ -812,7 +812,7 @@ const AIScreeningModal = ({ jobId, jobTitle, onClose }) => {
                             </button>
                         </div>
                     ) : (
-                        <div className="space-y-6 animate-fadeIn">
+                        <div className="space-y-4 sm:space-y-6 animate-fadeIn">
                             <div className="flex flex-col md:flex-row gap-8 items-center bg-zinc-50 p-6 rounded-lg border border-zinc-100">
                                 <div className="relative">
                                     <svg className="w-28 h-28 transform -rotate-90">

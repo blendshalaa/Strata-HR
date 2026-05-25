@@ -84,7 +84,7 @@ const ReportsPage = () => {
     const leaveStatusColors = { approved: '#5B4FE8', pending: '#A89CFF', rejected: '#DC2626' };
 
     return (
-        <div className="space-y-6 animate-fadeIn">
+        <div className="space-y-4 sm:space-y-6 animate-fadeIn">
             {/* Header */}
             <div>
                 <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-1 flex items-center gap-2">

@@ -73,7 +73,7 @@ const KnowledgePage = () => {
 
   return (
     <>
-    <div className="space-y-6 animate-fadeIn">
+    <div className="space-y-4 sm:space-y-6 animate-fadeIn">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">{t('knowledge.title')}</h1>

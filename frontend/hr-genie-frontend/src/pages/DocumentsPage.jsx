@@ -189,7 +189,7 @@ const DocumentsPage = () => {
     const inputClass = "w-full px-4 py-2.5 bg-white border border-zinc-300 rounded-md text-zinc-900 placeholder-zinc-400 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all text-sm font-medium";
 
     return (
-        <div className="space-y-6 animate-fadeIn">
+        <div className="space-y-4 sm:space-y-6 animate-fadeIn">
             {/* Header */}
             <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
                 <div>

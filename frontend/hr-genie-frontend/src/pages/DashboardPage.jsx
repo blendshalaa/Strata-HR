@@ -79,7 +79,7 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <div className="space-y-4 sm:space-y-6 animate-fadeIn">
       {/* Welcome Banner */}
       <div className="rounded-lg p-6 sm:p-8" style={{ backgroundColor: '#5B4FE8', border: '0.5px solid rgba(91,79,232,0.3)' }}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

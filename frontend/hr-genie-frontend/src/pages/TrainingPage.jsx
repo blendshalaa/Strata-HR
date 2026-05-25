@@ -127,7 +127,7 @@ const TrainingPage = () => {
     const progressPercent = assignments.length > 0 ? Math.round((completedCount / assignments.length) * 100) : 0;
 
     return (
-        <div className="space-y-6 animate-fadeIn">
+        <div className="space-y-4 sm:space-y-6 animate-fadeIn">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>

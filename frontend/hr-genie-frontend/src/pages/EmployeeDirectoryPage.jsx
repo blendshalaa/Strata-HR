@@ -41,7 +41,7 @@ const EmployeeDirectoryPage = () => {
     }
 
     return (
-        <div className="space-y-6 animate-fadeIn">
+        <div className="space-y-4 sm:space-y-6 animate-fadeIn">
             <div>
                 <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-1">{t('directory.title')}</h1>
                 <p className="text-zinc-500 text-sm">{t('directory.subtitle')}</p>

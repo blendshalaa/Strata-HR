@@ -162,7 +162,7 @@ const GoalsPage = ({ embedded = false }) => {
 
     return (
         <>
-        <div className="space-y-6 animate-fadeIn">
+        <div className="space-y-4 sm:space-y-6 animate-fadeIn">
             {/* Header */}
             {!embedded && (
             <div className="flex items-end justify-between">
