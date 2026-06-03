@@ -5,6 +5,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 const api = axios.create({
   baseURL: API_URL,
   withCredentials: true,
+  timeout: 30000, // 30s timeout — prevents infinite hangs during backend cold starts
   headers: {
     'Content-Type': 'application/json',
   },
@@ -17,17 +18,30 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    // Retry config defaults
+    config.__retryCount = config.__retryCount || 0;
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// Handle response errors
+// Handle response errors — includes retry logic for cold-start resilience
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const config = error.config;
+
+    // Retry on network errors or timeouts (Render cold-start), up to 2 retries
+    const isRetryable = !error.response && (error.code === 'ECONNABORTED' || error.message?.includes('Network Error'));
+    if (isRetryable && config && config.__retryCount < 2) {
+      config.__retryCount += 1;
+      const delay = config.__retryCount * 3000; // 3s, 6s
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return api(config);
+    }
+
     if (error.response?.status === 401) {
-      const isLoginRequest = error.config?.url?.includes('/auth/login');
+      const isLoginRequest = config?.url?.includes('/auth/login');
       if (!isLoginRequest) {
         // Session expired — show a message before redirecting
         localStorage.removeItem('token');
@@ -40,6 +54,16 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+/**
+ * Wake-up ping — fire-and-forget request to the health endpoint.
+ * Call this early to start the Render cold-boot in the background
+ * so that subsequent authenticated requests respond faster.
+ */
+export const wakeUpBackend = () => {
+  const baseUrl = API_URL.replace('/api', '');
+  fetch(`${baseUrl}/health`, { mode: 'cors' }).catch(() => {});
+};
 
 
 // Auth endpoints

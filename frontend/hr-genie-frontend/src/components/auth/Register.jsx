@@ -53,26 +53,40 @@ const Register = () => {
   const passwordsMatch = !formData.confirmPassword || formData.password === formData.confirmPassword;
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  const [slowRegister, setSlowRegister] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     if (formData.password !== formData.confirmPassword) { setError('Passwords do not match.'); return; }
     if (formData.password.length < 8) { setError('Password must be at least 8 characters.'); return; }
     setLoading(true);
+    setSlowRegister(false);
+
+    // If registration takes >5s, show a "server waking up" hint
+    const slowTimer = setTimeout(() => setSlowRegister(true), 5000);
+
     try {
       const { confirmPassword, ...payload } = formData;
       if (mode === 'create') {
         delete payload.invite_code;
-        if (!payload.org_name.trim()) { setError(t('auth.orgNameRequired')); setLoading(false); return; }
+        if (!payload.org_name.trim()) { setError(t('auth.orgNameRequired')); clearTimeout(slowTimer); setLoading(false); return; }
       } else {
         delete payload.org_name;
-        if (!payload.invite_code.trim()) { setError(t('auth.inviteCodeRequired')); setLoading(false); return; }
+        if (!payload.invite_code.trim()) { setError(t('auth.inviteCodeRequired')); clearTimeout(slowTimer); setLoading(false); return; }
       }
       await register(payload);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error || t('auth.registrationFailed'));
+      const isNetworkError = !err.response && (err.code === 'ECONNABORTED' || err.message?.includes('Network Error'));
+      setError(
+        isNetworkError
+          ? 'The server is still waking up. Please wait a moment and try again.'
+          : err.response?.data?.error || t('auth.registrationFailed')
+      );
     } finally {
+      clearTimeout(slowTimer);
+      setSlowRegister(false);
       setLoading(false);
     }
   };
@@ -285,7 +299,7 @@ const Register = () => {
               onMouseEnter={e => { if (!loading) e.currentTarget.style.backgroundColor = '#4a3fd4'; }}
               onMouseLeave={e => { if (!loading) e.currentTarget.style.backgroundColor = '#5B4FE8'; }}
             >
-              {loading ? t('auth.creatingAccount') : (
+              {loading ? (slowRegister ? 'Server is waking up…' : t('auth.creatingAccount')) : (
                 <>
                   {mode === 'create' ? t('auth.createOrgAndAccount') : t('auth.joinAndCreateAccount')}
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />

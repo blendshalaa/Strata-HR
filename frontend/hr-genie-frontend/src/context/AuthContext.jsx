@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
-import { authAPI } from '../services/api';
+import { authAPI, wakeUpBackend } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -14,9 +14,15 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [coldStarting, setColdStarting] = useState(false);
   const [token, setToken] = useState(localStorage.getItem('token'));
   // Skip fetchUser when login/register already provided user data
   const skipFetchRef = useRef(false);
+
+  // Fire a wake-up ping to the backend on first mount (fire-and-forget)
+  useEffect(() => {
+    wakeUpBackend();
+  }, []);
 
   useEffect(() => {
     if (token) {
@@ -35,6 +41,11 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     setLoading(true);
+    setColdStarting(false);
+
+    // If the fetch takes more than 5s, the backend is likely cold-starting
+    const coldStartTimer = setTimeout(() => setColdStarting(true), 5000);
+
     try {
       const response = await authAPI.getMe();
       setUser(response.data.user);
@@ -42,6 +53,8 @@ export const AuthProvider = ({ children }) => {
       console.error('Failed to fetch user:', error);
       logout();
     } finally {
+      clearTimeout(coldStartTimer);
+      setColdStarting(false);
       setLoading(false);
     }
   };
@@ -99,6 +112,7 @@ export const AuthProvider = ({ children }) => {
     user,
     token,
     loading,
+    coldStarting,
     login,
     register,
     logout,

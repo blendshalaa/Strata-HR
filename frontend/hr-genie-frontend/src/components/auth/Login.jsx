@@ -23,16 +23,30 @@ const Login = () => {
     }
   }, []);
 
+  const [slowLogin, setSlowLogin] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+    setSlowLogin(false);
+
+    // If login takes >5s, show a "server waking up" hint
+    const slowTimer = setTimeout(() => setSlowLogin(true), 5000);
+
     try {
       await login(email, password);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error || t('auth.invalidCredentials'));
+      const isNetworkError = !err.response && (err.code === 'ECONNABORTED' || err.message?.includes('Network Error'));
+      setError(
+        isNetworkError
+          ? 'The server is still waking up. Please wait a moment and try again.'
+          : err.response?.data?.error || t('auth.invalidCredentials')
+      );
     } finally {
+      clearTimeout(slowTimer);
+      setSlowLogin(false);
       setLoading(false);
     }
   };
@@ -196,7 +210,7 @@ const Login = () => {
               onMouseEnter={e => { if (!loading) e.currentTarget.style.backgroundColor = '#4a3fd4'; }}
               onMouseLeave={e => { if (!loading) e.currentTarget.style.backgroundColor = '#5B4FE8'; }}
             >
-              {loading ? t('auth.signingIn') : (
+              {loading ? (slowLogin ? 'Server is waking up…' : t('auth.signingIn')) : (
                 <>
                   {t('auth.signIn')}
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
