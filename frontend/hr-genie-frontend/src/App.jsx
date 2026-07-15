@@ -38,34 +38,31 @@ const TrainingPage = lazy(() => import('./pages/TrainingPage'));
 
 
 const ColdStartLoader = () => (
-  <div className="min-h-screen flex flex-col items-center justify-center gap-5" style={{ backgroundColor: '#F5F4FF' }}>
-    <div className="relative">
-      <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#5B4FE8' }}>
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 2L2 7l10 5 10-5-10-5z" />
-          <path d="M2 17l10 5 10-5" />
-          <path d="M2 12l10 5 10-5" />
-        </svg>
-      </div>
-      <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white animate-pulse" style={{ backgroundColor: '#F59E0B' }} />
+  <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ backgroundColor: '#F7F7F6' }}>
+    <div style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: '#111318', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+        <path d="M2 17l10 5 10-5" />
+        <path d="M2 12l10 5 10-5" />
+      </svg>
     </div>
-    <div className="text-center">
-      <h2 className="text-lg font-bold tracking-tight" style={{ color: '#0F0D2E' }}>Waking up the server…</h2>
-      <p className="text-sm mt-1.5 max-w-xs" style={{ color: '#71717A' }}>
-        The server is starting from a cold state. This usually takes 20–40 seconds on the first visit.
+    <div style={{ textAlign: 'center' }}>
+      <p style={{ fontSize: '14px', fontWeight: '500', color: '#111318', marginBottom: '4px' }}>Starting up…</p>
+      <p style={{ fontSize: '12px', color: '#9CA3AF', maxWidth: '260px', lineHeight: '1.5' }}>
+        The server is waking from a cold state. Usually takes 20–40 seconds.
       </p>
     </div>
-    <div className="flex items-center gap-1.5 mt-1">
-      <div className="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: '#5B4FE8', animationDelay: '0ms' }} />
-      <div className="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: '#5B4FE8', animationDelay: '150ms' }} />
-      <div className="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: '#5B4FE8', animationDelay: '300ms' }} />
+    <div style={{ display: 'flex', gap: '4px', marginTop: '4px' }}>
+      {[0, 150, 300].map(d => (
+        <div key={d} style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#111318', animation: `bounce 1s ${d}ms infinite` }} />
+      ))}
     </div>
   </div>
 );
 
 const QuickSpinner = () => (
-  <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F5F4FF' }}>
-    <div className="w-8 h-8 border-3 rounded-full animate-spin" style={{ borderColor: '#EEF0FF', borderTopColor: '#5B4FE8' }} />
+  <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F7F7F6' }}>
+    <div style={{ width: '20px', height: '20px', border: '2px solid #E5E7EB', borderTopColor: '#111318', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} />
   </div>
 );
 
@@ -92,7 +89,7 @@ const PublicRoute = ({ children }) => {
 // A simple loading fallback for lazy-loaded routes
 const PageLoader = () => (
   <div className="flex items-center justify-center h-[60vh]">
-    <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
+    <div style={{ width: '18px', height: '18px', border: '1.5px solid #E5E7EB', borderTopColor: '#111318', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} />
   </div>
 );
 

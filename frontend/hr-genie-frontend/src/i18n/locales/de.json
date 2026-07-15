@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "HR Genie",
+    "appName": "Strata HR",
     "loading": "Wird geladen...",
     "save": "Speichern",
     "cancel": "Abbrechen",
@@ -219,7 +219,7 @@
   "chat": {
     "hrAssistant": "HR-Assistent",
     "aiPoweredOnline": "KI-gestützt • Online",
-    "welcomeToHrGenie": "Willkommen bei HR Genie",
+    "welcomeToHrGenie": "Willkommen bei Strata HR",
     "imYourAiAssistant": "Ich bin Ihr KI-Assistent. Fragen Sie mich zu Richtlinien, Urlaubsanträgen, Leistungen oder Unternehmensverfahren.",
     "commonQuestions": "Häufige Fragen",
     "sickLeavePolicy": "Wie ist die Krankenurlaubs-Richtlinie?",

@@ -88,7 +88,7 @@ const TimeClockWidget = ({ compact = false }) => {
           className={`shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-md font-semibold text-sm transition-all ${
             isClockedIn
               ? 'bg-white text-zinc-900 border border-zinc-300 hover:bg-zinc-50'
-              : 'bg-[#5B4FE8] text-white hover:bg-[#4a3fd4]'
+              : 'bg-[#111318] text-white hover:bg-[#374151]'
           }`}
         >
           {isClockedIn ? (
@@ -131,7 +131,7 @@ const TimeClockWidget = ({ compact = false }) => {
         className={`w-full max-w-[200px] flex items-center justify-center gap-2 py-3.5 rounded-md font-semibold text-sm transition-all ${
           isClockedIn
             ? 'bg-white text-zinc-900 border border-zinc-300 hover:bg-zinc-100'
-            : 'bg-[#5B4FE8] text-white border border-transparent hover:bg-[#4a3fd4]'
+            : 'bg-[#111318] text-white border border-transparent hover:bg-[#374151]'
         }`}
       >
         {isClockedIn ? (

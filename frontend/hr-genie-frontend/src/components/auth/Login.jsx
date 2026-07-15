@@ -13,6 +13,7 @@ const Login = () => {
   const [sessionExpired, setSessionExpired] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [slowLogin, setSlowLogin] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -23,25 +24,20 @@ const Login = () => {
     }
   }, []);
 
-  const [slowLogin, setSlowLogin] = useState(false);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
     setSlowLogin(false);
-
-    // If login takes >5s, show a "server waking up" hint
     const slowTimer = setTimeout(() => setSlowLogin(true), 5000);
-
     try {
       await login(email, password);
       navigate('/dashboard');
     } catch (err) {
-      const isNetworkError = !err.response && (err.code === 'ECONNABORTED' || err.message?.includes('Network Error'));
+      const isNetwork = !err.response && (err.code === 'ECONNABORTED' || err.message?.includes('Network Error'));
       setError(
-        isNetworkError
-          ? 'The server is still waking up. Please wait a moment and try again.'
+        isNetwork
+          ? 'The server is starting up. Please wait a moment and try again.'
           : err.response?.data?.error || t('auth.invalidCredentials')
       );
     } finally {
@@ -53,150 +49,160 @@ const Login = () => {
 
   return (
     <div
-      className="min-h-screen flex"
-      style={{ backgroundColor: '#F5F4FF', fontFamily: "'Inter', system-ui, sans-serif" }}
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        backgroundColor: '#F7F7F6',
+        fontFamily: "'Hanken Grotesk', system-ui, sans-serif",
+      }}
     >
-      {/* Left panel — brand */}
+      {/* Left panel — brand + features */}
       <div
-        className="hidden lg:flex lg:w-[420px] xl:w-[480px] flex-col justify-between p-12 flex-shrink-0"
-        style={{ backgroundColor: '#1E1B4B' }}
+        className="hidden lg:flex flex-col justify-between p-12 flex-shrink-0"
+        style={{ width: '400px', backgroundColor: '#1A1D23' }}
       >
-        <div className="flex items-center gap-3">
-          <Logo className="w-10 h-10" />
-          <span className="text-white font-bold text-[17px]">{t('common.appName')}</span>
+        {/* Logo */}
+        <div className="flex items-center gap-2.5">
+          <Logo className="w-8 h-8" color="#ffffff" />
+          <span style={{ color: '#fff', fontSize: '14px', fontWeight: '500' }}>{t('common.appName')}</span>
         </div>
 
+        {/* Copy */}
         <div>
-          <h2 className="text-3xl font-bold text-white leading-tight mb-4">
-            Your AI-powered<br />HR workspace
+          <h2 style={{ fontSize: '22px', fontWeight: '500', color: '#fff', lineHeight: '1.35', marginBottom: '12px' }}>
+            Human Resources.<br />Engineered.
           </h2>
-          <p className="text-[15px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>
-            Manage leave, payroll, performance, and your team — all in one place.
+          <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.45)', lineHeight: '1.7', marginBottom: '28px' }}>
+            Manage your entire workforce — leave, payroll, performance, and compliance — from a single, focused tool.
           </p>
 
-          <div className="mt-10 space-y-3">
+          {/* Feature list */}
+          <div className="space-y-2.5">
             {[
-              'AI Copilot for instant HR answers',
-              'Leave & payroll in seconds',
-              'Real-time team insights',
-            ].map((f) => (
-              <div key={f} className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(91,79,232,0.4)' }}>
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                    <path d="M2 5l2 2 4-4" stroke="#A89CFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-                <span className="text-[13px]" style={{ color: 'rgba(255,255,255,0.7)' }}>{f}</span>
+              'AI assistant for instant HR answers',
+              'Leave & approval workflows',
+              'Payroll, shifts & timesheets',
+              'Real-time attendance tracking',
+            ].map(f => (
+              <div key={f} className="flex items-center gap-2.5">
+                <span
+                  style={{
+                    width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#FFFFFF',
+                    display: 'inline-block', flexShrink: 0,
+                  }}
+                />
+                <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)' }}>{f}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <p className="text-[12px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
-          © {new Date().getFullYear()} HR Genie. All rights reserved.
+        <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.18)' }}>
+          © {new Date().getFullYear()} Strata HR. All rights reserved.
         </p>
       </div>
 
       {/* Right panel — form */}
-      <div className="flex-1 flex flex-col justify-center py-12 px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-[400px]">
+      <div className="flex-1 flex items-center justify-center px-6 lg:px-16">
+        <div style={{ maxWidth: '360px', width: '100%', paddingTop: '40px', paddingBottom: '40px' }}>
 
           {/* Mobile logo */}
-          <div className="flex items-center gap-2.5 mb-10 lg:hidden">
-            <Logo className="w-8 h-8" />
-            <span className="font-bold text-[16px]" style={{ color: '#0F0D2E' }}>{t('common.appName')}</span>
+          <div className="flex items-center gap-2 mb-10 lg:hidden">
+            <Logo className="w-7 h-7" />
+            <span style={{ fontSize: '14px', fontWeight: '500', color: '#111318' }}>{t('common.appName')}</span>
           </div>
 
-          <div className="mb-8">
-            <h1 className="text-[24px] font-bold mb-1" style={{ color: '#0F0D2E' }}>
+          <div style={{ marginBottom: '28px' }}>
+            <h1 style={{ fontSize: '18px', fontWeight: '500', color: '#111318', marginBottom: '4px' }}>
               {t('auth.signInToAccount')}
             </h1>
-            <p className="text-[14px]" style={{ color: '#6B7280' }}>{t('auth.yourHrWorkspace')}</p>
+            <p style={{ fontSize: '13px', color: '#9CA3AF' }}>{t('auth.yourHrWorkspace')}</p>
           </div>
 
-          {/* Alerts */}
+          {/* Session expired notice */}
           {sessionExpired && (
-            <div className="mb-5 p-3 rounded-lg flex items-start gap-2.5" style={{ backgroundColor: '#FFF8EB', border: '0.5px solid #FDE68A' }}>
-              <Clock className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: '#B45309' }} />
-              <p className="text-[13px] font-medium" style={{ color: '#92400E' }}>Your session expired. Please sign in again.</p>
+            <div
+              className="flex items-center gap-2 mb-4 px-3 py-2 rounded"
+              style={{ backgroundColor: '#FFFBEB', border: '1px solid #FDE68A', fontSize: '12px', color: '#92400E' }}
+            >
+              <Clock className="w-3.5 h-3.5 flex-shrink-0" />
+              Your session expired. Please sign in again.
             </div>
           )}
+
+          {/* Error */}
           {error && (
-            <div className="mb-5 p-3 rounded-lg flex items-start gap-2.5" style={{ backgroundColor: '#FEF2F2', border: '0.5px solid #FECACA' }}>
-              <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: '#DC2626' }} />
-              <p className="text-[13px] font-medium" style={{ color: '#991B1B' }}>{error}</p>
+            <div
+              className="flex items-center gap-2 mb-4 px-3 py-2 rounded"
+              style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA', fontSize: '12px', color: '#DC2626' }}
+            >
+              <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+              {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email */}
             <div>
-              <label className="block text-[13px] font-semibold mb-1.5" style={{ color: '#0F0D2E' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', color: '#374151', marginBottom: '5px' }}>
                 {t('auth.emailAddress')}
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#9CA3AF' }} />
+                <Mail
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5"
+                  style={{ color: '#D1D5DB' }}
+                />
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
                   placeholder="you@company.com"
                   autoComplete="email"
                   required
-                  className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[16px] sm:text-[14px] outline-none transition-all"
-                  style={{
-                    backgroundColor: '#fff',
-                    border: '0.5px solid rgba(0,0,0,0.12)',
-                    color: '#0F0D2E',
-                  }}
-                  onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
-                  onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
+                  className="input"
+                  style={{ paddingLeft: '34px' }}
                 />
               </div>
             </div>
 
             {/* Password */}
             <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-[13px] font-semibold" style={{ color: '#0F0D2E' }}>
+              <div className="flex items-center justify-between" style={{ marginBottom: '5px' }}>
+                <label style={{ fontSize: '12px', fontWeight: '500', color: '#374151' }}>
                   {t('auth.password')}
                 </label>
                 <Link
                   to="/forgot-password"
-                  className="text-[13px] font-medium transition-colors"
-                  style={{ color: '#5B4FE8' }}
+                  style={{ fontSize: '12px', color: '#111318' }}
                 >
                   {t('auth.forgotPassword')}
                 </Link>
               </div>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#9CA3AF' }} />
+                <Lock
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5"
+                  style={{ color: '#D1D5DB' }}
+                />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   placeholder="••••••••"
                   autoComplete="current-password"
                   required
-                  className="w-full pl-9 pr-10 py-2.5 rounded-lg text-[16px] sm:text-[14px] outline-none transition-all"
-                  style={{
-                    backgroundColor: '#fff',
-                    border: '0.5px solid rgba(0,0,0,0.12)',
-                    color: '#0F0D2E',
-                  }}
-                  onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
-                  onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
+                  className="input"
+                  style={{ paddingLeft: '34px', paddingRight: '36px' }}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   tabIndex={-1}
                   className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
-                  style={{ color: '#9CA3AF' }}
-                  onMouseEnter={e => e.currentTarget.style.color = '#5B4FE8'}
-                  onMouseLeave={e => e.currentTarget.style.color = '#9CA3AF'}
+                  style={{ color: '#D1D5DB', background: 'none', border: 'none', cursor: 'pointer' }}
+                  onMouseEnter={e => e.currentTarget.style.color = '#6B7280'}
+                  onMouseLeave={e => e.currentTarget.style.color = '#D1D5DB'}
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                 </button>
               </div>
             </div>
@@ -205,27 +211,19 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 py-2.5 rounded-lg text-[14px] font-semibold text-white flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
-              style={{ backgroundColor: loading ? '#7B6EF0' : '#5B4FE8' }}
-              onMouseEnter={e => { if (!loading) e.currentTarget.style.backgroundColor = '#4a3fd4'; }}
-              onMouseLeave={e => { if (!loading) e.currentTarget.style.backgroundColor = '#5B4FE8'; }}
+              className="btn-primary w-full justify-center"
+              style={{ padding: '9px 16px', fontSize: '13px', marginTop: '4px' }}
             >
-              {loading ? (slowLogin ? 'Server is waking up…' : t('auth.signingIn')) : (
-                <>
-                  {t('auth.signIn')}
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                </>
-              )}
+              {loading
+                ? (slowLogin ? 'Server is starting up…' : t('auth.signingIn'))
+                : <>{t('auth.signIn')} <ArrowRight className="w-3.5 h-3.5" /></>
+              }
             </button>
           </form>
 
-          <p className="mt-6 text-center text-[13px]" style={{ color: '#6B7280' }}>
+          <p style={{ marginTop: '20px', fontSize: '12px', color: '#9CA3AF', textAlign: 'center' }}>
             {t('auth.dontHaveAccount')}{' '}
-            <Link
-              to="/register"
-              className="font-semibold transition-colors"
-              style={{ color: '#5B4FE8' }}
-            >
+            <Link to="/register" style={{ color: '#111318', fontWeight: '500' }}>
               {t('auth.signUp')}
             </Link>
           </p>

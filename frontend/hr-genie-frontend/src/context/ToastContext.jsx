@@ -20,7 +20,7 @@ const colors = {
     success: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
     error: 'bg-rose-500/10 border-rose-500/30 text-rose-400',
     warning: 'bg-amber-500/10 border-amber-500/30 text-amber-400',
-    info: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400',
+    info: 'bg-zinc-500/10 border-zinc-500/30 text-zinc-400',
 };
 
 let toastId = 0;

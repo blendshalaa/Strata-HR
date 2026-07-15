@@ -61,7 +61,7 @@ const LeaveRequestForm = ({ onSubmit, compact = false }) => {
           <div>
             <label className="block text-[13px] font-bold text-zinc-700 mb-2">{t('leaveForm.leaveType')}</label>
             <select name="type" value={formData.type} onChange={handleChange}
-              className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors"
+              className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
               required>
               <option value="vacation">{t('leaveForm.vacation')}</option>
               <option value="sick">{t('leaveForm.sickLeave')}</option>
@@ -72,24 +72,24 @@ const LeaveRequestForm = ({ onSubmit, compact = false }) => {
             <div>
               <label className="block text-[13px] font-bold text-zinc-700 mb-2">{t('leaveForm.startDate')}</label>
               <input type="date" name="start_date" value={formData.start_date} onChange={handleChange}
-                className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors"
+                className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                 required />
             </div>
             <div>
               <label className="block text-[13px] font-bold text-zinc-700 mb-2">{t('leaveForm.endDate')}</label>
               <input type="date" name="end_date" value={formData.end_date} onChange={handleChange}
-                className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors"
+                className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
                 required />
             </div>
           </div>
           <div>
             <label className="block text-[13px] font-bold text-zinc-700 mb-2">{t('leaveForm.reason')}</label>
             <textarea name="reason" value={formData.reason} onChange={handleChange} rows="3"
-              className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors resize-none"
+              className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors resize-none"
               placeholder={t('leaveForm.reasonPlaceholder')} />
           </div>
           <button type="submit" disabled={loading}
-            className={`w-full py-2.5 text-[13px] font-bold uppercase tracking-wider text-white bg-[#5B4FE8] border border-[#5B4FE8] rounded-md hover:bg-[#4a3fd4] transition-colors ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+            className={`w-full py-2.5 text-[13px] font-bold uppercase tracking-wider text-white bg-[#111318] border border-[#111318] rounded-md hover:bg-[#374151] transition-colors ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}>
             {loading ? t('common.submitting') : t('leaveForm.submitRequest')}
           </button>
         </form>
@@ -185,7 +185,7 @@ const LeaveRequestForm = ({ onSubmit, compact = false }) => {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-2.5 text-[13px] font-bold uppercase tracking-wider text-white bg-[#5B4FE8] border border-[#5B4FE8] rounded-md hover:bg-[#4a3fd4] transition-colors ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`w-full py-2.5 text-[13px] font-bold uppercase tracking-wider text-white bg-[#111318] border border-[#111318] rounded-md hover:bg-[#374151] transition-colors ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           {loading ? t('common.submitting') : t('leaveForm.submitRequest')}
         </button>

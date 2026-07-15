@@ -96,7 +96,7 @@ const AvatarEditor = ({ profile, onAvatarChange }) => {
                     <div
                         className="w-full h-full rounded-full flex items-center justify-center border-2"
                         style={{
-                            background: 'linear-gradient(135deg, #5B4FE8 0%, #7C6FFF 100%)',
+                            background: 'linear-gradient(135deg, #111318 0%, #374151 100%)',
                             borderColor: '#E0DEFF',
                         }}
                     >
@@ -140,12 +140,12 @@ const AvatarEditor = ({ profile, onAvatarChange }) => {
                     disabled={uploading}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-medium transition-colors"
                     style={{
-                        backgroundColor: '#F5F4FF',
-                        color: '#5B4FE8',
+                        backgroundColor: '#F7F7F6',
+                        color: '#111318',
                         border: '1px solid #E0DEFF',
                     }}
                     onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#EBE9FF'; }}
-                    onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#F5F4FF'; }}
+                    onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#F7F7F6'; }}
                 >
                     <Camera className="w-3 h-3" />
                     {t('profile.uploadPhoto', 'Upload Photo')}
@@ -227,7 +227,7 @@ const ProfilePage = () => {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="w-6 h-6 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin" />
+                <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
             </div>
         );
     }
@@ -267,7 +267,7 @@ const ProfilePage = () => {
 
             {/* Profile Header Card */}
             <div className="relative overflow-hidden bg-white border border-zinc-200 rounded-2xl shadow-sm">
-                <div className="absolute top-0 left-0 right-0 h-20 sm:h-24" style={{ background: 'linear-gradient(to right, #EEF0FF, #E0DEFF)' }}></div>
+                <div className="absolute top-0 left-0 right-0 h-20 sm:h-24" style={{ background: 'linear-gradient(to right, #EEF2FF, #E0DEFF)' }}></div>
                 <div className="relative p-5 sm:p-8 pt-10 sm:pt-16 flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-8">
                     <div className="relative z-10 p-1 bg-white rounded-full shadow-sm">
                         <AvatarEditor profile={profile} onAvatarChange={handleAvatarChange} />
@@ -369,7 +369,7 @@ const ProfilePage = () => {
                     <button
                         onClick={handleSave}
                         disabled={saving}
-                        className="flex items-center gap-2 px-4 py-2 bg-[#5B4FE8] text-white rounded-md text-[13px] font-semibold hover:bg-[#4a3fd4] transition-colors disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 py-2 bg-[#111318] text-white rounded-md text-[13px] font-semibold hover:bg-[#374151] transition-colors disabled:opacity-50"
                     >
                         <Save className="w-3 h-3" />
                         {saving ? t('common.saving') : t('profile.saveChanges')}
@@ -381,7 +381,7 @@ const ProfilePage = () => {
 };
 
 const InfoCard = ({ icon: Icon, label, value, editing, editValue, onChange }) => (
-    <div className="bg-white border border-zinc-200 rounded-xl p-4 flex items-center gap-4 transition-all hover:border-[#C4BDFF] shadow-sm">
+    <div className="bg-white border border-zinc-200 rounded-xl p-4 flex items-center gap-4 transition-all hover:border-[#C7D2FE] shadow-sm">
         <div className="p-2.5 bg-zinc-50 rounded-lg border border-zinc-100 shrink-0">
             <Icon className="w-5 h-5 text-zinc-400" />
         </div>
@@ -392,7 +392,7 @@ const InfoCard = ({ icon: Icon, label, value, editing, editValue, onChange }) =>
                     type="text"
                     value={editValue}
                     onChange={e => onChange(e.target.value)}
-                    className="w-full bg-white border border-zinc-300 rounded-md px-3 py-2 text-[14px] font-medium text-zinc-900 focus:outline-none focus:border-[#5B4FE8] focus:ring-2 focus:ring-[#EEF0FF] transition-all"
+                    className="w-full bg-white border border-zinc-300 rounded-md px-3 py-2 text-[14px] font-medium text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-2 focus:ring-zinc-900 transition-all"
                 />
             ) : (
                 <p className="text-[15px] font-bold text-zinc-900 truncate">{value}</p>

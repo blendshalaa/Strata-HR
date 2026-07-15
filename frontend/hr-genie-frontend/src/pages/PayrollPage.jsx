@@ -87,7 +87,7 @@ const PayrollPage = () => {
 
     if (loading) return (
         <div className="flex items-center justify-center h-64">
-            <div className="w-6 h-6 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin" />
+            <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
         </div>
     );
 
@@ -173,8 +173,8 @@ const PayrollPage = () => {
                         onClick={() => setFilterStatus(s)}
                         className={`px-3 py-1.5 rounded-md text-[12px] font-bold uppercase tracking-wider transition-colors border ${
                             filterStatus === s
-                                ? 'bg-[#5B4FE8] text-white border-[#5B4FE8]'
-                                : 'bg-white text-zinc-500 border-zinc-200 hover:border-[#5B4FE8]'
+                                ? 'bg-zinc-900 text-white border-zinc-900'
+                                : 'bg-white text-zinc-500 border-zinc-200 hover:border-zinc-400'
                         }`}
                     >
                         {s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
@@ -239,7 +239,7 @@ const PayrollPage = () => {
                                                 <button
                                                     onClick={() => setConfirmPayId(pay.id)}
                                                     disabled={isUpdating === pay.id}
-                                                    className="px-2.5 py-1 text-[11px] font-bold text-white bg-[#5B4FE8] rounded-md hover:bg-[#4a3fd4] transition-colors disabled:opacity-50 whitespace-nowrap uppercase tracking-wider"
+                                                    className="px-2.5 py-1 text-[11px] font-bold text-white bg-[#111318] rounded-md hover:bg-[#374151] transition-colors disabled:opacity-50 whitespace-nowrap uppercase tracking-wider"
                                                 >
                                                     {isUpdating === pay.id ? t('common.updating') : t('payroll.markPaid')}
                                                 </button>
@@ -304,7 +304,7 @@ const PayrollPage = () => {
                             <div className="flex items-center gap-2 pt-3 border-t border-zinc-100">
                                 {pay.status !== 'paid' && (
                                     <button onClick={() => setConfirmPayId(pay.id)} disabled={isUpdating === pay.id}
-                                        className="flex-1 py-1.5 text-[12px] font-bold uppercase tracking-wider text-white bg-[#5B4FE8] rounded-md hover:bg-[#4a3fd4] transition-colors disabled:opacity-50">
+                                        className="flex-1 py-1.5 text-[12px] font-bold uppercase tracking-wider text-white bg-[#111318] rounded-md hover:bg-[#374151] transition-colors disabled:opacity-50">
                                         {isUpdating === pay.id ? t('common.updating') : t('payroll.markAsPaid')}
                                     </button>
                                 )}

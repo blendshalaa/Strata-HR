@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 
 const STATUS_CFG = {
-    active: { label: 'Active', color: 'bg-[#EEF0FF] text-[#5B4FE8] border-blue-100', icon: Clock },
+    active: { label: 'Active', color: 'bg-zinc-100 text-zinc-900 border-zinc-200', icon: Clock },
     completed: { label: 'Completed', color: 'bg-green-50 text-green-700 border-green-100', icon: CheckCircle2 },
     cancelled: { label: 'Cancelled', color: 'bg-zinc-50 text-zinc-500 border-zinc-200', icon: X },
     at_risk: { label: 'At Risk', color: 'bg-red-50 text-red-700 border-red-100', icon: AlertCircle },
@@ -158,7 +158,7 @@ const GoalsPage = ({ embedded = false }) => {
     };
 
     const filtered = goals.filter(g => !filterStatus || g.status === filterStatus);
-    const inputClass = "w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors placeholder-zinc-400";
+    const inputClass = "w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors placeholder-zinc-400";
 
     return (
         <>
@@ -172,14 +172,14 @@ const GoalsPage = ({ embedded = false }) => {
                     </h1>
                     <p className="text-zinc-500 text-sm">{t('goals.subtitle')}</p>
                 </div>
-                <button onClick={() => setShowCreate(!showCreate)} className="px-4 py-2 bg-[#5B4FE8] text-white text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-[#4a3fd4] transition-colors shadow-sm flex items-center gap-2">
+                <button onClick={() => setShowCreate(!showCreate)} className="px-4 py-2 bg-[#111318] text-white text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-[#374151] transition-colors shadow-sm flex items-center gap-2">
                     <Plus className="w-3.5 h-3.5" /> {t('goals.newGoal')}
                 </button>
             </div>
             )}
             {embedded && (
             <div className="flex justify-end">
-                <button onClick={() => setShowCreate(!showCreate)} className="px-4 py-2 bg-[#5B4FE8] text-white text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-[#4a3fd4] transition-colors shadow-sm flex items-center gap-2">
+                <button onClick={() => setShowCreate(!showCreate)} className="px-4 py-2 bg-[#111318] text-white text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-[#374151] transition-colors shadow-sm flex items-center gap-2">
                     <Plus className="w-3.5 h-3.5" /> {t('goals.newGoal')}
                 </button>
             </div>
@@ -249,7 +249,7 @@ const GoalsPage = ({ embedded = false }) => {
 
                         <div className="flex justify-end gap-3 pt-4 border-t border-zinc-50">
                             <button type="button" onClick={() => setShowCreate(false)} className="px-4 py-2 bg-white text-zinc-700 border border-zinc-300 rounded-md hover:bg-zinc-50 transition-colors text-[12px] font-bold uppercase tracking-wider">Cancel</button>
-                            <button type="submit" className="px-6 py-2 bg-[#5B4FE8] text-white rounded-md hover:bg-[#4a3fd4] transition-colors text-[12px] font-bold uppercase tracking-wider">{t('goals.createGoal')}</button>
+                            <button type="submit" className="px-6 py-2 bg-[#111318] text-white rounded-md hover:bg-[#374151] transition-colors text-[12px] font-bold uppercase tracking-wider">{t('goals.createGoal')}</button>
                         </div>
                     </form>
                 </div>
@@ -258,7 +258,7 @@ const GoalsPage = ({ embedded = false }) => {
             {/* Filter */}
             <div className="flex items-center gap-4">
                 <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-                    className="px-3 py-1.5 bg-white border border-zinc-200 rounded-md text-zinc-900 text-[13px] font-bold focus:outline-none focus:border-[#5B4FE8] transition-colors">
+                    className="px-3 py-1.5 bg-white border border-zinc-200 rounded-md text-zinc-900 text-[13px] font-bold focus:outline-none focus:border-zinc-900 transition-colors">
                     <option value="">{t('goals.allStatuses')}</option>
                     {Object.entries(STATUS_CFG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
                 </select>
@@ -268,7 +268,7 @@ const GoalsPage = ({ embedded = false }) => {
             {/* Goals List */}
             {loading ? (
                 <div className="flex items-center justify-center h-48">
-                    <div className="w-6 h-6 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin" />
+                    <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
                 </div>
             ) : filtered.length === 0 ? (
                 <div className="bg-white rounded-lg p-16 text-center">
@@ -283,12 +283,12 @@ const GoalsPage = ({ embedded = false }) => {
                         const StIcon = st.icon;
                         const isExpanded = expandedGoal?.id === goal.id;
                         return (
-                            <div key={goal.id} className="bg-white rounded-lg overflow-hidden shadow-sm hover:border-[#C4BDFF] transition-colors">
+                            <div key={goal.id} className="bg-white rounded-lg overflow-hidden shadow-sm hover:border-zinc-400 transition-colors">
                                 {/* Goal Header */}
                                 <div className="p-5 cursor-pointer" onClick={() => toggleExpand(goal)}>
                                     <div className="flex items-start justify-between gap-6">
                                         <div className="flex items-start gap-4 flex-1 min-w-0">
-                                            <div className={`p-2 rounded-md ${isExpanded ? 'bg-[#5B4FE8] text-white' : 'bg-zinc-100 text-zinc-400'} transition-colors`}>
+                                            <div className={`p-2 rounded-md ${isExpanded ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-400'} transition-colors`}>
                                                 {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                                             </div>
                                             <div className="flex-1 min-w-0">
@@ -316,7 +316,7 @@ const GoalsPage = ({ embedded = false }) => {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <select value={goal.status} onChange={e => handleStatusChange(goal.id, e.target.value)}
-                                                    className="px-2 py-1 bg-white border border-zinc-200 rounded-md text-zinc-700 text-[11px] font-bold uppercase tracking-wider focus:outline-none focus:border-[#5B4FE8]">
+                                                    className="px-2 py-1 bg-white border border-zinc-200 rounded-md text-zinc-700 text-[11px] font-bold uppercase tracking-wider focus:outline-none focus:border-zinc-900">
                                                     {Object.entries(STATUS_CFG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
                                                 </select>
                                                 <button onClick={() => setDeleteConfirm(goal.id)} className="p-1.5 text-zinc-400 hover:text-red-600 border border-transparent hover:border-red-100 hover:bg-red-50 rounded-md transition-all">
@@ -361,7 +361,7 @@ const GoalsPage = ({ embedded = false }) => {
                                                                             onChange={e => setKrEdit({ ...krEdit, current_value: parseFloat(e.target.value) })}
                                                                             className="w-20 px-2 py-1 bg-white border border-zinc-900 rounded text-zinc-900 text-[12px] font-bold outline-none" />
                                                                         <span className="text-[11px] font-bold text-zinc-400 uppercase">/ {kr.target_value} {kr.unit}</span>
-                                                                        <button onClick={() => handleUpdateKR(kr.id)} className="p-1.5 bg-[#5B4FE8] text-white rounded-md hover:bg-[#4a3fd4] transition-colors"><Save className="w-3.5 h-3.5" /></button>
+                                                                        <button onClick={() => handleUpdateKR(kr.id)} className="p-1.5 bg-[#111318] text-white rounded-md hover:bg-[#374151] transition-colors"><Save className="w-3.5 h-3.5" /></button>
                                                                         <button onClick={() => setEditingKR(null)} className="p-1.5 bg-zinc-100 text-zinc-400 rounded-md hover:bg-zinc-200 transition-colors"><X className="w-3.5 h-3.5" /></button>
                                                                     </div>
                                                                 ) : (
@@ -394,7 +394,7 @@ const GoalsPage = ({ embedded = false }) => {
                                                 <input type="text" value={newKR.unit} onChange={e => setNewKR({ ...newKR, unit: e.target.value })}
                                                     className={`${inputClass} w-20`} placeholder="Unit" />
                                                 <div className="flex items-center gap-2">
-                                                    <button onClick={() => handleAddKR(expandedGoal.id)} className="px-4 py-2 bg-[#5B4FE8] text-white text-[11px] font-bold uppercase tracking-wider rounded-md hover:bg-[#4a3fd4] transition-colors">{t('common.add')}</button>
+                                                    <button onClick={() => handleAddKR(expandedGoal.id)} className="px-4 py-2 bg-[#111318] text-white text-[11px] font-bold uppercase tracking-wider rounded-md hover:bg-[#374151] transition-colors">{t('common.add')}</button>
                                                     <button onClick={() => setAddingKR(null)} className="px-4 py-2 bg-white text-zinc-500 border border-zinc-200 text-[11px] font-bold uppercase tracking-wider rounded-md hover:bg-zinc-50 transition-colors">{t('common.cancel')}</button>
                                                 </div>
                                             </div>

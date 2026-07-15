@@ -64,7 +64,7 @@ const OrgSettingsPage = () => {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="w-6 h-6 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin" />
+                <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
             </div>
         );
     }
@@ -74,7 +74,7 @@ const OrgSettingsPage = () => {
     const roleColors = {
         admin: 'bg-red-50 text-red-700 border-red-200',
         hr: 'bg-amber-50 text-amber-700 border-amber-200',
-        manager: 'bg-[#EEF0FF] text-[#5B4FE8] border-blue-200',
+        manager: 'bg-zinc-100 text-zinc-900 border-zinc-200',
         employee: 'bg-zinc-100 text-zinc-700 border-zinc-200',
     };
 
@@ -98,9 +98,9 @@ const OrgSettingsPage = () => {
                                     type="text"
                                     value={editName}
                                     onChange={e => setEditName(e.target.value)}
-                                    className="px-3 py-1.5 bg-white border border-zinc-300 rounded-md text-zinc-900 text-lg font-bold outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] w-full max-w-sm"
+                                    className="px-3 py-1.5 bg-white border border-zinc-300 rounded-md text-zinc-900 text-lg font-bold outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 w-full max-w-sm"
                                 />
-                                <button onClick={handleUpdateName} className="bg-[#5B4FE8] hover:bg-[#4a3fd4] text-white px-4 py-2 rounded-md font-bold text-sm transition-colors">Save</button>
+                                <button onClick={handleUpdateName} className="bg-[#111318] hover:bg-[#374151] text-white px-4 py-2 rounded-md font-bold text-sm transition-colors">Save</button>
                                 <button onClick={() => { setEditing(false); setEditName(org.name); }} className="px-4 py-2 text-sm font-bold text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded-md transition-colors">Cancel</button>
                             </div>
                         ) : (

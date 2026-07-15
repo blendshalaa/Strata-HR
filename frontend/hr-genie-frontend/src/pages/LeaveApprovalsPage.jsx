@@ -67,7 +67,7 @@ const LeaveApprovalsPage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-6 h-6 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
       </div>
     );
   }
@@ -105,7 +105,7 @@ const LeaveApprovalsPage = () => {
                 onClick={() => setFilter(status === 'all' ? '' : status)}
                 className={`px-3 py-1.5 rounded-md text-[12px] font-bold uppercase tracking-wider transition-colors border ${
                   (status === 'all' && filter === '') || filter === status
-                    ? 'bg-[#5B4FE8] text-white border-[#5B4FE8]'
+                    ? 'bg-zinc-900 text-white border-zinc-900'
                     : 'bg-white text-zinc-500 border-zinc-200 hover:bg-zinc-50'
                 }`}
               >
@@ -128,7 +128,7 @@ const LeaveApprovalsPage = () => {
       ) : (
         <div className="grid grid-cols-1 gap-4">
           {requests.map((request) => (
-            <div key={request.id} className="card bg-white border border-zinc-200 p-6 hover:border-[#C4BDFF] transition-colors">
+            <div key={request.id} className="card bg-white border border-zinc-200 p-6 hover:border-zinc-400 transition-colors">
               <div className="flex flex-col md:flex-row gap-6 lg:gap-8">
                 <div className="flex-1">
                   {/* Header */}
@@ -196,7 +196,7 @@ const LeaveApprovalsPage = () => {
                     <button
                       onClick={() => handleApproval(request.id, 'approved')}
                       disabled={actionLoading === request.id}
-                      className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-[#5B4FE8] text-white border border-zinc-900 rounded-md hover:bg-[#4a3fd4] transition-colors disabled:opacity-50 text-[12px] font-bold uppercase tracking-wider"
+                      className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-[#111318] text-white border border-zinc-900 rounded-md hover:bg-[#374151] transition-colors disabled:opacity-50 text-[12px] font-bold uppercase tracking-wider"
                     >
                       <CheckCircle className="w-4 h-4" />
                       {t('leaveApprovals.approve')}

@@ -81,8 +81,8 @@ const CareersPage = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#F5F4FF] flex items-center justify-center">
-                <div className="w-6 h-6 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin" />
+            <div className="min-h-screen bg-[#F7F7F6] flex items-center justify-center">
+                <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
             </div>
         );
     }
@@ -90,7 +90,7 @@ const CareersPage = () => {
     // Success State
     if (submitted) {
         return (
-            <div className="min-h-screen bg-[#F5F4FF] flex items-center justify-center p-4">
+            <div className="min-h-screen bg-[#F7F7F6] flex items-center justify-center p-4">
                 <div className="bg-white border border-zinc-200 rounded-md max-w-md w-full p-10 text-center animate-fadeIn">
                     <div className="w-20 h-20 bg-emerald-50 border border-emerald-200 rounded-md flex items-center justify-center mx-auto mb-6">
                         <CheckCircle className="w-10 h-10 text-emerald-600" />
@@ -104,7 +104,7 @@ const CareersPage = () => {
                     </p>
                     <button
                         onClick={resetForm}
-                        className="w-full bg-[#5B4FE8] text-white py-3 rounded-md font-bold hover:bg-[#4a3fd4] transition-colors"
+                        className="w-full bg-[#111318] text-white py-3 rounded-md font-bold hover:bg-[#374151] transition-colors"
                     >
                         {t('careers.browseOther')}
                     </button>
@@ -116,7 +116,7 @@ const CareersPage = () => {
     // Application Form
     if (selectedJob) {
         return (
-            <div className="min-h-screen bg-[#F5F4FF] py-12 px-4">
+            <div className="min-h-screen bg-[#F7F7F6] py-12 px-4">
                 <div className="max-w-2xl mx-auto">
                     <button
                         onClick={resetForm}
@@ -173,7 +173,7 @@ const CareersPage = () => {
                                     type="text"
                                     value={formData.applicant_name}
                                     onChange={(e) => setFormData({ ...formData, applicant_name: e.target.value })}
-                                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
+                                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
                                     placeholder={t('careers.yourFullName')}
                                     required
                                 />
@@ -185,7 +185,7 @@ const CareersPage = () => {
                                     type="email"
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
+                                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
                                     placeholder="your.email@example.com"
                                     required
                                 />
@@ -197,7 +197,7 @@ const CareersPage = () => {
                                     type="file"
                                     accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                                     onChange={(e) => setFormData({ ...formData, resume: e.target.files[0] })}
-                                    className="w-full px-4 py-2 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-bold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200"
+                                    className="w-full px-4 py-2 bg-white border border-zinc-200 rounded-md text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-bold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200"
                                 />
                                 <p className="text-xs text-zinc-500 mt-1">{t('careers.maxFileSize')}</p>
                             </div>
@@ -205,7 +205,7 @@ const CareersPage = () => {
                             <button
                                 type="submit"
                                 disabled={submitting}
-                                className="w-full bg-[#5B4FE8] text-white py-3.5 rounded-md font-bold hover:bg-[#4a3fd4] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="w-full bg-[#111318] text-white py-3.5 rounded-md font-bold hover:bg-[#374151] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                             >
                                 <Send className="w-5 h-5" />
                                 {submitting ? t('careers.submitting') : t('careers.submitApplication')}
@@ -223,10 +223,10 @@ const CareersPage = () => {
             {/* Hero */}
             <div className="text-center pt-16 pb-12 px-4 bg-white border-b border-zinc-200">
                 <div className="flex items-center justify-center gap-3 mb-6">
-                    <div className="w-12 h-12 bg-[#5B4FE8] rounded-md flex items-center justify-center">
+                    <div className="w-12 h-12 bg-[#111318] rounded-md flex items-center justify-center">
                         <Bot className="w-7 h-7 text-white" />
                     </div>
-                    <h1 className="text-3xl font-black text-zinc-900 tracking-tight">{orgName || 'HR Genie'}</h1>
+                    <h1 className="text-3xl font-black text-zinc-900 tracking-tight">{orgName || 'Strata HR'}</h1>
                 </div>
                 <h2 className="text-4xl md:text-5xl font-black text-zinc-900 mb-4 tracking-tight">
                     {t('careers.joinOurTeam')}
@@ -247,11 +247,11 @@ const CareersPage = () => {
                             <div
                                 key={job.id}
                                 onClick={() => setSelectedJob(job)}
-                                className="bg-white border border-zinc-200 rounded-md p-6 hover:border-[#5B4FE8] transition-colors cursor-pointer group"
+                                className="bg-white border border-zinc-200 rounded-md p-6 hover:border-zinc-400 transition-colors cursor-pointer group"
                             >
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="flex items-start gap-4">
-                                        <div className="p-3 bg-zinc-100 border border-zinc-200 text-zinc-600 rounded-md group-hover:bg-[#5B4FE8] group-hover:text-white group-hover:border-[#5B4FE8] transition-colors">
+                                        <div className="p-3 bg-zinc-100 border border-zinc-200 text-zinc-600 rounded-md group-hover:bg-[#111318] group-hover:text-white group-hover:border-[#111318] transition-colors">
                                             <Briefcase className="w-6 h-6" />
                                         </div>
                                         <div>

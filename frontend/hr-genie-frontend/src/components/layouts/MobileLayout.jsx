@@ -24,13 +24,13 @@ const BottomNav = ({ onMenuClick }) => {
             to={item.to}
             className={({ isActive }) => 
               `flex flex-col items-center justify-center w-full h-full gap-1 transition-colors ${
-                isActive ? 'text-[#5B4FE8]' : 'text-zinc-500 hover:text-zinc-900'
+                isActive ? 'text-[#111318]' : 'text-zinc-500 hover:text-zinc-900'
               }`
             }
           >
             {({ isActive }) => (
               <>
-                <item.icon className={`w-6 h-6 ${isActive ? 'fill-[#EEF0FF]' : ''}`} strokeWidth={isActive ? 2.5 : 2} />
+                <item.icon className={`w-6 h-6 ${isActive ? 'fill-[#F3F4F6]' : ''}`} strokeWidth={isActive ? 2.5 : 2} />
                 <span className={`text-[10px] font-medium ${isActive ? 'font-bold' : ''}`}>{item.label}</span>
               </>
             )}
@@ -54,7 +54,7 @@ const MobileLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F5F4FF] text-[#0F0D2E] pb-16">
+    <div className="min-h-screen flex flex-col bg-[#F7F7F6] text-[#111318] pb-16">
       {/* 
         We reuse the Sidebar for the "Menu" drawer.
         When open, it slides over. 

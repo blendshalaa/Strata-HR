@@ -88,13 +88,13 @@ const JobModal = ({ isOpen, onClose, onJobAdded }) => {
                         </button>
                     </div>
                     <div className="p-6 space-y-5">
-                        <div className="flex items-center gap-3 p-4 bg-[#EEF0FF] border border-[#C4BDFF] rounded-md">
-                            <div className="p-2 bg-[#5B4FE8] rounded-md shrink-0">
+                        <div className="flex items-center gap-3 p-4 bg-[#EEF2FF] border border-[#C7D2FE] rounded-md">
+                            <div className="p-2 bg-[#111318] rounded-md shrink-0">
                                 <Briefcase className="w-4 h-4 text-white" />
                             </div>
                             <div>
                                 <p className="text-[13px] font-bold text-zinc-900">{postedJob.title}</p>
-                                <p className="text-[11px] text-[#5B4FE8] font-bold uppercase tracking-wider mt-0.5">Live — accepting applications</p>
+                                <p className="text-[11px] text-zinc-900 font-bold uppercase tracking-wider mt-0.5">Live — accepting applications</p>
                             </div>
                         </div>
 
@@ -119,7 +119,7 @@ const JobModal = ({ isOpen, onClose, onJobAdded }) => {
                         </div>
 
                         <button onClick={onClose}
-                            className="w-full py-2.5 text-[13px] font-bold text-white bg-[#5B4FE8] rounded-md hover:bg-[#4a3fd4] transition-colors">
+                            className="w-full py-2.5 text-[13px] font-bold text-white bg-[#111318] rounded-md hover:bg-[#374151] transition-colors">
                             Done
                         </button>
                     </div>
@@ -220,7 +220,7 @@ const JobModal = ({ isOpen, onClose, onJobAdded }) => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className={`px-4 py-2 text-[13px] font-bold text-white bg-[#5B4FE8] border border-[#5B4FE8] rounded-md hover:bg-[#4a3fd4] transition-colors ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            className={`px-4 py-2 text-[13px] font-bold text-white bg-[#111318] border border-[#111318] rounded-md hover:bg-[#374151] transition-colors ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                             {loading ? t('jobModal.posting') : t('jobModal.postJob')}
                         </button>

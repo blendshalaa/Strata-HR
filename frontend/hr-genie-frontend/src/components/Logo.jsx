@@ -1,18 +1,65 @@
 import React from 'react';
 
-const Logo = ({ className = "w-10 h-10" }) => (
-  <svg className={className} viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-    {/* Background rounded square */}
-    <rect width="40" height="40" rx="10" fill="#5B4FE8"/>
-    {/* Lamp body top */}
-    <path d="M20 9 C20 9 14 9 12 13 C10 17 13 19 13 19 L27 19 C27 19 30 17 28 13 C26 9 20 9 20 9Z" fill="#ffffff"/>
-    {/* Lamp body bottom */}
-    <path d="M13 19 L10 25 L30 25 L27 19Z" fill="#ffffff"/>
-    {/* Lamp base curve */}
-    <path d="M10 25 Q20 31 30 25" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round"/>
-    {/* Lamp spout */}
-    <path d="M28 13 Q34 11 33 7 Q32 4 29 6" fill="none" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round"/>
-  </svg>
+/**
+ * Strata HR — Official Logo Components
+ * Brand Identity System 2025
+ *
+ * GeometricS   — Swiss-grid geometric lettermark (S)
+ * StrataLayers — Horizontal strata bars icon (primary app icon)
+ */
+
+export function GeometricS({ color = '#0C0C0C', size = 60, className = '' }) {
+  const h = Math.round(size * (80 / 60));
+  return (
+    <svg
+      width={size}
+      height={h}
+      viewBox="0 0 60 80"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      {/* Top bar */}
+      <rect width="60" height="11" fill={color} />
+      {/* Upper-right vertical */}
+      <rect x="49" width="11" height="45" fill={color} />
+      {/* Middle bar */}
+      <rect y="34" width="60" height="11" fill={color} />
+      {/* Lower-left vertical */}
+      <rect y="34" width="11" height="46" fill={color} />
+      {/* Bottom bar */}
+      <rect y="69" width="60" height="11" fill={color} />
+    </svg>
+  );
+}
+
+export function StrataLayers({ color = '#0C0C0C', size = 60, className = '' }) {
+  const h = Math.round(size * (58 / 60));
+  return (
+    <svg
+      width={size}
+      height={h}
+      viewBox="0 0 60 58"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <rect width="60" height="10" fill={color} />
+      <rect y="16" width="45" height="10" fill={color} />
+      <rect y="32" width="53" height="10" fill={color} />
+      <rect y="48" width="33" height="10" fill={color} />
+    </svg>
+  );
+}
+
+/**
+ * Default export — StrataLayers icon
+ * Used in Sidebar, Navbar, Login, mobile header.
+ * Pass `color="#fff"` for dark backgrounds (sidebar).
+ * The `className` prop controls sizing (e.g. "w-6 h-6").
+ */
+const Logo = ({ className = 'w-8 h-8', color = '#0C0C0C' }) => (
+  <StrataLayers color={color} className={className} size={32} />
 );
 
 export default Logo;

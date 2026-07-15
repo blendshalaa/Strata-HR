@@ -127,7 +127,7 @@ const PayslipModal = ({ isOpen, onClose, payroll }) => {
 
                     {/* Net Total Summary */}
                     <div className="flex justify-end">
-                        <div className="bg-[#1E1B4B] rounded-md p-5 w-full sm:w-64 text-white">
+                        <div className="bg-[#1A1D23] rounded-md p-5 w-full sm:w-64 text-white">
                             <div className="flex justify-between items-center mb-1.5">
                                 <span className="text-zinc-400 text-[13px] font-medium">{t('payslipModal.totalEarnings')}</span>
                                 <span className="text-[13px] font-semibold">{formatCurrency(parseFloat(payroll.base_salary) + parseFloat(payroll.bonus))}</span>

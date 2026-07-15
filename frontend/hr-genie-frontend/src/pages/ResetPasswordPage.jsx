@@ -62,18 +62,18 @@ const ResetPasswordPage = () => {
     };
 
     return (
-        <div style={{ minHeight: '100vh', background: '#F5F4FF', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+        <div style={{ minHeight: '100vh', background: '#F7F7F6', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
             <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '12px', width: '100%', maxWidth: '420px', overflow: 'hidden', boxShadow: '0 4px 24px rgba(91,79,232,0.08)' }}>
                 {/* Header */}
                 <div style={{ padding: '28px 32px 24px', borderBottom: '1px solid #f4f4f5', textAlign: 'center' }}>
-                    <div style={{ width: '48px', height: '48px', background: '#5B4FE8', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                    <div style={{ width: '48px', height: '48px', background: '#111318', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
                         <Bot size={24} color="#fff" />
                     </div>
                     <h1 style={{ fontSize: '20px', fontWeight: 800, color: '#18181b', margin: '0 0 4px', letterSpacing: '-0.3px' }}>
                         {success ? 'Password Set!' : 'Set Your Password'}
                     </h1>
                     <p style={{ fontSize: '13px', color: '#71717a', margin: 0 }}>
-                        {success ? 'Redirecting you to login…' : 'Create a secure password for your HR Genie account.'}
+                        {success ? 'Redirecting you to login…' : 'Create a secure password for your Strata HR account.'}
                     </p>
                 </div>
 
@@ -111,7 +111,7 @@ const ResetPasswordPage = () => {
                                                 placeholder="Minimum 6 characters"
                                                 required
                                                 minLength={6}
-                                                onFocus={e => e.target.style.borderColor = '#5B4FE8'}
+                                                onFocus={e => e.target.style.borderColor = '#111318'}
                                                 onBlur={e => e.target.style.borderColor = '#e4e4e7'}
                                             />
                                             <button
@@ -135,7 +135,7 @@ const ResetPasswordPage = () => {
                                             style={inputStyle}
                                             placeholder="Repeat your password"
                                             required
-                                            onFocus={e => e.target.style.borderColor = '#5B4FE8'}
+                                            onFocus={e => e.target.style.borderColor = '#111318'}
                                             onBlur={e => e.target.style.borderColor = '#e4e4e7'}
                                         />
                                     </div>
@@ -144,7 +144,7 @@ const ResetPasswordPage = () => {
                                         type="submit"
                                         disabled={loading}
                                         style={{
-                                            width: '100%', padding: '12px', background: loading ? '#a89cff' : '#5B4FE8',
+                                            width: '100%', padding: '12px', background: loading ? '#71717A' : '#111318',
                                             color: '#fff', border: 'none', borderRadius: '8px', fontSize: '14px',
                                             fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer',
                                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',

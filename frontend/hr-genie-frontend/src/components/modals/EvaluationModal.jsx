@@ -207,7 +207,7 @@ const EvaluationModal = ({ isOpen, onClose, onEvaluationAdded }) => {
                             <button
                                 type="submit"
                                 disabled={loading || !userId}
-                                className={`flex-1 sm:flex-none px-4 py-2 text-[13px] font-bold text-white bg-[#5B4FE8] border border-[#5B4FE8] rounded-md hover:bg-[#4a3fd4] transition-colors ${(loading || !userId) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={`flex-1 sm:flex-none px-4 py-2 text-[13px] font-bold text-white bg-[#111318] border border-[#111318] rounded-md hover:bg-[#374151] transition-colors ${(loading || !userId) ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 {loading ? t('common.submitting') : t('evaluationModal.submitEvaluation')}
                             </button>

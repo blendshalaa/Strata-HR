@@ -113,12 +113,12 @@ const TrainingPage = () => {
         }
     };
 
-    const inputClass = "w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all text-sm font-medium";
+    const inputClass = "w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all text-sm font-medium";
 
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="w-6 h-6 border-2 border-[#EEF0FF] border-t-[#5B4FE8] rounded-full animate-spin" />
+                <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
             </div>
         );
     }
@@ -132,8 +132,8 @@ const TrainingPage = () => {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-2.5 mb-1">
-                        <div className="p-2 rounded-lg" style={{ backgroundColor: '#EEF0FF' }}>
-                            <GraduationCap className="w-5 h-5" style={{ color: '#5B4FE8' }} />
+                        <div className="p-2 rounded-lg" style={{ backgroundColor: '#F3F4F6' }}>
+                            <GraduationCap className="w-5 h-5" style={{ color: '#374151' }} />
                         </div>
                         <h1 className="text-xl font-bold text-zinc-900">{t('training.title', 'Training & Learning')}</h1>
                     </div>
@@ -144,7 +144,7 @@ const TrainingPage = () => {
                 {isHR && (
                     <button 
                         onClick={() => setShowCreate(!showCreate)} 
-                        className="bg-[#5B4FE8] hover:bg-[#4a3fd4] text-white px-5 py-2.5 rounded-md font-bold text-sm transition-colors flex items-center gap-2"
+                        className="bg-[#111318] hover:bg-[#374151] text-white px-5 py-2.5 rounded-md font-bold text-sm transition-colors flex items-center gap-2"
                     >
                         <Plus className="w-4 h-4" /> {t('training.createCourse', 'Create Course')}
                     </button>
@@ -153,14 +153,14 @@ const TrainingPage = () => {
 
             {/* My Training Progress (Employees) */}
             {!isHR && (
-                <div className="card border-l-4 border-l-[#5B4FE8]">
+                <div className="card border-l-4 border-l-zinc-900">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                         <div className="flex items-center gap-4">
                             <div className="relative w-16 h-16 flex items-center justify-center shrink-0">
                                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                                     <path className="text-zinc-100" strokeWidth="4" stroke="currentColor" fill="none"
                                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                    <path className="text-[#5B4FE8] transition-all duration-1000" strokeDasharray={`${progressPercent}, 100`} strokeWidth="4" strokeLinecap="round" stroke="currentColor" fill="none"
+                                    <path className="text-zinc-900 transition-all duration-1000" strokeDasharray={`${progressPercent}, 100`} strokeWidth="4" strokeLinecap="round" stroke="currentColor" fill="none"
                                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                                 </svg>
                                 <span className="absolute text-[13px] font-black text-zinc-900">{progressPercent}%</span>
@@ -201,7 +201,7 @@ const TrainingPage = () => {
                         </div>
                         <div className="md:col-span-2 flex justify-end gap-3 mt-2">
                             <button type="button" onClick={() => setShowCreate(false)} className="px-5 py-2 text-sm font-bold text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded-md transition-colors">Cancel</button>
-                            <button type="submit" className="bg-[#5B4FE8] hover:bg-[#4a3fd4] text-white px-6 py-2 rounded-md font-bold text-sm transition-colors">Create Course</button>
+                            <button type="submit" className="bg-[#111318] hover:bg-[#374151] text-white px-6 py-2 rounded-md font-bold text-sm transition-colors">Create Course</button>
                         </div>
                     </form>
                 </div>
@@ -219,7 +219,7 @@ const TrainingPage = () => {
                         </div>
                     ) : (
                         assignments.map(a => (
-                            <div key={a.id} className={`card p-5 transition-all ${a.status === 'completed' ? 'opacity-70 bg-zinc-50' : 'hover:border-[#5B4FE8]'}`}>
+                            <div key={a.id} className={`card p-5 transition-all ${a.status === 'completed' ? 'opacity-70 bg-zinc-50' : 'hover:border-zinc-400'}`}>
                                 <div className="flex items-start justify-between gap-4">
                                     <div>
                                         <div className="flex items-center gap-2 mb-1.5">
@@ -245,7 +245,7 @@ const TrainingPage = () => {
                                 
                                 <div className="flex items-center justify-between mt-5 pt-4 border-t border-zinc-100">
                                     {a.link_url ? (
-                                        <a href={a.link_url} target="_blank" rel="noopener noreferrer" className="text-[12px] font-bold text-[#5B4FE8] hover:text-[#4a3fd4] flex items-center gap-1.5 transition-colors">
+                                        <a href={a.link_url} target="_blank" rel="noopener noreferrer" className="text-[12px] font-bold text-zinc-900 hover:text-zinc-600 flex items-center gap-1.5 transition-colors">
                                             <Video className="w-4 h-4" /> Open Course Material
                                         </a>
                                     ) : <span />}
@@ -292,7 +292,7 @@ const TrainingPage = () => {
                                     {isHR && (
                                         <button 
                                             onClick={() => setAssignModal(t)}
-                                            className="text-[12px] font-bold text-[#5B4FE8] hover:text-[#4a3fd4] flex items-center gap-1 transition-colors"
+                                            className="text-[12px] font-bold text-zinc-900 hover:text-zinc-600 flex items-center gap-1 transition-colors"
                                         >
                                             <Users className="w-3.5 h-3.5" /> Assign to Employee
                                         </button>
@@ -333,7 +333,7 @@ const TrainingPage = () => {
                                 </div>
                                 <div className="flex justify-end gap-3">
                                     <button type="button" onClick={() => setAssignModal(null)} className="px-5 py-2 text-[13px] font-bold text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded-md transition-colors">Cancel</button>
-                                    <button type="submit" disabled={!assignUserId} className="bg-[#5B4FE8] hover:bg-[#4a3fd4] text-white px-6 py-2 rounded-md font-bold text-[13px] transition-colors disabled:opacity-50">Assign Training</button>
+                                    <button type="submit" disabled={!assignUserId} className="bg-[#111318] hover:bg-[#374151] text-white px-6 py-2 rounded-md font-bold text-[13px] transition-colors disabled:opacity-50">Assign Training</button>
                                 </div>
                             </form>
                         </div>

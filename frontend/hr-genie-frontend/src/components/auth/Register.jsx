@@ -15,7 +15,7 @@ const getStrength = (password) => {
   if (/[^A-Za-z0-9]/.test(password)) score++;
   if (score <= 1) return { score, label: 'Weak',   color: '#DC2626' };
   if (score <= 2) return { score, label: 'Fair',   color: '#B45309' };
-  if (score <= 3) return { score, label: 'Good',   color: '#5B4FE8' };
+  if (score <= 3) return { score, label: 'Good',   color: '#111318' };
   return             { score, label: 'Strong', color: '#059669' };
 };
 
@@ -25,8 +25,8 @@ const StyledInput = ({ icon: Icon, ...props }) => (
     <input
       {...props}
       className="w-full pl-9 pr-10 py-2.5 rounded-lg text-[16px] sm:text-[14px] outline-none transition-all"
-      style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#0F0D2E' }}
-      onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
+      style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#111318' }}
+      onFocus={e => { e.target.style.borderColor = '#111318'; e.target.style.boxShadow = '0 0 0 3px rgba(17,19,24,0.12)'; }}
       onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
     />
     {props.children}
@@ -91,20 +91,26 @@ const Register = () => {
     }
   };
 
-  const labelStyle = { color: '#0F0D2E', fontSize: '13px', fontWeight: '600', display: 'block', marginBottom: '6px' };
+  const labelStyle = {
+    color: '#374151',
+    fontSize: '12px',
+    fontWeight: '500',
+    display: 'block',
+    marginBottom: '5px',
+  };
 
   return (
-    <div className="min-h-screen flex" style={{ backgroundColor: '#F5F4FF', fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen flex" style={{ backgroundColor: '#F7F7F6', fontFamily: "'Inter', system-ui, sans-serif" }}>
 
       {/* Left brand panel */}
-      <div className="hidden lg:flex lg:w-[420px] xl:w-[480px] flex-col justify-between p-12 flex-shrink-0" style={{ backgroundColor: '#1E1B4B' }}>
+      <div className="hidden lg:flex lg:w-[420px] xl:w-[480px] flex-col justify-between p-12 flex-shrink-0" style={{ backgroundColor: '#1A1D23' }}>
         <div className="flex items-center gap-3">
           <Logo className="w-10 h-10" />
           <span className="text-white font-bold text-[17px]">{t('common.appName')}</span>
         </div>
         <div>
-          <h2 className="text-3xl font-bold text-white leading-tight mb-4">
-            {mode === 'create' ? 'Set up your\norganization' : 'Join your\nteam today'}
+          <h2 style={{ fontSize: '20px', fontWeight: '500', color: '#fff', lineHeight: '1.35', marginBottom: '10px' }}>
+            {mode === 'create' ? 'Set up your organization' : 'Join your team today'}
           </h2>
           <p className="text-[15px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>
             {mode === 'create'
@@ -124,16 +130,16 @@ const Register = () => {
           {/* Mobile logo */}
           <div className="flex items-center gap-2.5 mb-8 lg:hidden">
             <Logo className="w-8 h-8" />
-            <span className="font-bold text-[16px]" style={{ color: '#0F0D2E' }}>{t('common.appName')}</span>
+            <span className="font-bold text-[16px]" style={{ color: '#111318' }}>{t('common.appName')}</span>
           </div>
 
           <div className="mb-7">
-            <h1 className="text-[24px] font-bold mb-1" style={{ color: '#0F0D2E' }}>{t('auth.signUp')}</h1>
-            <p className="text-[14px]" style={{ color: '#6B7280' }}>{t('auth.createAccount')}</p>
+            <h1 style={{ fontSize: '18px', fontWeight: '500', color: '#111318', marginBottom: '4px' }}>{t('auth.signUp')}</h1>
+            <p style={{ fontSize: '13px', color: '#9CA3AF' }}>{t('auth.createAccount')}</p>
           </div>
 
           {/* Mode toggle */}
-          <div className="flex gap-1 p-1 rounded-lg mb-6" style={{ backgroundColor: '#EEF0FF' }}>
+          <div className="flex gap-1 p-1 rounded mb-6" style={{ backgroundColor: '#F3F4F6', border: '1px solid #E5E7EB' }}>
             {[
               { key: 'create', label: t('auth.createOrganization') },
               { key: 'join',   label: t('auth.joinWithInvite') },
@@ -144,8 +150,8 @@ const Register = () => {
                 onClick={() => setMode(key)}
                 className="flex-1 py-2 text-[13px] font-semibold rounded-md transition-all"
                 style={{
-                  backgroundColor: mode === key ? '#5B4FE8' : 'transparent',
-                  color: mode === key ? '#fff' : '#5B4FE8',
+                  backgroundColor: mode === key ? '#111318' : 'transparent',
+                  color: mode === key ? '#fff' : '#111318',
                 }}
               >
                 {label}
@@ -171,8 +177,8 @@ const Register = () => {
                   <input type="text" name="org_name" value={formData.org_name} onChange={handleChange}
                     placeholder="Acme Corp" autoComplete="organization" required
                     className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[16px] sm:text-[14px] outline-none transition-all"
-                    style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#0F0D2E' }}
-                    onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
+                    style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#111318' }}
+                    onFocus={e => { e.target.style.borderColor = '#111318'; e.target.style.boxShadow = '0 0 0 3px rgba(17,19,24,0.12)'; }}
                     onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
                   />
                 </div>
@@ -186,8 +192,8 @@ const Register = () => {
                   <input type="text" name="invite_code" value={formData.invite_code} onChange={handleChange}
                     placeholder={t('auth.pasteInviteCode')} autoComplete="off" required
                     className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[16px] sm:text-[14px] outline-none transition-all"
-                    style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#0F0D2E' }}
-                    onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
+                    style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#111318' }}
+                    onFocus={e => { e.target.style.borderColor = '#111318'; e.target.style.boxShadow = '0 0 0 3px rgba(17,19,24,0.12)'; }}
                     onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
                   />
                 </div>
@@ -203,8 +209,8 @@ const Register = () => {
                 <input type="text" name="name" value={formData.name} onChange={handleChange}
                   placeholder="John Doe" autoComplete="name" required
                   className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[16px] sm:text-[14px] outline-none transition-all"
-                  style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#0F0D2E' }}
-                  onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
+                  style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#111318' }}
+                  onFocus={e => { e.target.style.borderColor = '#111318'; e.target.style.boxShadow = '0 0 0 3px rgba(17,19,24,0.12)'; }}
                   onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
                 />
               </div>
@@ -218,8 +224,8 @@ const Register = () => {
                 <input type="email" name="email" value={formData.email} onChange={handleChange}
                   placeholder="you@company.com" autoComplete="email" required
                   className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[16px] sm:text-[14px] outline-none transition-all"
-                  style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#0F0D2E' }}
-                  onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
+                  style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#111318' }}
+                  onFocus={e => { e.target.style.borderColor = '#111318'; e.target.style.boxShadow = '0 0 0 3px rgba(17,19,24,0.12)'; }}
                   onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
                 />
               </div>
@@ -234,13 +240,13 @@ const Register = () => {
                   onChange={handleChange} placeholder="Min. 8 characters"
                   autoComplete="new-password" required minLength={8}
                   className="w-full pl-9 pr-10 py-2.5 rounded-lg text-[16px] sm:text-[14px] outline-none transition-all"
-                  style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#0F0D2E' }}
-                  onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
+                  style={{ backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', color: '#111318' }}
+                  onFocus={e => { e.target.style.borderColor = '#111318'; e.target.style.boxShadow = '0 0 0 3px rgba(17,19,24,0.12)'; }}
                   onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}
                   className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors" style={{ color: '#9CA3AF' }}
-                  onMouseEnter={e => e.currentTarget.style.color = '#5B4FE8'}
+                  onMouseEnter={e => e.currentTarget.style.color = '#111318'}
                   onMouseLeave={e => e.currentTarget.style.color = '#9CA3AF'}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -272,14 +278,14 @@ const Register = () => {
                   style={{
                     backgroundColor: '#fff',
                     border: `0.5px solid ${!passwordsMatch ? '#DC2626' : 'rgba(0,0,0,0.12)'}`,
-                    color: '#0F0D2E',
+                    color: '#111318',
                   }}
-                  onFocus={e => { e.target.style.borderColor = '#5B4FE8'; e.target.style.boxShadow = '0 0 0 3px rgba(91,79,232,0.1)'; }}
+                  onFocus={e => { e.target.style.borderColor = '#111318'; e.target.style.boxShadow = '0 0 0 3px rgba(17,19,24,0.12)'; }}
                   onBlur={e => { e.target.style.borderColor = !passwordsMatch ? '#DC2626' : 'rgba(0,0,0,0.12)'; e.target.style.boxShadow = 'none'; }}
                 />
                 <button type="button" onClick={() => setShowConfirm(!showConfirm)} tabIndex={-1}
                   className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: '#9CA3AF' }}
-                  onMouseEnter={e => e.currentTarget.style.color = '#5B4FE8'}
+                  onMouseEnter={e => e.currentTarget.style.color = '#111318'}
                   onMouseLeave={e => e.currentTarget.style.color = '#9CA3AF'}
                 >
                   {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -295,9 +301,9 @@ const Register = () => {
               type="submit"
               disabled={loading || !passwordsMatch}
               className="w-full mt-2 py-2.5 rounded-lg text-[14px] font-semibold text-white flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
-              style={{ backgroundColor: '#5B4FE8' }}
-              onMouseEnter={e => { if (!loading) e.currentTarget.style.backgroundColor = '#4a3fd4'; }}
-              onMouseLeave={e => { if (!loading) e.currentTarget.style.backgroundColor = '#5B4FE8'; }}
+              style={{ backgroundColor: '#111318' }}
+              onMouseEnter={e => { if (!loading) e.currentTarget.style.backgroundColor = '#374151'; }}
+              onMouseLeave={e => { if (!loading) e.currentTarget.style.backgroundColor = '#111318'; }}
             >
               {loading ? (slowRegister ? 'Server is waking up…' : t('auth.creatingAccount')) : (
                 <>
@@ -310,7 +316,7 @@ const Register = () => {
 
           <p className="mt-6 text-center text-[13px]" style={{ color: '#6B7280' }}>
             {t('auth.alreadyHaveAccount')}{' '}
-            <Link to="/login" className="font-semibold" style={{ color: '#5B4FE8' }}>{t('auth.signInLink')}</Link>
+            <Link to="/login" className="font-semibold" style={{ color: '#111318' }}>{t('auth.signInLink')}</Link>
           </p>
         </div>
       </div>

@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 // ── Config ────────────────────────────────────────────────────────
 const ACTION_CONFIG = {
     create:  { label: 'Created',  icon: Plus,         color: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
-    update:  { label: 'Updated',  icon: Edit3,        color: 'text-blue-700 bg-blue-50 border-blue-200' },
+    update:  { label: 'Updated',  icon: Edit3,        color: 'text-zinc-700 bg-zinc-50 border-zinc-200' },
     delete:  { label: 'Deleted',  icon: Trash2,       color: 'text-red-700 bg-red-50 border-red-200' },
     approve: { label: 'Approved', icon: CheckCircle2, color: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
     reject:  { label: 'Rejected', icon: XCircle,      color: 'text-red-700 bg-red-50 border-red-200' },
@@ -26,9 +26,9 @@ const ENTITY_CONFIG = {
     leave_request: { label: 'Leave Request', icon: Calendar,    color: 'text-sky-700 bg-sky-50' },
     timesheet:     { label: 'Timesheet',     icon: Clock,       color: 'text-zinc-700 bg-zinc-100' },
     payroll:       { label: 'Payroll',       icon: DollarSign,  color: 'text-emerald-700 bg-emerald-50' },
-    user:          { label: 'User',          icon: UserCog,     color: 'text-indigo-700 bg-indigo-50' },
+    user:          { label: 'User',          icon: UserCog,     color: 'text-zinc-700 bg-zinc-100' },
     shift:         { label: 'Shift',         icon: Layers,      color: 'text-violet-700 bg-violet-50' },
-    document:      { label: 'Document',      icon: FileCheck,   color: 'text-blue-700 bg-blue-50' },
+    document:      { label: 'Document',      icon: FileCheck,   color: 'text-zinc-700 bg-zinc-100' },
 };
 
 const ACTIONS = ['', 'create', 'update', 'delete', 'approve', 'reject', 'login', 'export'];
@@ -126,9 +126,9 @@ const AuditLogPage = () => {
                     <div className="flex items-center gap-2.5 mb-1">
                         <div
                             className="p-2 rounded-lg"
-                            style={{ backgroundColor: '#EEF0FF' }}
+                            style={{ backgroundColor: '#F3F4F6' }}
                         >
-                            <Shield className="w-5 h-5" style={{ color: '#5B4FE8' }} />
+                            <Shield className="w-5 h-5" style={{ color: '#111318' }} />
                         </div>
                         <h1 className="text-xl font-bold text-zinc-900">{t('auditLog.title')}</h1>
                         <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-500 border border-zinc-200">
@@ -151,14 +151,14 @@ const AuditLogPage = () => {
             {/* Stats Bar */}
             {!statsLoading && stats && (
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <StatCard label={t('auditLog.eventsToday')} value={stats.today} icon={Shield} color="#5B4FE8" />
+                    <StatCard label={t('auditLog.eventsToday')} value={stats.today} icon={Shield} color="#111318" />
                     {stats.actions.slice(0, 3).map(a => (
                         <StatCard
                             key={a.action}
                             label={ACTION_CONFIG[a.action]?.label || a.action}
                             value={a.count}
                             icon={ACTION_CONFIG[a.action]?.icon || Shield}
-                            color={a.action === 'delete' || a.action === 'reject' ? '#EF4444' : a.action === 'create' || a.action === 'approve' ? '#10B981' : '#5B4FE8'}
+                            color={a.action === 'delete' || a.action === 'reject' ? '#EF4444' : a.action === 'create' || a.action === 'approve' ? '#10B981' : '#111318'}
                             sub={t('auditLog.last30Days')}
                         />
                     ))}
@@ -180,7 +180,7 @@ const AuditLogPage = () => {
                                 placeholder={t('auditLog.searchActor') + '...'}
                                 value={search}
                                 onChange={e => setSearch(e.target.value)}
-                                className="w-full pl-8 pr-3 py-1.5 text-[13px] rounded-md border border-zinc-200 focus:outline-none focus:border-[#5B4FE8] transition-colors"
+                                className="w-full pl-8 pr-3 py-1.5 text-[13px] rounded-md border border-zinc-200 focus:outline-none focus:border-zinc-900 transition-colors"
                             />
                         </div>
                     </div>
@@ -193,7 +193,7 @@ const AuditLogPage = () => {
                         <select
                             value={filters.action}
                             onChange={e => handleFilterChange('action', e.target.value)}
-                            className="w-full px-3 py-1.5 text-[13px] rounded-md border border-zinc-200 focus:outline-none focus:border-[#5B4FE8] bg-white transition-colors"
+                            className="w-full px-3 py-1.5 text-[13px] rounded-md border border-zinc-200 focus:outline-none focus:border-zinc-900 bg-white transition-colors"
                         >
                             <option value="">{t('auditLog.allActions')}</option>
                             {ACTIONS.filter(Boolean).map(a => (
@@ -210,7 +210,7 @@ const AuditLogPage = () => {
                         <select
                             value={filters.entity_type}
                             onChange={e => handleFilterChange('entity_type', e.target.value)}
-                            className="w-full px-3 py-1.5 text-[13px] rounded-md border border-zinc-200 focus:outline-none focus:border-[#5B4FE8] bg-white transition-colors"
+                            className="w-full px-3 py-1.5 text-[13px] rounded-md border border-zinc-200 focus:outline-none focus:border-zinc-900 bg-white transition-colors"
                         >
                             <option value="">{t('auditLog.allResources')}</option>
                             {ENTITIES.filter(Boolean).map(e => (
@@ -228,7 +228,7 @@ const AuditLogPage = () => {
                             type="date"
                             value={filters.from}
                             onChange={e => handleFilterChange('from', e.target.value)}
-                            className="px-3 py-1.5 text-[13px] rounded-md border border-zinc-200 focus:outline-none focus:border-[#5B4FE8] transition-colors"
+                            className="px-3 py-1.5 text-[13px] rounded-md border border-zinc-200 focus:outline-none focus:border-zinc-900 transition-colors"
                         />
                     </div>
                     <div>
@@ -239,7 +239,7 @@ const AuditLogPage = () => {
                             type="date"
                             value={filters.to}
                             onChange={e => handleFilterChange('to', e.target.value)}
-                            className="px-3 py-1.5 text-[13px] rounded-md border border-zinc-200 focus:outline-none focus:border-[#5B4FE8] transition-colors"
+                            className="px-3 py-1.5 text-[13px] rounded-md border border-zinc-200 focus:outline-none focus:border-zinc-900 transition-colors"
                         />
                     </div>
 
@@ -256,12 +256,12 @@ const AuditLogPage = () => {
             <div className="card !p-0 overflow-hidden">
                 {loading ? (
                     <div className="flex items-center justify-center h-48">
-                        <div className="w-6 h-6 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin" />
+                        <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
                     </div>
                 ) : displayedLogs.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-48 text-center">
-                        <div className="p-3 rounded-full mb-3" style={{ backgroundColor: '#EEF0FF' }}>
-                            <Shield className="w-6 h-6" style={{ color: '#5B4FE8' }} />
+                        <div className="p-3 rounded-full mb-3" style={{ backgroundColor: '#F3F4F6' }}>
+                            <Shield className="w-6 h-6" style={{ color: '#111318' }} />
                         </div>
                         <p className="text-[14px] font-semibold text-zinc-700">{t('auditLog.noEvents')}</p>
                         <p className="text-[13px] text-zinc-400 mt-1">{t('auditLog.adjustFilters')}</p>
@@ -306,7 +306,7 @@ const AuditLogPage = () => {
                                         <div className="flex items-center gap-2.5 min-w-0">
                                             <div
                                                 className="w-7 h-7 rounded-md flex items-center justify-center text-white text-[11px] font-bold shrink-0"
-                                                style={{ backgroundColor: '#5B4FE8' }}
+                                                style={{ backgroundColor: '#111318' }}
                                             >
                                                 {initials(log.actor_name)}
                                             </div>
@@ -401,9 +401,9 @@ const AuditLogPage = () => {
                                         onClick={() => fetchLogs(pg)}
                                         className="w-8 h-8 rounded-md text-[13px] font-semibold transition-colors"
                                         style={{
-                                            backgroundColor: pg === pagination.page ? '#5B4FE8' : 'transparent',
+                                            backgroundColor: pg === pagination.page ? '#111318' : 'transparent',
                                             color: pg === pagination.page ? '#fff' : '#6B7280',
-                                            border: `0.5px solid ${pg === pagination.page ? '#5B4FE8' : '#E5E7EB'}`,
+                                            border: `0.5px solid ${pg === pagination.page ? '#111318' : '#E5E7EB'}`,
                                         }}
                                     >
                                         {pg}

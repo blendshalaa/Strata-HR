@@ -53,10 +53,10 @@ const ForgotPasswordPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#F5F4FF] flex items-center justify-center p-4 relative overflow-hidden font-sans">
+        <div className="min-h-screen bg-[#F7F7F6] flex items-center justify-center p-4 relative overflow-hidden font-sans">
             <div className="w-full max-w-md relative z-10 animate-fadeIn my-8">
                 <div className="text-center mb-8">
-                    <div className="w-12 h-12 bg-[#5B4FE8] rounded-lg flex items-center justify-center mx-auto mb-5 shadow-sm border border-zinc-200">
+                    <div className="w-12 h-12 bg-[#111318] rounded-lg flex items-center justify-center mx-auto mb-5 shadow-sm border border-zinc-200">
                         <Bot className="w-6 h-6 text-white" />
                     </div>
                     <h1 className="text-2xl font-bold text-white">

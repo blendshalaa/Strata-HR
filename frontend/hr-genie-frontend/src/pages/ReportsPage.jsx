@@ -8,10 +8,10 @@ import {
 } from 'recharts';
 import { useTranslation } from 'react-i18next';
 
-const CHART_COLORS = ['#5B4FE8', '#7B6EF0', '#A89CFF', '#C4BDFF', '#059669', '#B45309', '#DC2626', '#3730a3'];
+const CHART_COLORS = ['#111318', '#3F3F46', '#71717A', '#A1A1AA', '#059669', '#B45309', '#DC2626', '#18181B'];
 
 const chartTooltipStyle = {
-    contentStyle: { background: '#ffffff', border: '0.5px solid rgba(0,0,0,0.08)', borderRadius: '8px', color: '#0F0D2E', fontSize: '13px', boxShadow: '0 4px 16px rgba(91,79,232,0.08)' },
+    contentStyle: { background: '#ffffff', border: '0.5px solid rgba(0,0,0,0.08)', borderRadius: '8px', color: '#111318', fontSize: '13px', boxShadow: '0 4px 16px rgba(91,79,232,0.08)' },
     labelStyle: { color: '#6B7280', fontWeight: '600', marginBottom: '4px' }
 };
 
@@ -25,11 +25,11 @@ const StatCard = ({ icon: Icon, label, value, sub }) => (
     <div className="card">
         <div className="flex items-start justify-between mb-3">
             <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: '#6B7280' }}>{label}</p>
-            <div className="p-2 rounded-md flex-shrink-0" style={{ backgroundColor: '#EEF0FF' }}>
-                <Icon className="w-4 h-4" style={{ color: '#5B4FE8' }} />
+            <div className="p-2 rounded-md flex-shrink-0" style={{ backgroundColor: '#F3F4F6' }}>
+                <Icon className="w-4 h-4" style={{ color: '#111318' }} />
             </div>
         </div>
-        <p className="text-[28px] font-bold tracking-tight leading-none" style={{ color: '#0F0D2E' }}>{value}</p>
+        <p className="text-[28px] font-bold tracking-tight leading-none" style={{ color: '#111318' }}>{value}</p>
         {sub && <p className="text-[12px] mt-2" style={{ color: '#9CA3AF' }}>{sub}</p>}
     </div>
 );
@@ -37,7 +37,7 @@ const StatCard = ({ icon: Icon, label, value, sub }) => (
 const ChartCard = ({ title, subtitle, children, className = '' }) => (
     <div className={`card ${className}`}>
         <div className="mb-5">
-            <h3 className="text-[15px] font-semibold" style={{ color: '#0F0D2E' }}>{title}</h3>
+            <h3 className="text-[15px] font-semibold" style={{ color: '#111318' }}>{title}</h3>
             {subtitle && <p className="text-[13px] mt-0.5" style={{ color: '#6B7280' }}>{subtitle}</p>}
         </div>
         {children}
@@ -67,7 +67,7 @@ const ReportsPage = () => {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="w-6 h-6 border-2 border-[#EEF0FF] border-t-[#5B4FE8] rounded-full animate-spin" />
+                <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
             </div>
         );
     }
@@ -81,7 +81,7 @@ const ReportsPage = () => {
     const approvalRate = totalLeave > 0 ? Math.round((approvedLeave / totalLeave) * 100) : 0;
     const totalPayroll = payroll.trends.reduce((s, r) => s + r.total_net, 0);
 
-    const leaveStatusColors = { approved: '#5B4FE8', pending: '#A89CFF', rejected: '#DC2626' };
+    const leaveStatusColors = { approved: '#111318', pending: '#A1A1AA', rejected: '#DC2626' };
 
     return (
         <div className="space-y-4 sm:space-y-6 animate-fadeIn">
@@ -111,8 +111,8 @@ const ReportsPage = () => {
                             <YAxis tick={{ fill: '#71717a', fontSize: 11, fontWeight: 'bold' }} tickLine={false} axisLine={false} />
                             <Tooltip {...chartTooltipStyle} />
                             <Legend wrapperStyle={{ fontSize: 11, fontWeight: 'bold', color: '#71717a', textTransform: 'uppercase' }} />
-                            <Area type="monotone" dataKey="cumulative" name="Total Employees" stroke="#5B4FE8" fill="#5B4FE8" fillOpacity={0.06} strokeWidth={2} />
-                            <Bar dataKey="new_hires" name="New Hires" fill="#C4BDFF" barSize={16} radius={[4, 4, 0, 0]} />
+                            <Area type="monotone" dataKey="cumulative" name="Total Employees" stroke="#111318" fill="#111318" fillOpacity={0.06} strokeWidth={2} />
+                            <Bar dataKey="new_hires" name="New Hires" fill="#D4D4D8" barSize={16} radius={[4, 4, 0, 0]} />
                         </AreaChart>
                     </ResponsiveContainer>
                 </ChartCard>
@@ -143,8 +143,8 @@ const ReportsPage = () => {
                             <Tooltip {...chartTooltipStyle} />
                             <Legend wrapperStyle={{ fontSize: 11, fontWeight: 'bold', color: '#71717a', textTransform: 'uppercase' }} />
                             <Bar dataKey="sick" name="Sick" fill="#A89CFF" stackId="a" radius={[0, 0, 0, 0]} />
-                            <Bar dataKey="vacation" name="Vacation" fill="#5B4FE8" stackId="a" />
-                            <Bar dataKey="personal" name="Personal" fill="#EEF0FF" stackId="a" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="vacation" name="Vacation" fill="#111318" stackId="a" />
+                            <Bar dataKey="personal" name="Personal" fill="#E4E4E7" stackId="a" radius={[4, 4, 0, 0]} />
                         </BarChart>
                     </ResponsiveContainer>
                 </ChartCard>
@@ -173,8 +173,8 @@ const ReportsPage = () => {
                         <YAxis tick={{ fill: '#71717a', fontSize: 11, fontWeight: 'bold' }} tickLine={false} axisLine={false} tickFormatter={formatCurrency} />
                         <Tooltip {...chartTooltipStyle} formatter={(v) => formatCurrency(v)} />
                         <Legend wrapperStyle={{ fontSize: 11, fontWeight: 'bold', color: '#71717a', textTransform: 'uppercase' }} />
-                        <Line type="monotone" dataKey="total_base" name="Base Salary" stroke="#5B4FE8" strokeWidth={2} dot={{ fill: '#5B4FE8', r: 4 }} />
-                        <Line type="monotone" dataKey="total_net" name="Net Pay" stroke="#A89CFF" strokeWidth={2} dot={{ fill: '#A89CFF', r: 4 }} />
+                        <Line type="monotone" dataKey="total_base" name="Base Salary" stroke="#111318" strokeWidth={2} dot={{ fill: '#111318', r: 4 }} />
+                        <Line type="monotone" dataKey="total_net" name="Net Pay" stroke="#A1A1AA" strokeWidth={2} dot={{ fill: '#A1A1AA', r: 4 }} />
                         <Line type="monotone" dataKey="total_bonus" name="Bonuses" stroke="#059669" strokeWidth={2} dot={{ fill: '#059669', r: 4 }} />
                         <Line type="monotone" dataKey="total_tax" name="Tax Deductions" stroke="#DC2626" strokeWidth={2} strokeDasharray="5 5" dot={{ fill: '#DC2626', r: 3 }} />
                     </LineChart>
@@ -197,7 +197,7 @@ const ReportsPage = () => {
                                 <YAxis tick={{ fill: '#71717a', fontSize: 11, fontWeight: 'bold' }} tickLine={false} axisLine={false} />
                                 <Tooltip {...chartTooltipStyle} />
                                 <Bar dataKey="count" name="Applications" radius={[4, 4, 0, 0]} barSize={40}>
-                                    {['#5B4FE8', '#A89CFF', '#059669', '#DC2626'].map((c, i) => <Cell key={i} fill={c} />)}
+                                    {['#111318', '#A1A1AA', '#059669', '#DC2626'].map((c, i) => <Cell key={i} fill={c} />)}
                                 </Bar>
                             </BarChart>
                         </ResponsiveContainer>
@@ -228,7 +228,7 @@ const ReportsPage = () => {
                             <XAxis dataKey="bucket" tick={{ fill: '#3f3f46', fontSize: 11, fontWeight: 'bold' }} tickLine={false} />
                             <YAxis tick={{ fill: '#71717a', fontSize: 11, fontWeight: 'bold' }} tickLine={false} axisLine={false} />
                             <Tooltip {...chartTooltipStyle} />
-                            <Bar dataKey="count" name="Employees" fill="#5B4FE8" radius={[4, 4, 0, 0]} barSize={36} />
+                            <Bar dataKey="count" name="Employees" fill="#111318" radius={[4, 4, 0, 0]} barSize={36} />
                         </BarChart>
                     </ResponsiveContainer>
                 </ChartCard>

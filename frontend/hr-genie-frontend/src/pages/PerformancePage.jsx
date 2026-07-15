@@ -41,7 +41,7 @@ const PerformancePage = () => {
 
     if (loading && activeTab === 'reviews') return (
         <div className="flex items-center justify-center h-64">
-            <div className="w-6 h-6 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin" />
+            <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
         </div>
     );
 
@@ -56,7 +56,7 @@ const PerformancePage = () => {
                 {activeTab === 'reviews' && (user?.role === 'admin' || user?.role === 'hr' || user?.role === 'manager') && (
                     <button
                         onClick={() => setIsEvalModalOpen(true)}
-                        className="px-4 py-2 bg-[#5B4FE8] text-white text-[13px] font-bold uppercase tracking-wider rounded-md hover:bg-[#4a3fd4] transition-colors flex items-center gap-2"
+                        className="px-4 py-2 bg-[#111318] text-white text-[13px] font-bold uppercase tracking-wider rounded-md hover:bg-[#374151] transition-colors flex items-center gap-2"
                     >
                         <TrendingUp className="w-4 h-4" />
                         {t('performance.newEvaluation')}
@@ -85,7 +85,7 @@ const PerformancePage = () => {
             {activeTab === 'reviews' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {reviews.map(review => (
-                        <div key={review.id} className="card bg-white border border-zinc-200 flex flex-col hover:border-[#C4BDFF] transition-colors relative overflow-hidden p-6">
+                        <div key={review.id} className="card bg-white border border-zinc-200 flex flex-col hover:border-zinc-300 transition-colors relative overflow-hidden p-6">
                             <div className="flex items-center justify-between border-b border-zinc-100 pb-4 mb-4">
                                 <div className="flex items-center gap-3">
                                     <div className="p-2 bg-zinc-50 border border-zinc-100 rounded-md">

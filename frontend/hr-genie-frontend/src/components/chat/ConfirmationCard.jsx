@@ -63,7 +63,7 @@ const ConfirmationCard = ({ confirmation, onConfirm, onReject }) => {
           <button
             onClick={handleConfirm}
             disabled={status === 'confirming'}
-            className="px-4 py-1.5 bg-[#5B4FE8] text-white rounded-md text-[12px] font-medium hover:bg-[#4a3fd4] transition-colors disabled:opacity-50 flex items-center gap-1.5"
+            className="px-4 py-1.5 bg-[#111318] text-white rounded-md text-[12px] font-medium hover:bg-[#374151] transition-colors disabled:opacity-50 flex items-center gap-1.5"
           >
             {status === 'confirming' ? (
               <><Loader className="w-3 h-3 animate-spin" /> Confirming...</>

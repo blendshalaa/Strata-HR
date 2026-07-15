@@ -5,7 +5,7 @@ const KnowledgeCard = ({ article, onClick }) => {
   const categoryColors = {
     policies: 'bg-zinc-100 text-zinc-900 border-zinc-200',
     benefits: 'bg-green-50 text-green-700 border-green-100',
-    procedures: 'bg-blue-50 text-blue-700 border-blue-100',
+    procedures: 'bg-zinc-50 text-zinc-700 border-zinc-200',
     faq: 'bg-amber-50 text-amber-700 border-amber-100',
   };
 

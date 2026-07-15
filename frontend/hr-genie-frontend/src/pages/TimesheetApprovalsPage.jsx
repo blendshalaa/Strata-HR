@@ -144,12 +144,12 @@ const TimesheetApprovalsPage = () => {
         return <span className={`inline-flex px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider border ${cls}`}>{label}</span>;
     };
 
-    const inputClass = "w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-colors";
+    const inputClass = "w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors";
 
     if (loading && timesheets.length === 0) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="w-6 h-6 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin" />
+                <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
             </div>
         );
     }
@@ -185,7 +185,7 @@ const TimesheetApprovalsPage = () => {
             {/* Filters */}
             <div className="flex items-center gap-3 flex-wrap">
                 <select value={filterRange} onChange={e => setFilterRange(e.target.value)}
-                    className="px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] font-bold text-zinc-900 focus:outline-none focus:border-[#5B4FE8]">
+                    className="px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] font-bold text-zinc-900 focus:outline-none focus:border-zinc-900">
                     <option value="all">{t('timesheets.allTime')}</option>
                     <option value="this-week">{t('timesheets.thisWeek')}</option>
                     <option value="last-week">{t('timesheets.lastWeek')}</option>
@@ -193,7 +193,7 @@ const TimesheetApprovalsPage = () => {
                     <option value="custom">{t('timesheets.customRange')}</option>
                 </select>
                 <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-                    className="px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] font-bold text-zinc-900 focus:outline-none focus:border-[#5B4FE8]">
+                    className="px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] font-bold text-zinc-900 focus:outline-none focus:border-zinc-900">
                     <option value="">{t('timesheetApprovals.allStatuses')}</option>
                     <option value="pending">{t('common.pending')}</option>
                     <option value="approved">{t('common.approved')}</option>
@@ -201,9 +201,9 @@ const TimesheetApprovalsPage = () => {
                 </select>
                 {filterRange === 'custom' && (
                     <>
-                        <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)} className="px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8]" />
+                        <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)} className="px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900" />
                         <span className="text-zinc-400 text-[12px] font-bold">to</span>
-                        <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)} className="px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-[#5B4FE8]" />
+                        <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)} className="px-3 py-2 bg-white border border-zinc-200 rounded-md text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-900" />
                     </>
                 )}
                 <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">{timesheets.length} entries</span>
@@ -371,7 +371,7 @@ const TimesheetApprovalsPage = () => {
                             </div>
                             <div className="flex justify-end gap-3 pt-2">
                                 <button type="button" onClick={() => setEditingTs(null)} className="px-4 py-2 text-[12px] font-bold uppercase tracking-wider text-zinc-700 border border-zinc-200 rounded-md hover:bg-zinc-50 transition-colors">Cancel</button>
-                                <button type="submit" disabled={editLoading} className="px-5 py-2 bg-[#5B4FE8] text-white text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-[#4a3fd4] transition-colors flex items-center gap-2">
+                                <button type="submit" disabled={editLoading} className="px-5 py-2 bg-[#111318] text-white text-[12px] font-bold uppercase tracking-wider rounded-md hover:bg-[#374151] transition-colors flex items-center gap-2">
                                     <Save className="w-3.5 h-3.5" /> {editLoading ? t('common.saving') : t('timesheetApprovals.saveChanges')}
                                 </button>
                             </div>

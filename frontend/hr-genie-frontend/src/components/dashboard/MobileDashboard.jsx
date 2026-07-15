@@ -20,7 +20,7 @@ const MobileDashboard = ({ stats, balance, user, isHR }) => {
 
 
       {/* 2. Welcome Banner (Compact) */}
-      <div className="rounded-xl p-5" style={{ backgroundColor: '#5B4FE8', border: '0.5px solid rgba(91,79,232,0.3)' }}>
+      <div className="rounded-xl p-5" style={{ backgroundColor: '#111318', border: '0.5px solid rgba(17,19,24,0.3)' }}>
         <h1 className="text-xl font-semibold mb-1 tracking-tight text-white">
           {t('dashboard.welcomeBack', { name: user?.name?.split(' ')[0] })}
         </h1>
@@ -80,15 +80,15 @@ const MobileDashboard = ({ stats, balance, user, isHR }) => {
             onClick={() => navigate('/training')}
             className={`w-full flex items-center justify-between p-3 rounded-lg border transition-colors ${
               stats?.stats?.pending_trainings > 0
-                ? 'bg-[#EEF0FF] border-[#5B4FE8]'
+                ? 'bg-zinc-100 border-zinc-900'
                 : 'bg-zinc-50 border-zinc-200'
             }`}
           >
             <div className="flex items-center gap-3">
-              <Sparkles className={`w-4 h-4 ${stats?.stats?.pending_trainings > 0 ? 'text-[#5B4FE8]' : 'text-zinc-400'}`} />
+              <Sparkles className={`w-4 h-4 ${stats?.stats?.pending_trainings > 0 ? 'text-zinc-900' : 'text-zinc-400'}`} />
               <span className="text-[13px] font-medium text-zinc-900">{t('dashboard.assignedTraining', 'Assigned Training')}</span>
             </div>
-            <span className={`text-[13px] font-black ${stats?.stats?.pending_trainings > 0 ? 'text-[#5B4FE8]' : 'text-zinc-400'}`}>
+            <span className={`text-[13px] font-black ${stats?.stats?.pending_trainings > 0 ? 'text-zinc-900' : 'text-zinc-400'}`}>
               {stats?.stats?.pending_trainings ?? 0}
             </span>
           </button>
@@ -153,7 +153,7 @@ const MobileDashboard = ({ stats, balance, user, isHR }) => {
                 
                 return (
                   <div key={shift.id || idx} className="p-3 border border-zinc-100 rounded-lg bg-zinc-50 flex items-center justify-between relative overflow-hidden">
-                    {isToday && <div className="absolute top-0 left-0 w-1 h-full bg-[#5B4FE8]"></div>}
+                    {isToday && <div className="absolute top-0 left-0 w-1 h-full bg-zinc-900"></div>}
                     <div>
                       <p className="text-[13px] font-bold text-zinc-900">
                         {isToday ? 'Today' : start.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
@@ -163,7 +163,7 @@ const MobileDashboard = ({ stats, balance, user, isHR }) => {
                         {start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </div>
                     </div>
-                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider ${isToday ? 'bg-[#EEF0FF] text-[#5B4FE8]' : 'bg-zinc-200/50 text-zinc-500'}`}>
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider ${isToday ? 'bg-zinc-100 text-zinc-900' : 'bg-zinc-200/50 text-zinc-500'}`}>
                       {shift.role}
                     </span>
                   </div>

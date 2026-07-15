@@ -6,21 +6,26 @@ import MobileLayout from './MobileLayout';
 
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const isMobile = useIsMobile(1024); // Use lg breakpoint
+  const isMobile = useIsMobile(1024);
 
   if (isMobile) {
     return <MobileLayout>{children}</MobileLayout>;
   }
 
   return (
-    <div className="min-h-screen flex relative overflow-hidden" style={{ backgroundColor: '#F5F4FF', color: '#0F0D2E' }}>
+    <div
+      className="min-h-screen flex"
+      style={{ backgroundColor: '#F7F7F6', color: '#111318' }}
+    >
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <Navbar onMenuClick={() => setSidebarOpen(true)} />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">
-          {children}
+        <main className="flex-1 overflow-auto p-6 lg:p-8">
+          <div className="mx-auto" style={{ maxWidth: '1600px' }}>
+            {children}
+          </div>
         </main>
       </div>
     </div>

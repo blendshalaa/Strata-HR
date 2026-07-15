@@ -15,7 +15,7 @@ const FileIcon = ({ mime }) => {
     if (mime.includes('sheet') || mime.includes('excel') || mime.includes('csv'))
         return <FileSpreadsheet className="w-5 h-5 text-emerald-600" />;
     if (mime.includes('word') || mime.includes('document'))
-        return <FileText className="w-5 h-5 text-blue-500" />;
+        return <FileText className="w-5 h-5 text-zinc-500" />;
     return <FileText className="w-5 h-5 text-zinc-400" />;
 };
 
@@ -25,12 +25,12 @@ const fileBg = (mime) => {
     if (mime.startsWith('image/')) return 'bg-sky-50';
     if (mime.includes('pdf')) return 'bg-red-50';
     if (mime.includes('sheet') || mime.includes('excel')) return 'bg-emerald-50';
-    if (mime.includes('word') || mime.includes('document')) return 'bg-blue-50';
+    if (mime.includes('word') || mime.includes('document')) return 'bg-zinc-100';
     return 'bg-zinc-100';
 };
 
 const CATEGORIES = [
-    { value: 'contract', label: 'Contract', color: 'bg-[#EEF0FF] text-[#5B4FE8] border-blue-200' },
+    { value: 'contract', label: 'Contract', color: 'bg-zinc-100 text-zinc-700 border-zinc-200' },
     { value: 'id_document', label: 'ID Document', color: 'bg-amber-50 text-amber-700 border-amber-200' },
     { value: 'tax_form', label: 'Tax Form', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
     { value: 'certificate', label: 'Certificate', color: 'bg-purple-50 text-purple-700 border-purple-200' },
@@ -186,7 +186,7 @@ const DocumentsPage = () => {
         return true;
     });
 
-    const inputClass = "w-full px-4 py-2.5 bg-white border border-zinc-300 rounded-md text-zinc-900 placeholder-zinc-400 outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all text-sm font-medium";
+    const inputClass = "w-full px-4 py-2.5 bg-white border border-zinc-300 rounded-md text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all text-sm font-medium";
 
     return (
         <div className="space-y-4 sm:space-y-6 animate-fadeIn">
@@ -200,7 +200,7 @@ const DocumentsPage = () => {
                         {isHR ? t('documents.subtitleHR') : t('documents.subtitleEmployee')}
                     </p>
                 </div>
-                <button onClick={() => setShowUpload(!showUpload)} className="bg-[#5B4FE8] hover:bg-[#4a3fd4] text-white px-5 py-2.5 rounded-md font-bold text-sm transition-colors flex items-center gap-2">
+                <button onClick={() => setShowUpload(!showUpload)} className="bg-[#111318] hover:bg-[#374151] text-white px-5 py-2.5 rounded-md font-bold text-sm transition-colors flex items-center gap-2">
                     <Upload className="w-4 h-4" /> {t('documents.uploadDocument')}
                 </button>
             </div>
@@ -260,7 +260,7 @@ const DocumentsPage = () => {
                                 onDragLeave={handleDragLeave}
                                 onClick={() => fileInputRef.current?.click()}
                                 className={`relative border-2 border-dashed rounded-md p-6 text-center cursor-pointer transition-colors ${
-                                    dragOver ? 'border-zinc-900 bg-zinc-50' : 'border-zinc-200 hover:border-[#5B4FE8] bg-white'
+                                    dragOver ? 'border-zinc-900 bg-zinc-50' : 'border-zinc-200 hover:border-zinc-900 bg-white'
                                 }`}
                             >
                                 <input
@@ -315,7 +315,7 @@ const DocumentsPage = () => {
 
                         <div className="md:col-span-2 flex justify-end gap-3 mt-2">
                             <button type="button" onClick={() => setShowUpload(false)} className="px-5 py-2 text-sm font-bold text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded-md transition-colors">{t('common.cancel')}</button>
-                            <button type="submit" disabled={uploading || !uploadFile} className="bg-[#5B4FE8] hover:bg-[#4a3fd4] text-white px-6 py-2 rounded-md font-bold text-sm transition-colors disabled:opacity-50">
+                            <button type="submit" disabled={uploading || !uploadFile} className="bg-[#111318] hover:bg-[#374151] text-white px-6 py-2 rounded-md font-bold text-sm transition-colors disabled:opacity-50">
                                 {uploading ? `${uploadProgress}%` : t('documents.upload')}
                             </button>
                         </div>
@@ -330,14 +330,14 @@ const DocumentsPage = () => {
                     <div className="relative flex-1 min-w-[200px] max-w-sm">
                         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
                         <input type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 text-sm font-medium outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
+                            className="w-full pl-10 pr-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 text-sm font-medium outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
                             placeholder={t('documents.searchDocuments')} />
                     </div>
                     {isHR && (
                         <div className="relative min-w-[180px]">
                             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
                             <input type="text" value={filterEmployee} onChange={e => setFilterEmployee(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 text-sm font-medium outline-none focus:border-[#5B4FE8] focus:ring-1 focus:ring-[#5B4FE8] transition-all"
+                                className="w-full pl-10 pr-4 py-2.5 bg-white border border-zinc-200 rounded-md text-zinc-900 placeholder-zinc-400 text-sm font-medium outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
                                 placeholder="Filter by employee…" />
                         </div>
                     )}
@@ -349,8 +349,8 @@ const DocumentsPage = () => {
                         onClick={() => setFilterCategory('')}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-bold uppercase tracking-wider border transition-colors ${
                             filterCategory === ''
-                                ? 'bg-[#5B4FE8] text-white border-[#5B4FE8]'
-                                : 'bg-white text-zinc-500 border-zinc-200 hover:border-[#5B4FE8]'
+                                ? 'bg-zinc-900 text-white border-zinc-900'
+                                : 'bg-white text-zinc-500 border-zinc-200 hover:border-zinc-900'
                         }`}
                     >
                         All
@@ -367,7 +367,7 @@ const DocumentsPage = () => {
                                 key={cat.value}
                                 onClick={() => setFilterCategory(isActive ? '' : cat.value)}
                                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-bold uppercase tracking-wider border transition-colors ${
-                                    isActive ? 'bg-[#5B4FE8] text-white border-[#5B4FE8]' : `${cat.color} hover:opacity-80`
+                                    isActive ? 'bg-zinc-900 text-white border-zinc-900' : `${cat.color} hover:opacity-80`
                                 }`}
                             >
                                 {cat.label}
@@ -388,7 +388,7 @@ const DocumentsPage = () => {
             {/* Documents List */}
             {loading ? (
                 <div className="flex items-center justify-center h-48">
-                    <div className="w-6 h-6 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin" />
+                    <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
                 </div>
             ) : filtered.length === 0 ? (
                 <div className="bg-white border border-zinc-200 rounded-md p-16 text-center">
@@ -546,7 +546,7 @@ const DocumentsPage = () => {
                                     <div className="flex items-center justify-end gap-2 border-t border-zinc-100 pt-4">
                                         {doc.requires_signature && !doc.is_signed && doc.user_id === user?.id && (
                                             <button onClick={() => setSignDocument(doc)}
-                                                className="px-4 py-2 bg-[#5B4FE8] hover:bg-[#4a3fd4] text-white rounded-md font-bold text-[12px] flex items-center gap-2 transition-colors mr-auto">
+                                                className="px-4 py-2 bg-zinc-900 hover:bg-zinc-700 text-white rounded-md font-bold text-[12px] flex items-center gap-2 transition-colors mr-auto">
                                                 Sign Now
                                             </button>
                                         )}

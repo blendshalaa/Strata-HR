@@ -24,8 +24,8 @@ const typeColors = {
     payroll: 'text-emerald-600 bg-emerald-50 border-emerald-100',
     shift: 'text-violet-600 bg-violet-50 border-violet-100',
     goal: 'text-amber-600 bg-amber-50 border-amber-100',
-    document: 'text-blue-600 bg-blue-50 border-blue-100',
-    user: 'text-indigo-600 bg-indigo-50 border-indigo-100',
+    document: 'text-zinc-600 bg-zinc-50 border-zinc-200',
+    user: 'text-zinc-900 bg-zinc-100 border-zinc-200',
     success: 'text-emerald-600 bg-emerald-50 border-emerald-100',
     warning: 'text-amber-600 bg-amber-50 border-amber-100',
     info: 'text-zinc-500 bg-zinc-100 border-zinc-200',
@@ -142,7 +142,7 @@ const NotificationBell = () => {
                 onClick={handleToggle}
                 className="relative p-2 rounded-[6px] transition-colors"
                 style={{ color: '#71717A' }}
-                onMouseEnter={e => e.currentTarget.style.background = '#F5F4FF'}
+                onMouseEnter={e => e.currentTarget.style.background = '#F7F7F6'}
                 onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 aria-label="Notifications"
             >
@@ -163,8 +163,8 @@ const NotificationBell = () => {
                 <div
                     className="absolute right-0 top-full mt-1 w-80 sm:w-96 bg-white rounded-[10px] overflow-hidden z-50 animate-fadeIn"
                     style={{
-                        border: '0.5px solid rgba(0,0,0,0.1)',
-                        boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                    border: '1px solid #E5E7EB',
+                        boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
                     }}
                 >
                     {/* Header */}
@@ -177,7 +177,7 @@ const NotificationBell = () => {
                             {unreadCount > 0 && (
                                 <span
                                     className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-white"
-                                    style={{ backgroundColor: '#5B4FE8' }}
+                                style={{ backgroundColor: '#111318' }}
                                 >
                                     {unreadCount}
                                 </span>
@@ -198,15 +198,15 @@ const NotificationBell = () => {
                     <div className="max-h-[420px] overflow-y-auto divide-y divide-zinc-50">
                         {loading ? (
                             <div className="p-8 text-center">
-                                <div className="w-5 h-5 border-2 border-zinc-200 border-t-[#5B4FE8] rounded-full animate-spin mx-auto" />
+                                <div style={{ width: '18px', height: '18px', border: '2px solid #E5E7EB', borderTopColor: '#111318', borderRadius: '50%', animation: 'spin 0.7s linear infinite', margin: '0 auto' }} />
                             </div>
                         ) : notifications.length === 0 ? (
                             <div className="p-10 text-center">
                                 <div
                                     className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3"
-                                    style={{ backgroundColor: '#EEF0FF' }}
+                                    style={{ backgroundColor: '#F3F4F6' }}
                                 >
-                                    <Bell className="w-5 h-5" style={{ color: '#5B4FE8' }} />
+                                        <Bell className="w-5 h-5" style={{ color: '#111318' }} />
                                 </div>
                                 <p className="text-[13px] font-medium text-zinc-500">{t('notifications.noNotifications')}</p>
                                 <p className="text-[12px] text-zinc-400 mt-0.5">You're all caught up!</p>
@@ -219,13 +219,13 @@ const NotificationBell = () => {
                                     <div
                                         key={n.id}
                                         onClick={() => handleNotificationClick(n)}
-                                        className={`px-4 py-3 flex items-start gap-3 transition-colors cursor-pointer ${!n.is_read ? 'bg-[#FAFAFE]' : 'bg-white hover:bg-zinc-50'}`}
+                                        className={`px-4 py-3 flex items-start gap-3 transition-colors cursor-pointer ${!n.is_read ? 'bg-zinc-50' : 'bg-white hover:bg-zinc-50'}`}
                                     >
                                         {/* Unread dot */}
                                         {!n.is_read && (
                                             <div
                                                 className="w-1.5 h-1.5 rounded-full mt-2 shrink-0"
-                                                style={{ backgroundColor: '#5B4FE8' }}
+                                                style={{ backgroundColor: '#111318' }}
                                             />
                                         )}
 

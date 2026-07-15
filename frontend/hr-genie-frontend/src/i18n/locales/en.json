@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "HR Genie",
+    "appName": "Strata HR",
     "loading": "Loading...",
     "save": "Save",
     "cancel": "Cancel",
@@ -227,7 +227,7 @@
   "chat": {
     "hrAssistant": "HR Assistant",
     "aiPoweredOnline": "AI Powered • Online",
-    "welcomeToHrGenie": "Welcome to HR Genie",
+    "welcomeToHrGenie": "Welcome to Strata HR",
     "imYourAiAssistant": "I'm your dedicated AI assistant. Ask me about policies, leave requests, benefits, or company procedures.",
     "commonQuestions": "Common Questions",
     "sickLeavePolicy": "What's the sick leave policy?",

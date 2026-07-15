@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "HR Genie",
+    "appName": "Strata HR",
     "loading": "Duke u ngarkuar...",
     "save": "Ruaj",
     "cancel": "Anulo",
@@ -219,7 +219,7 @@
   "chat": {
     "hrAssistant": "Asistenti i HR-së",
     "aiPoweredOnline": "Me AI • Online",
-    "welcomeToHrGenie": "Mirë se vini në HR Genie",
+    "welcomeToHrGenie": "Mirë se vini në Strata HR",
     "imYourAiAssistant": "Unë jam asistenti juaj AI. Më pyet për politikat, pushimet, përfitimet ose procedurat e kompanisë.",
     "commonQuestions": "Pyetje të zakonshme",
     "sickLeavePolicy": "Cila është politika e pushimit mjekësor?",
