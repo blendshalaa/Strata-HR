@@ -138,8 +138,8 @@ Strata-HR/
 
 ### 1. Repository Initialization
 ```bash
-git clone https://github.com/blendshalaa/HR-Genie-final.git
-cd HR-Genie-final
+git clone https://github.com/blendshalaa/Strata-HR.git
+cd Strata-HR
 ```
 
 ### 2. Backend Environment
