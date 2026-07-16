@@ -14,6 +14,10 @@
 </p>
 
 <p align="center">
+  <img src="screenshots/dashboard1.png" alt="Strata HR Interface" width="100%">
+</p>
+
+<p align="center">
   <a href="https://strata-hr-final.vercel.app/"><strong>View Live System →</strong></a>
 </p>
 
