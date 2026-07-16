@@ -13,34 +13,12 @@
   An instrument-grade, multi-tenant organizational management platform. Features an integrated AI Copilot capable of autonomous data querying, leave approval, shift scheduling, and policy enforcement via natural language.
 </p>
 
----
-
-## Screenshots
-
-### Authentication
-| Login | Register |
-|:-----:|:--------:|
-| ![Login](screenshots/login.png) | ![Register](screenshots/register.png) |
-
-### Dashboard
-![Dashboard](screenshots/dashboard.png)
-
-### AI Copilot Chat
-![AI Chat](screenshots/chat.png)
-
-### Leave Management
-![Leave](screenshots/leave.png)
-
-### Payroll
-![Payroll](screenshots/payroll.png)
-
-### Recruitment
-![Recruitment](screenshots/recruitment.png)
-
-### Calendar & Events
-![Calendar](screenshots/calendar.png)
+<p align="center">
+  <a href="https://strata-hr-final.vercel.app/"><strong>View Live System →</strong></a>
+</p>
 
 ---
+
 
 ## Features
 
