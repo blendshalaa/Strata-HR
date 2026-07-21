@@ -30,6 +30,7 @@ const BREADCRUMBS = {
   '/leave-approvals': ['HR & Payroll', 'Leave Approvals'],
   '/timesheets':      ['HR & Payroll', 'Timesheet Approvals'],
   '/reports':         ['HR & Payroll', 'Reports'],
+  '/goals':           ['My Work', 'Goals'],
   '/users':           ['Admin', 'User Management'],
   '/departments':     ['Admin', 'Departments'],
   '/org-settings':    ['Admin', 'Organization'],

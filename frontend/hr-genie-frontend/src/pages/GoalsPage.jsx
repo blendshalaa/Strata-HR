@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { useToast } from '../context/ToastContext';
-import { Target, Plus, ChevronDown, ChevronRight, Trash2, Edit3, CheckCircle2, Clock, AlertCircle, X, Save } from 'lucide-react';
+import { Target, Plus, ChevronDown, ChevronRight, Trash2, Edit3, CheckCircle2, Clock, AlertCircle, X, Save, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 
@@ -300,7 +300,7 @@ const GoalsPage = ({ embedded = false }) => {
                                                     <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-zinc-50 border border-zinc-200 text-zinc-500">{goal.category}</span>
                                                 </div>
                                                 <div className="flex items-center gap-4 text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
-                                                    {isHR && goal.owner_name && <span className="flex items-center gap-1.5"><Save className="w-3 h-3" /> {goal.owner_name}</span>}
+                                                    {isHR && goal.owner_name && <span className="flex items-center gap-1.5"><User className="w-3 h-3" /> {goal.owner_name}</span>}
                                                     {goal.target_date && <span className="flex items-center gap-1.5"><Clock className="w-3 h-3" /> {new Date(goal.target_date).toLocaleDateString()}</span>}
                                                     <span className="flex items-center gap-1.5"><Target className="w-3 h-3" /> {goal.kr_count || 0} Key Results</span>
                                                 </div>

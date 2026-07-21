@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Play, Square, Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useToast } from '../../context/ToastContext';
 import api from '../../services/api';
 
 const TimeClockWidget = ({ compact = false }) => {
   const { t } = useTranslation();
+  const toast = useToast();
   const [activeShift, setActiveShift] = useState(null);
   const [loading, setLoading] = useState(true);
   const [elapsed, setElapsed] = useState('00:00:00');
@@ -49,12 +51,15 @@ const TimeClockWidget = ({ compact = false }) => {
       if (activeShift) {
         await api.post('/attendance/clock-out');
         setActiveShift(null);
+        toast.success('Clocked out successfully');
       } else {
         const res = await api.post('/attendance/clock-in');
         setActiveShift(res.data.timesheet);
+        toast.success('Clocked in — have a great shift!');
       }
     } catch (err) {
       console.error(err);
+      toast.error(err.response?.data?.error || 'Failed to update time clock. Please try again.');
     } finally {
       setLoading(false);
     }

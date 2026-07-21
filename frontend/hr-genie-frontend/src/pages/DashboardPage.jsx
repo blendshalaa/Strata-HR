@@ -119,6 +119,14 @@ const tooltipStyle = {
   color: '#111318',
 };
 
+/* ── Time of day helper ──────────────────────────────────────────────────── */
+function getTimeOfDay() {
+  const h = new Date().getHours();
+  if (h < 12) return 'morning';
+  if (h < 17) return 'afternoon';
+  return 'evening';
+}
+
 /* ════════════════════════════════════════════════════════════════════════════ */
 const DashboardPage = () => {
   const { user, isHR } = useAuth();
@@ -197,13 +205,6 @@ const DashboardPage = () => {
   );
 };
 
-/* ── Time of day helper ──────────────────────────────────────────────────── */
-function getTimeOfDay() {
-  const h = new Date().getHours();
-  if (h < 12) return 'morning';
-  if (h < 17) return 'afternoon';
-  return 'evening';
-}
 
 /* ── HR main dashboard ───────────────────────────────────────────────────── */
 const HRDashboard = ({ stats, loading, navigate }) => {
@@ -365,7 +366,7 @@ const EmployeeDashboard = ({ stats, loading, navigate }) => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-      {/* Time clock */}
+      {/* Left Column: Time clock, Action items, Quick links */}
       <div className="lg:col-span-8 space-y-5">
         <TimeClockWidget />
 
@@ -424,58 +425,38 @@ const EmployeeDashboard = ({ stats, loading, navigate }) => {
         </div>
       </div>
 
-      {/* Upcoming shifts */}
-      <div className="lg:col-span-4">
-        <p className="section-label mb-2">Upcoming shifts</p>
-        <div className="space-y-1.5">
-          {stats?.upcoming_shifts?.length > 0 ? (
-            stats.upcoming_shifts.map((shift, idx) => {
-              const start = new Date(shift.start_time);
-              const end = new Date(shift.end_time);
-              const isToday = start.toDateString() === new Date().toDateString();
-              return (
-                <div
-                  key={shift.id || idx}
-                  className="px-3 py-2.5 rounded relative overflow-hidden"
-                  style={{
-                    border: `1px solid ${isToday ? '#C7D2FE' : '#E5E7EB'}`,
-                    backgroundColor: isToday ? '#EEF2FF' : '#FFFFFF',
-                  }}
-                >
-                  {isToday && (
-                    <span
-                      style={{
-                        position: 'absolute',
-                        left: 0,
-                        top: 0,
-                        bottom: 0,
-                        width: '2px',
-                        backgroundColor: '#111318',
-                      }}
-                    />
-                  )}
-                  <div className="flex items-center justify-between mb-1">
-                    <p style={{ fontSize: '12px', fontWeight: '500', color: '#111318' }}>
-                      {isToday ? 'Today' : start.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
-                    </p>
-                    <span className="chip chip-neutral text-[10px]">{shift.role}</span>
-                  </div>
-                  <p className="tabular" style={{ fontSize: '12px', color: '#6B7280' }}>
-                    {start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} –{' '}
-                    {end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </p>
-                </div>
-              );
-            })
-          ) : (
-            <div className="card py-8 text-center">
-              <p style={{ fontSize: '13px', color: '#9CA3AF' }}>No upcoming shifts</p>
-            </div>
-          )}
+      {/* Leave balance summary */}
+      <div className="card mt-4">
+        <div className="flex items-center justify-between mb-3">
+          <span className="section-label">Leave balance</span>
+          <button
+            onClick={() => navigate('/leave')}
+            className="text-[11px] font-medium"
+            style={{ color: '#9CA3AF' }}
+            onMouseEnter={e => e.currentTarget.style.color = '#111318'}
+            onMouseLeave={e => e.currentTarget.style.color = '#9CA3AF'}
+          >
+            Request →
+          </button>
+        </div>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span style={{ fontSize: '12px', color: '#6B7280' }}>Vacation</span>
+            <span className="tabular" style={{ fontSize: '13px', fontWeight: '500', color: '#111318' }}>
+              {stats?.balance?.vacation_balance ?? '—'} days
+            </span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span style={{ fontSize: '12px', color: '#6B7280' }}>Sick leave</span>
+            <span className="tabular" style={{ fontSize: '13px', fontWeight: '500', color: '#111318' }}>
+              {stats?.balance?.sick_leave_balance ?? '—'} days
+            </span>
+          </div>
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 /* ── Flight Risk Widget ───────────────────────────────────────────────────── */

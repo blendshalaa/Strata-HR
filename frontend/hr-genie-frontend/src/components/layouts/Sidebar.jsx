@@ -5,7 +5,7 @@ import {
   BookOpen, X, Users, CheckSquare, Building2, Briefcase,
   CircleDollarSign, TrendingUp, CalendarDays, Clock,
   User, FileText, Contact, ChevronRight, Target, BarChart3,
-  Settings, Layers, ShieldCheck, GraduationCap, Bot
+  Settings, Layers, ShieldCheck, GraduationCap, Bot, Trophy
 } from 'lucide-react';
 import Logo from '../Logo';
 import { useAuth } from '../../context/AuthContext';
@@ -28,6 +28,7 @@ const NAV_GROUPS = (t) => [
       { to: '/my-timesheets',  icon: Clock,         label: t('sidebar.myTimesheets'),   roles: ['employee', 'hr', 'admin'] },
       { to: '/shifts',         icon: Layers,        label: t('sidebar.myShifts'),       roles: ['employee', 'hr', 'admin'] },
       { to: '/my-payslips',    icon: FileText,      label: t('sidebar.myPayslips'),     roles: ['employee', 'hr', 'admin'] },
+      { to: '/goals',          icon: Trophy,        label: t('sidebar.goals', 'Goals'), roles: ['employee', 'hr', 'admin'] },
       { to: '/performance',    icon: TrendingUp,    label: t('sidebar.performance'),    roles: ['employee', 'hr', 'admin'] },
     ]
   },

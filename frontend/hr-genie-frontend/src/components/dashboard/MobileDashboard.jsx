@@ -103,17 +103,17 @@ const MobileDashboard = ({ stats, balance, user, isHR }) => {
           <button
             onClick={() => navigate('/leave-approvals')}
             className={`w-full flex items-center justify-between p-3 rounded-lg border transition-colors ${
-              stats?.stats?.pending_leaves > 0
+              stats?.stats?.pending_leave_requests > 0
                 ? 'bg-rose-50 border-rose-200'
                 : 'bg-zinc-50 border-zinc-200'
             }`}
           >
             <div className="flex items-center gap-3">
-              <Calendar className={`w-4 h-4 ${stats?.stats?.pending_leaves > 0 ? 'text-rose-600' : 'text-zinc-400'}`} />
+              <Calendar className={`w-4 h-4 ${stats?.stats?.pending_leave_requests > 0 ? 'text-rose-600' : 'text-zinc-400'}`} />
               <span className="text-[13px] font-medium text-zinc-900">Pending Leave Approvals</span>
             </div>
-            <span className={`text-[13px] font-black ${stats?.stats?.pending_leaves > 0 ? 'text-rose-600' : 'text-zinc-400'}`}>
-              {stats?.stats?.pending_leaves ?? 0}
+            <span className={`text-[13px] font-black ${stats?.stats?.pending_leave_requests > 0 ? 'text-rose-600' : 'text-zinc-400'}`}>
+              {stats?.stats?.pending_leave_requests ?? 0}
             </span>
           </button>
 
@@ -198,14 +198,9 @@ const MobileDashboard = ({ stats, balance, user, isHR }) => {
         </div>
       )}
 
-      <style jsx>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
+      <style>{`
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
     </div>
   );
